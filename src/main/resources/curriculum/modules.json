@@ -1,0 +1,135 @@
+[
+  {
+    "name": "listening",
+    "displayName": "Listening",
+    "description": "Develop comprehension of spoken English",
+    "weight": 35,
+    "levels": {
+      "a1": [
+        {"index": 0, "title": "Basic Words & Phrases", "type": "reduced-forms"},
+        {"index": 1, "title": "Simple Instructions", "type": "dictation"},
+        {"index": 2, "title": "Greetings Conversations", "type": "shadowing"},
+        {"index": 3, "title": "Numbers & Dates", "type": "dictation"},
+        {"index": 4, "title": "Shopping Dialogues", "type": "reduced-forms"},
+        {"index": 5, "title": "Weather Reports", "type": "dictation"},
+        {"index": 6, "title": "Restaurant Orders", "type": "shadowing"},
+        {"index": 7, "title": "Directions", "type": "dictation"},
+        {"index": 8, "title": "Phone Calls", "type": "reduced-forms"},
+        {"index": 9, "title": "Daily Routines", "type": "shadowing"},
+        {"index": 10, "title": "Stories", "type": "dictation"},
+        {"index": 11, "title": "A1 Review", "type": "review"}
+      ],
+      "a2": [
+        {"index": 0, "title": "Connected Speech Basics", "type": "reduced-forms"},
+        {"index": 1, "title": "News Headlines", "type": "dictation"},
+        {"index": 2, "title": "Interviews", "type": "shadowing"},
+        {"index": 3, "title": "Announcements", "type": "dictation"},
+        {"index": 4, "title": "Conversations Speed", "type": "reduced-forms"},
+        {"index": 5, "title": "Movie Clips", "type": "shadowing"},
+        {"index": 6, "title": "Radio Programs", "type": "dictation"},
+        {"index": 7, "title": "Presentations", "type": "shadowing"},
+        {"index": 8, "title": "Podcasts Intro", "type": "reduced-forms"},
+        {"index": 9, "title": "Song Lyrics", "type": "dictation"},
+        {"index": 10, "title": "Debates Simple", "type": "shadowing"},
+        {"index": 11, "title": "A2 Review", "type": "review"}
+      ],
+      "b1": [
+        {"index": 0, "title": "Fast Speech", "type": "reduced-forms"},
+        {"index": 1, "title": "Lectures", "type": "dictation"},
+        {"index": 2, "title": "TED Talks", "type": "shadowing"},
+        {"index": 3, "title": "News Reports", "type": "dictation"},
+        {"index": 4, "title": "Accents British", "type": "reduced-forms"},
+        {"index": 5, "title": "Accents American", "type": "reduced-forms"},
+        {"index": 6, "title": "Documentaries", "type": "shadowing"},
+        {"index": 7, "title": "Radio Discussions", "type": "dictation"},
+        {"index": 8, "title": "Podcast Analysis", "type": "shadowing"},
+        {"index": 9, "title": "B1 Review", "type": "review"}
+      ],
+      "b2": [
+        {"index": 0, "title": "Academic Lectures", "type": "dictation"},
+        {"index": 1, "title": "Business Meetings", "type": "shadowing"},
+        {"index": 2, "title": "Complex Narratives", "type": "reduced-forms"},
+        {"index": 3, "title": "Scientific Content", "type": "dictation"},
+        {"index": 4, "title": "Multiple Speakers", "type": "shadowing"},
+        {"index": 5, "title": "Idiomatic Speech", "type": "reduced-forms"},
+        {"index": 6, "title": "Panel Discussions", "type": "shadowing"},
+        {"index": 7, "title": "Subtle Tone", "type": "dictation"},
+        {"index": 8, "title": "Speed Listening", "type": "shadowing"},
+        {"index": 9, "title": "B2 Review", "type": "review"}
+      ],
+      "c1": [
+        {"index": 0, "title": "Native Speed", "type": "shadowing"},
+        {"index": 1, "title": "Complex Arguments", "type": "dictation"},
+        {"index": 2, "title": "Implicit Meaning", "type": "reduced-forms"},
+        {"index": 3, "title": "Humor & Sarcasm", "type": "shadowing"},
+        {"index": 4, "title": "Technical Content", "type": "dictation"},
+        {"index": 5, "title": "Multi-accent", "type": "shadowing"},
+        {"index": 6, "title": "Extended Discourse", "type": "dictation"},
+        {"index": 7, "title": "C1 Review", "type": "review"}
+      ]
+    }
+  },
+  {
+    "name": "vocabulary",
+    "displayName": "Vocabulary",
+    "description": "Build word knowledge and usage",
+    "weight": 15,
+    "levels": {
+      "a1": [
+        {"index": 0, "title": "Top 100 Words", "type": "flashcards"},
+        {"index": 1, "title": "Colors & Shapes", "type": "matching"},
+        {"index": 2, "title": "Food & Drinks", "type": "flashcards"},
+        {"index": 3, "title": "Family Members", "type": "matching"},
+        {"index": 4, "title": "Clothing", "type": "flashcards"},
+        {"index": 5, "title": "Animals", "type": "matching"},
+        {"index": 6, "title": "Home & Furniture", "type": "flashcards"},
+        {"index": 7, "title": "Body Parts", "type": "matching"},
+        {"index": 8, "title": "Basic Verbs", "type": "flashcards"},
+        {"index": 9, "title": "A1 Review", "type": "review"}
+      ],
+      "a2": [{"index": 0, "title": "Words 200-500", "type": "flashcards"}, {"index": 1, "title": "Work & Jobs", "type": "matching"}, {"index": 2, "title": "Travel", "type": "flashcards"}, {"index": 3, "title": "Health", "type": "matching"}, {"index": 4, "title": "Education", "type": "flashcards"}, {"index": 5, "title": "Technology", "type": "matching"}, {"index": 6, "title": "Sports & Hobbies", "type": "flashcards"}, {"index": 7, "title": "Feelings", "type": "matching"}, {"index": 8, "title": "Prepositions", "type": "flashcards"}, {"index": 9, "title": "A2 Review", "type": "review"}],
+      "b1": [{"index": 0, "title": "Words 500-1000", "type": "flashcards"}, {"index": 1, "title": "Business Basics", "type": "context"}, {"index": 2, "title": "Environment", "type": "flashcards"}, {"index": 3, "title": "Media & News", "type": "context"}, {"index": 4, "title": "Phrasal Verbs 1", "type": "flashcards"}, {"index": 5, "title": "Collocations 1", "type": "context"}, {"index": 6, "title": "Word Formation", "type": "flashcards"}, {"index": 7, "title": "Idioms Basic", "type": "context"}, {"index": 8, "title": "Academic 1", "type": "flashcards"}, {"index": 9, "title": "B1 Review", "type": "review"}],
+      "b2": [{"index": 0, "title": "Words 1000-2000", "type": "context"}, {"index": 1, "title": "Phrasal Verbs 2", "type": "flashcards"}, {"index": 2, "title": "Collocations 2", "type": "context"}, {"index": 3, "title": "Idioms Advanced", "type": "flashcards"}, {"index": 4, "title": "Academic 2", "type": "context"}, {"index": 5, "title": "Formal Register", "type": "flashcards"}, {"index": 6, "title": "Synonyms", "type": "context"}, {"index": 7, "title": "B2 Review", "type": "review"}],
+      "c1": [{"index": 0, "title": "Words 2000-3000", "type": "context"}, {"index": 1, "title": "Nuance & Connotation", "type": "context"}, {"index": 2, "title": "Specialized Vocab", "type": "flashcards"}, {"index": 3, "title": "Rare Idioms", "type": "context"}, {"index": 4, "title": "Etymology", "type": "context"}, {"index": 5, "title": "Register Shifts", "type": "context"}, {"index": 6, "title": "Precision", "type": "context"}, {"index": 7, "title": "C1 Review", "type": "review"}]
+    }
+  },
+  {
+    "name": "grammar",
+    "displayName": "Grammar",
+    "description": "Master English grammar structures",
+    "weight": 15,
+    "levels": {
+      "a1": [{"index": 0, "title": "Subject Pronouns", "type": "fill-blank"}, {"index": 1, "title": "To Be", "type": "fill-blank"}, {"index": 2, "title": "Present Simple", "type": "fill-blank"}, {"index": 3, "title": "Articles", "type": "fill-blank"}, {"index": 4, "title": "Plurals", "type": "fill-blank"}, {"index": 5, "title": "There is/are", "type": "fill-blank"}, {"index": 6, "title": "Possessives", "type": "fill-blank"}, {"index": 7, "title": "Can/Can't", "type": "fill-blank"}, {"index": 8, "title": "Imperatives", "type": "fill-blank"}, {"index": 9, "title": "A1 Review", "type": "review"}],
+      "a2": [{"index": 0, "title": "Present Continuous", "type": "fill-blank"}, {"index": 1, "title": "Past Simple", "type": "fill-blank"}, {"index": 2, "title": "Future: Will/Going to", "type": "fill-blank"}, {"index": 3, "title": "Comparatives", "type": "fill-blank"}, {"index": 4, "title": "Superlatives", "type": "fill-blank"}, {"index": 5, "title": "Adverbs", "type": "fill-blank"}, {"index": 6, "title": "Countable/Uncountable", "type": "fill-blank"}, {"index": 7, "title": "Prepositions of Time", "type": "fill-blank"}, {"index": 8, "title": "Questions", "type": "fill-blank"}, {"index": 9, "title": "Connectors Basic", "type": "fill-blank"}, {"index": 10, "title": "Some/Any", "type": "fill-blank"}, {"index": 11, "title": "A2 Review", "type": "review"}],
+      "b1": [{"index": 0, "title": "Present Perfect", "type": "transform"}, {"index": 1, "title": "Past Continuous", "type": "transform"}, {"index": 2, "title": "Used to/Would", "type": "transform"}, {"index": 3, "title": "Modals Obligation", "type": "fill-blank"}, {"index": 4, "title": "First Conditional", "type": "transform"}, {"index": 5, "title": "Passive Voice", "type": "transform"}, {"index": 6, "title": "Relative Clauses", "type": "fill-blank"}, {"index": 7, "title": "Reported Speech 1", "type": "transform"}, {"index": 8, "title": "Gerunds/Infinitives", "type": "fill-blank"}, {"index": 9, "title": "Connectors Advanced", "type": "fill-blank"}, {"index": 10, "title": "Quantifiers", "type": "fill-blank"}, {"index": 11, "title": "B1 Review", "type": "review"}],
+      "b2": [{"index": 0, "title": "Second Conditional", "type": "transform"}, {"index": 1, "title": "Third Conditional", "type": "transform"}, {"index": 2, "title": "Mixed Conditionals", "type": "transform"}, {"index": 3, "title": "Reported Speech 2", "type": "transform"}, {"index": 4, "title": "Advanced Passive", "type": "transform"}, {"index": 5, "title": "Subjunctive", "type": "fill-blank"}, {"index": 6, "title": "Inversion", "type": "transform"}, {"index": 7, "title": "Cleft Sentences", "type": "transform"}, {"index": 8, "title": "Advanced Modals", "type": "fill-blank"}, {"index": 9, "title": "B2 Review", "type": "review"}],
+      "c1": [{"index": 0, "title": "Discourse Markers", "type": "transform"}, {"index": 1, "title": "Advanced Inversion", "type": "transform"}, {"index": 2, "title": "Subjunctive Advanced", "type": "fill-blank"}, {"index": 3, "title": "Ellipsis", "type": "transform"}, {"index": 4, "title": "Fronting", "type": "transform"}, {"index": 5, "title": "Nominalization", "type": "transform"}, {"index": 6, "title": "Complex Sentences", "type": "transform"}, {"index": 7, "title": "Subtle Distinctions", "type": "fill-blank"}, {"index": 8, "title": "Register Grammar", "type": "transform"}, {"index": 9, "title": "C1 Review", "type": "review"}]
+    }
+  },
+  {
+    "name": "phrases",
+    "displayName": "Phrases",
+    "description": "Learn useful expressions for real situations",
+    "weight": 15,
+    "levels": {
+      "a1": [{"index": 0, "title": "Greetings", "type": "memorize"}, {"index": 1, "title": "Polite Requests", "type": "role-play"}, {"index": 2, "title": "Shopping Phrases", "type": "memorize"}, {"index": 3, "title": "Restaurant", "type": "role-play"}, {"index": 4, "title": "Directions", "type": "memorize"}, {"index": 5, "title": "Emergency", "type": "memorize"}, {"index": 6, "title": "Phone Basics", "type": "role-play"}, {"index": 7, "title": "A1 Review", "type": "review"}],
+      "a2": [{"index": 0, "title": "Small Talk", "type": "role-play"}, {"index": 1, "title": "Appointments", "type": "memorize"}, {"index": 2, "title": "Complaints", "type": "role-play"}, {"index": 3, "title": "Invitations", "type": "memorize"}, {"index": 4, "title": "Travel Phrases", "type": "role-play"}, {"index": 5, "title": "Hotel Check-in", "type": "memorize"}, {"index": 6, "title": "Suggestions", "type": "role-play"}, {"index": 7, "title": "Agreement/Disagreement", "type": "memorize"}, {"index": 8, "title": "Farewells", "type": "role-play"}, {"index": 9, "title": "A2 Review", "type": "review"}],
+      "b1": [{"index": 0, "title": "Opinions", "type": "role-play"}, {"index": 1, "title": "Negotiations", "type": "role-play"}, {"index": 2, "title": "Job Interview", "type": "memorize"}, {"index": 3, "title": "Presenting Ideas", "type": "role-play"}, {"index": 4, "title": "Conditional Phrases", "type": "memorize"}, {"index": 5, "title": "Email Phrases", "type": "memorize"}, {"index": 6, "title": "Meeting Phrases", "type": "role-play"}, {"index": 7, "title": "Idioms Daily", "type": "memorize"}, {"index": 8, "title": "Transition Phrases", "type": "memorize"}, {"index": 9, "title": "B1 Review", "type": "review"}],
+      "b2": [{"index": 0, "title": "Persuasion", "type": "role-play"}, {"index": 1, "title": "Hedging", "type": "memorize"}, {"index": 2, "title": "Academic Phrases", "type": "memorize"}, {"index": 3, "title": "Debate Phrases", "type": "role-play"}, {"index": 4, "title": "Diplomacy", "type": "memorize"}, {"index": 5, "title": "Humor & Irony", "type": "role-play"}, {"index": 6, "title": "Formal Register", "type": "memorize"}, {"index": 7, "title": "Storytelling", "type": "role-play"}, {"index": 8, "title": "Colloquial", "type": "memorize"}, {"index": 9, "title": "B2 Review", "type": "review"}],
+      "c1": [{"index": 0, "title": "Nuanced Opinion", "type": "role-play"}, {"index": 1, "title": "Rhetoric", "type": "memorize"}, {"index": 2, "title": "Euphemisms", "type": "memorize"}, {"index": 3, "title": "Cultural Refs", "type": "role-play"}, {"index": 4, "title": "Pragmatics", "type": "memorize"}, {"index": 5, "title": "Register Shifts", "type": "role-play"}, {"index": 6, "title": "Proverbs", "type": "memorize"}, {"index": 7, "title": "C1 Review", "type": "review"}]
+    }
+  },
+  {
+    "name": "pronunciation",
+    "displayName": "Pronunciation",
+    "description": "Improve accent and speech clarity",
+    "weight": 20,
+    "levels": {
+      "a1": [{"index": 0, "title": "Vowel Sounds Short", "type": "minimal-pairs"}, {"index": 1, "title": "Vowel Sounds Long", "type": "minimal-pairs"}, {"index": 2, "title": "Consonants P/B/T/D", "type": "drill"}, {"index": 3, "title": "Consonants K/G/F/V", "type": "drill"}, {"index": 4, "title": "TH Sounds", "type": "minimal-pairs"}, {"index": 5, "title": "Word Stress Basic", "type": "drill"}, {"index": 6, "title": "Sentence Stress", "type": "drill"}, {"index": 7, "title": "Question Intonation", "type": "drill"}, {"index": 8, "title": "Numbers & Dates", "type": "drill"}, {"index": 9, "title": "A1 Review", "type": "review"}],
+      "a2": [{"index": 0, "title": "Diphthongs", "type": "minimal-pairs"}, {"index": 1, "title": "R & L Sounds", "type": "drill"}, {"index": 2, "title": "Silent Letters", "type": "drill"}, {"index": 3, "title": "-ed Endings", "type": "minimal-pairs"}, {"index": 4, "title": "-s Endings", "type": "minimal-pairs"}, {"index": 5, "title": "Contractions", "type": "drill"}, {"index": 6, "title": "Weak Forms", "type": "drill"}, {"index": 7, "title": "Rhythm Basics", "type": "drill"}, {"index": 8, "title": "Linking Words", "type": "drill"}, {"index": 9, "title": "A2 Review", "type": "review"}],
+      "b1": [{"index": 0, "title": "Connected Speech", "type": "shadowing"}, {"index": 1, "title": "Reduced Forms", "type": "drill"}, {"index": 2, "title": "Elision", "type": "minimal-pairs"}, {"index": 3, "title": "Assimilation", "type": "drill"}, {"index": 4, "title": "Thought Groups", "type": "shadowing"}, {"index": 5, "title": "Emphasis & Focus", "type": "drill"}, {"index": 6, "title": "Emotion in Speech", "type": "shadowing"}, {"index": 7, "title": "Common Mistakes", "type": "drill"}, {"index": 8, "title": "Tongue Twisters", "type": "drill"}, {"index": 9, "title": "B1 Review", "type": "review"}],
+      "b2": [{"index": 0, "title": "Advanced Intonation", "type": "shadowing"}, {"index": 1, "title": "Sarcasm & Irony", "type": "shadowing"}, {"index": 2, "title": "British vs American", "type": "minimal-pairs"}, {"index": 3, "title": "Formal Speech", "type": "drill"}, {"index": 4, "title": "Speed & Fluency", "type": "shadowing"}, {"index": 5, "title": "Hesitation Devices", "type": "drill"}, {"index": 6, "title": "Public Speaking", "type": "shadowing"}, {"index": 7, "title": "B2 Review", "type": "review"}],
+      "c1": [{"index": 0, "title": "Native Patterns", "type": "shadowing"}, {"index": 1, "title": "Dialectal Features", "type": "shadowing"}, {"index": 2, "title": "Prosody Mastery", "type": "drill"}, {"index": 3, "title": "Spontaneous Speech", "type": "shadowing"}, {"index": 4, "title": "Register Pronunciation", "type": "drill"}, {"index": 5, "title": "Micro-expressions", "type": "shadowing"}, {"index": 6, "title": "Full Mastery", "type": "shadowing"}, {"index": 7, "title": "C1 Review", "type": "review"}]
+    }
+  }
+]

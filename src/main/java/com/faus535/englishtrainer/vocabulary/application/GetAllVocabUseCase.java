@@ -1,13 +1,13 @@
 package com.faus535.englishtrainer.vocabulary.application;
 
+import com.faus535.englishtrainer.shared.domain.annotation.UseCase;
 import com.faus535.englishtrainer.vocabulary.domain.VocabEntry;
 import com.faus535.englishtrainer.vocabulary.domain.VocabRepository;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Service
-public class GetAllVocabUseCase {
+@UseCase
+public final class GetAllVocabUseCase {
 
     private final VocabRepository repository;
 

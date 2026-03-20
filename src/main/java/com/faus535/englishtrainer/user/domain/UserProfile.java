@@ -1,92 +1,131 @@
 package com.faus535.englishtrainer.user.domain;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import com.faus535.englishtrainer.shared.domain.AggregateRoot;
+import com.faus535.englishtrainer.user.domain.error.InvalidModuleException;
+import com.faus535.englishtrainer.user.domain.error.InvalidXpAmountException;
+import com.faus535.englishtrainer.user.domain.event.UserProfileCreatedEvent;
+import com.faus535.englishtrainer.user.domain.event.XpGrantedEvent;
 
+import java.time.Instant;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.UUID;
 
-@Entity
-@Table(name = "user_profiles")
-public class UserProfile {
+public final class UserProfile extends AggregateRoot<UserProfileId> {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+    private final UserProfileId id;
+    private final boolean testCompleted;
+    private final UserLevel levelListening;
+    private final UserLevel levelVocabulary;
+    private final UserLevel levelGrammar;
+    private final UserLevel levelPhrases;
+    private final UserLevel levelPronunciation;
+    private final int sessionCount;
+    private final int sessionsThisWeek;
+    private final LocalDate weekStart;
+    private final int xp;
+    private final Instant createdAt;
+    private final Instant updatedAt;
 
-    private boolean testCompleted;
-    private String levelListening;
-    private String levelVocabulary;
-    private String levelGrammar;
-    private String levelPhrases;
-    private String levelPronunciation;
-    private int sessionCount;
-    private int sessionsThisWeek;
-    private LocalDate weekStart;
-    private int xp;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
-
-    protected UserProfile() {}
+    private UserProfile(UserProfileId id, boolean testCompleted, UserLevel levelListening,
+                        UserLevel levelVocabulary, UserLevel levelGrammar, UserLevel levelPhrases,
+                        UserLevel levelPronunciation, int sessionCount, int sessionsThisWeek,
+                        LocalDate weekStart, int xp, Instant createdAt, Instant updatedAt) {
+        this.id = id;
+        this.testCompleted = testCompleted;
+        this.levelListening = levelListening;
+        this.levelVocabulary = levelVocabulary;
+        this.levelGrammar = levelGrammar;
+        this.levelPhrases = levelPhrases;
+        this.levelPronunciation = levelPronunciation;
+        this.sessionCount = sessionCount;
+        this.sessionsThisWeek = sessionsThisWeek;
+        this.weekStart = weekStart;
+        this.xp = xp;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+    }
 
     public static UserProfile create() {
-        var profile = new UserProfile();
-        profile.testCompleted = false;
-        profile.levelListening = "a1";
-        profile.levelVocabulary = "a1";
-        profile.levelGrammar = "a1";
-        profile.levelPhrases = "a1";
-        profile.levelPronunciation = "a1";
-        profile.sessionCount = 0;
-        profile.sessionsThisWeek = 0;
-        profile.xp = 0;
-        profile.createdAt = LocalDateTime.now();
-        profile.updatedAt = LocalDateTime.now();
+        UserLevel defaultLevel = UserLevel.defaultLevel();
+        Instant now = Instant.now();
+        UserProfile profile = new UserProfile(
+                UserProfileId.generate(),
+                false,
+                defaultLevel,
+                defaultLevel,
+                defaultLevel,
+                defaultLevel,
+                defaultLevel,
+                0,
+                0,
+                null,
+                0,
+                now,
+                now
+        );
+        profile.registerEvent(new UserProfileCreatedEvent(profile.id()));
         return profile;
     }
 
-    public UUID getId() { return id; }
-    public boolean isTestCompleted() { return testCompleted; }
-    public String getLevelListening() { return levelListening; }
-    public String getLevelVocabulary() { return levelVocabulary; }
-    public String getLevelGrammar() { return levelGrammar; }
-    public String getLevelPhrases() { return levelPhrases; }
-    public String getLevelPronunciation() { return levelPronunciation; }
-    public int getSessionCount() { return sessionCount; }
-    public int getSessionsThisWeek() { return sessionsThisWeek; }
-    public LocalDate getWeekStart() { return weekStart; }
-    public int getXp() { return xp; }
-    public LocalDateTime getCreatedAt() { return createdAt; }
-    public LocalDateTime getUpdatedAt() { return updatedAt; }
-
-    public void markTestCompleted() {
-        this.testCompleted = true;
-        this.updatedAt = LocalDateTime.now();
+    public static UserProfile reconstitute(UserProfileId id, boolean testCompleted, UserLevel levelListening,
+                                           UserLevel levelVocabulary, UserLevel levelGrammar, UserLevel levelPhrases,
+                                           UserLevel levelPronunciation, int sessionCount, int sessionsThisWeek,
+                                           LocalDate weekStart, int xp, Instant createdAt, Instant updatedAt) {
+        return new UserProfile(id, testCompleted, levelListening, levelVocabulary, levelGrammar,
+                levelPhrases, levelPronunciation, sessionCount, sessionsThisWeek, weekStart, xp, createdAt, updatedAt);
     }
 
-    public void setModuleLevel(String module, String level) {
-        switch (module) {
-            case "listening" -> this.levelListening = level;
-            case "vocabulary" -> this.levelVocabulary = level;
-            case "grammar" -> this.levelGrammar = level;
-            case "phrases" -> this.levelPhrases = level;
-            case "pronunciation" -> this.levelPronunciation = level;
+    public UserProfile markTestCompleted() {
+        return new UserProfile(id, true, levelListening, levelVocabulary, levelGrammar,
+                levelPhrases, levelPronunciation, sessionCount, sessionsThisWeek, weekStart, xp, createdAt, Instant.now());
+    }
+
+    public UserProfile updateModuleLevel(String module, UserLevel level) throws InvalidModuleException {
+        return switch (module.toLowerCase()) {
+            case "listening" -> new UserProfile(id, testCompleted, level, levelVocabulary, levelGrammar,
+                    levelPhrases, levelPronunciation, sessionCount, sessionsThisWeek, weekStart, xp, createdAt, Instant.now());
+            case "vocabulary" -> new UserProfile(id, testCompleted, levelListening, level, levelGrammar,
+                    levelPhrases, levelPronunciation, sessionCount, sessionsThisWeek, weekStart, xp, createdAt, Instant.now());
+            case "grammar" -> new UserProfile(id, testCompleted, levelListening, levelVocabulary, level,
+                    levelPhrases, levelPronunciation, sessionCount, sessionsThisWeek, weekStart, xp, createdAt, Instant.now());
+            case "phrases" -> new UserProfile(id, testCompleted, levelListening, levelVocabulary, levelGrammar,
+                    level, levelPronunciation, sessionCount, sessionsThisWeek, weekStart, xp, createdAt, Instant.now());
+            case "pronunciation" -> new UserProfile(id, testCompleted, levelListening, levelVocabulary, levelGrammar,
+                    levelPhrases, level, sessionCount, sessionsThisWeek, weekStart, xp, createdAt, Instant.now());
+            default -> throw new InvalidModuleException(module);
+        };
+    }
+
+    public UserProfile recordSession() {
+        return new UserProfile(id, testCompleted, levelListening, levelVocabulary, levelGrammar,
+                levelPhrases, levelPronunciation, sessionCount + 1, sessionsThisWeek + 1, weekStart, xp, createdAt, Instant.now());
+    }
+
+    public UserProfile addXp(int amount) throws InvalidXpAmountException {
+        if (amount < 0) {
+            throw new InvalidXpAmountException(amount);
         }
-        this.updatedAt = LocalDateTime.now();
+        UserProfile updated = new UserProfile(id, testCompleted, levelListening, levelVocabulary, levelGrammar,
+                levelPhrases, levelPronunciation, sessionCount, sessionsThisWeek, weekStart, xp + amount, createdAt, Instant.now());
+        updated.registerEvent(new XpGrantedEvent(id, amount, xp + amount));
+        return updated;
     }
 
-    public void recordSession() {
-        this.sessionCount++;
-        this.sessionsThisWeek++;
-        this.updatedAt = LocalDateTime.now();
+    public UserProfile resetWeeklyCounters() {
+        return new UserProfile(id, testCompleted, levelListening, levelVocabulary, levelGrammar,
+                levelPhrases, levelPronunciation, sessionCount, 0, LocalDate.now(), xp, createdAt, Instant.now());
     }
 
-    public void addXp(int amount) {
-        this.xp += amount;
-        this.updatedAt = LocalDateTime.now();
-    }
+    public UserProfileId id() { return id; }
+    public boolean testCompleted() { return testCompleted; }
+    public UserLevel levelListening() { return levelListening; }
+    public UserLevel levelVocabulary() { return levelVocabulary; }
+    public UserLevel levelGrammar() { return levelGrammar; }
+    public UserLevel levelPhrases() { return levelPhrases; }
+    public UserLevel levelPronunciation() { return levelPronunciation; }
+    public int sessionCount() { return sessionCount; }
+    public int sessionsThisWeek() { return sessionsThisWeek; }
+    public LocalDate weekStart() { return weekStart; }
+    public int xp() { return xp; }
+    public Instant createdAt() { return createdAt; }
+    public Instant updatedAt() { return updatedAt; }
 }

@@ -1,31 +1,19 @@
 package com.faus535.englishtrainer.vocabulary.domain;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import com.faus535.englishtrainer.shared.domain.AggregateRoot;
 
-import java.util.UUID;
+public final class VocabEntry extends AggregateRoot<VocabEntryId> {
 
-@Entity
-@Table(name = "vocab_entries")
-public class VocabEntry {
+    private final VocabEntryId id;
+    private final String en;
+    private final String ipa;
+    private final String es;
+    private final String type;
+    private final String example;
+    private final VocabLevel level;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
-
-    private String en;
-    private String ipa;
-    private String es;
-    private String type;
-    private String example;
-    private String level;
-
-    protected VocabEntry() {}
-
-    public VocabEntry(String en, String ipa, String es, String type, String example, String level) {
+    private VocabEntry(VocabEntryId id, String en, String ipa, String es, String type, String example, VocabLevel level) {
+        this.id = id;
         this.en = en;
         this.ipa = ipa;
         this.es = es;
@@ -34,11 +22,35 @@ public class VocabEntry {
         this.level = level;
     }
 
-    public UUID getId() { return id; }
-    public String getEn() { return en; }
-    public String getIpa() { return ipa; }
-    public String getEs() { return es; }
-    public String getType() { return type; }
-    public String getExample() { return example; }
-    public String getLevel() { return level; }
+    public static VocabEntry create(VocabEntryId id, String en, String ipa, String es, String type, String example, VocabLevel level) {
+        return new VocabEntry(id, en, ipa, es, type, example, level);
+    }
+
+    public VocabEntryId id() {
+        return id;
+    }
+
+    public String en() {
+        return en;
+    }
+
+    public String ipa() {
+        return ipa;
+    }
+
+    public String es() {
+        return es;
+    }
+
+    public String type() {
+        return type;
+    }
+
+    public String example() {
+        return example;
+    }
+
+    public VocabLevel level() {
+        return level;
+    }
 }

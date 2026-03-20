@@ -1,13 +1,13 @@
 package com.faus535.englishtrainer.user.application;
 
+import com.faus535.englishtrainer.shared.domain.annotation.UseCase;
 import com.faus535.englishtrainer.user.domain.UserProfile;
+import com.faus535.englishtrainer.user.domain.UserProfileId;
 import com.faus535.englishtrainer.user.domain.UserProfileRepository;
-import org.springframework.stereotype.Service;
+import com.faus535.englishtrainer.user.domain.error.UserProfileNotFoundException;
 
-import java.util.UUID;
-
-@Service
-public class GetUserProfileUseCase {
+@UseCase
+public final class GetUserProfileUseCase {
 
     private final UserProfileRepository repository;
 
@@ -15,8 +15,8 @@ public class GetUserProfileUseCase {
         this.repository = repository;
     }
 
-    public UserProfile execute(UUID id) {
+    public UserProfile execute(UserProfileId id) throws UserProfileNotFoundException {
         return repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Profile not found: " + id));
+                .orElseThrow(() -> new UserProfileNotFoundException(id));
     }
 }

@@ -1,0 +1,43 @@
+{
+  "name": "s2-quality-assurance",
+  "description": "Plugin for generating BDD-based test cases",
+  "version": "1.0.0",
+  "author": {
+    "name": "S2Grupo",
+    "url": "https://www.s2grupo.es"
+  },
+  "commands": {
+    "s2-init": {
+      "description": "Initializes a QA project based on the BDDKit library",
+      "source": "./commands/s2-init.md"
+    },
+    "s2-setup-claude": {
+      "description": "Generates CLAUDE.md with skill references for the QA project",
+      "source": "./commands/s2-setup-claude.md"
+    },
+    "s2-create-plan": {
+      "description": "Creates a test implementation plan with new test definitions and review proposals for existing ones",
+      "source": "./commands/s2-create-plan.md"
+    },
+    "s2-execute-plan": {
+      "description": "Executes the current phase of an implementation plan, generating complete test code, step definitions, and datasets",
+      "source": "./commands/s2-execute-plan.md"
+    },
+    "s2-review": {
+      "description": "Validates test structure, naming conventions, and code quality",
+      "source": "./commands/s2-review.md"
+    },
+    "s2-bddkit-suggestions": {
+      "description": "Detects common steps, objects, and elements and suggests contributions to the BDDKit library",
+      "source": "./commands/s2-bddkit-suggestions.md"
+    },
+    "s2-youtrack-integration": {
+      "description": "Syncs test definitions with YouTrack",
+      "source": "./commands/s2-youtrack-integration.md"
+    },
+    "s2-po-self-healing": {
+      "description": "Creates and updates page objects from HTML source files in resources/base_html/",
+      "source": "./commands/s2-po-self-healing.md"
+    }
+  }
+}

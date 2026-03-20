@@ -1,13 +1,14 @@
 package com.faus535.englishtrainer.vocabulary.application;
 
+import com.faus535.englishtrainer.shared.domain.annotation.UseCase;
 import com.faus535.englishtrainer.vocabulary.domain.VocabEntry;
+import com.faus535.englishtrainer.vocabulary.domain.VocabLevel;
 import com.faus535.englishtrainer.vocabulary.domain.VocabRepository;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Service
-public class GetVocabByLevelUseCase {
+@UseCase
+public final class GetVocabByLevelUseCase {
 
     private final VocabRepository repository;
 
@@ -15,7 +16,7 @@ public class GetVocabByLevelUseCase {
         this.repository = repository;
     }
 
-    public List<VocabEntry> execute(String level) {
+    public List<VocabEntry> execute(VocabLevel level) {
         return repository.findByLevel(level);
     }
 }

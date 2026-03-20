@@ -1,0 +1,226 @@
+[
+  {
+    "blockNumber": 1,
+    "name": "Foundation",
+    "description": "Build core listening skills and essential vocabulary",
+    "weeks": [
+      {
+        "weekNumber": 1,
+        "theme": "Getting Started",
+        "days": [
+          {"dayNumber": 1, "title": "Introduction & Level Assessment", "modules": ["listening", "vocabulary"], "activityType": "assessment", "estimatedMinutes": 20},
+          {"dayNumber": 2, "title": "Basic Greetings & Introductions", "modules": ["vocabulary", "phrases"], "activityType": "lesson", "estimatedMinutes": 25},
+          {"dayNumber": 3, "title": "Numbers & Time", "modules": ["vocabulary", "listening"], "activityType": "practice", "estimatedMinutes": 20},
+          {"dayNumber": 4, "title": "Common Verbs", "modules": ["grammar", "vocabulary"], "activityType": "lesson", "estimatedMinutes": 25},
+          {"dayNumber": 5, "title": "Daily Routines", "modules": ["listening", "phrases"], "activityType": "integrator", "estimatedMinutes": 30},
+          {"dayNumber": 6, "title": "Pronunciation Basics", "modules": ["pronunciation"], "activityType": "practice", "estimatedMinutes": 15},
+          {"dayNumber": 7, "title": "Week 1 Review", "modules": ["listening", "vocabulary", "grammar"], "activityType": "review", "estimatedMinutes": 20}
+        ]
+      },
+      {
+        "weekNumber": 2,
+        "theme": "Everyday Situations",
+        "days": [
+          {"dayNumber": 8, "title": "At the Cafe", "modules": ["listening", "phrases"], "activityType": "lesson", "estimatedMinutes": 25},
+          {"dayNumber": 9, "title": "Shopping Vocabulary", "modules": ["vocabulary", "listening"], "activityType": "lesson", "estimatedMinutes": 25},
+          {"dayNumber": 10, "title": "Present Simple", "modules": ["grammar"], "activityType": "lesson", "estimatedMinutes": 20},
+          {"dayNumber": 11, "title": "Giving Directions", "modules": ["phrases", "listening"], "activityType": "practice", "estimatedMinutes": 25},
+          {"dayNumber": 12, "title": "Restaurant Role-Play", "modules": ["listening", "vocabulary", "phrases"], "activityType": "integrator", "estimatedMinutes": 30},
+          {"dayNumber": 13, "title": "Vowel Sounds", "modules": ["pronunciation"], "activityType": "practice", "estimatedMinutes": 15},
+          {"dayNumber": 14, "title": "Week 2 Review", "modules": ["listening", "vocabulary", "grammar"], "activityType": "review", "estimatedMinutes": 20}
+        ]
+      },
+      {
+        "weekNumber": 3,
+        "theme": "People & Places",
+        "days": [
+          {"dayNumber": 15, "title": "Describing People", "modules": ["vocabulary", "grammar"], "activityType": "lesson", "estimatedMinutes": 25},
+          {"dayNumber": 16, "title": "Family & Relationships", "modules": ["vocabulary", "phrases"], "activityType": "lesson", "estimatedMinutes": 25},
+          {"dayNumber": 17, "title": "Present Continuous", "modules": ["grammar", "listening"], "activityType": "lesson", "estimatedMinutes": 20},
+          {"dayNumber": 18, "title": "At the Hotel", "modules": ["phrases", "listening"], "activityType": "practice", "estimatedMinutes": 25},
+          {"dayNumber": 19, "title": "Travel Check-in", "modules": ["listening", "vocabulary", "phrases"], "activityType": "integrator", "estimatedMinutes": 30},
+          {"dayNumber": 20, "title": "Consonant Sounds", "modules": ["pronunciation"], "activityType": "practice", "estimatedMinutes": 15},
+          {"dayNumber": 21, "title": "Week 3 Review", "modules": ["listening", "vocabulary", "grammar"], "activityType": "review", "estimatedMinutes": 20}
+        ]
+      },
+      {
+        "weekNumber": 4,
+        "theme": "Block 1 Consolidation",
+        "days": [
+          {"dayNumber": 22, "title": "Past Simple Regular", "modules": ["grammar", "vocabulary"], "activityType": "lesson", "estimatedMinutes": 25},
+          {"dayNumber": 23, "title": "Past Simple Irregular", "modules": ["grammar", "vocabulary"], "activityType": "lesson", "estimatedMinutes": 25},
+          {"dayNumber": 24, "title": "Telling Stories", "modules": ["listening", "grammar"], "activityType": "practice", "estimatedMinutes": 20},
+          {"dayNumber": 25, "title": "Weather & Seasons", "modules": ["vocabulary", "phrases"], "activityType": "lesson", "estimatedMinutes": 25},
+          {"dayNumber": 26, "title": "Block 1 Integrator", "modules": ["listening", "vocabulary", "grammar", "phrases", "pronunciation"], "activityType": "integrator", "estimatedMinutes": 35},
+          {"dayNumber": 27, "title": "Stress Patterns", "modules": ["pronunciation"], "activityType": "practice", "estimatedMinutes": 15},
+          {"dayNumber": 28, "title": "Block 1 Mini-Test", "modules": ["listening", "vocabulary", "grammar", "phrases", "pronunciation"], "activityType": "assessment", "estimatedMinutes": 25}
+        ]
+      }
+    ]
+  },
+  {
+    "blockNumber": 2,
+    "name": "Building",
+    "description": "Develop grammar foundations and practical phrases",
+    "weeks": [
+      {
+        "weekNumber": 5, "theme": "Work & Study",
+        "days": [
+          {"dayNumber": 29, "title": "Job Vocabulary", "modules": ["vocabulary", "phrases"], "activityType": "lesson", "estimatedMinutes": 25},
+          {"dayNumber": 30, "title": "Office Conversations", "modules": ["listening", "phrases"], "activityType": "practice", "estimatedMinutes": 25},
+          {"dayNumber": 31, "title": "Future Tenses", "modules": ["grammar"], "activityType": "lesson", "estimatedMinutes": 20},
+          {"dayNumber": 32, "title": "Making Plans", "modules": ["phrases", "grammar"], "activityType": "practice", "estimatedMinutes": 25},
+          {"dayNumber": 33, "title": "Job Interview", "modules": ["listening", "vocabulary", "phrases"], "activityType": "integrator", "estimatedMinutes": 30},
+          {"dayNumber": 34, "title": "Intonation Patterns", "modules": ["pronunciation"], "activityType": "practice", "estimatedMinutes": 15},
+          {"dayNumber": 35, "title": "Week 5 Review", "modules": ["listening", "vocabulary", "grammar"], "activityType": "review", "estimatedMinutes": 20}
+        ]
+      },
+      {
+        "weekNumber": 6, "theme": "Health & Wellbeing",
+        "days": [
+          {"dayNumber": 36, "title": "Body & Health Vocab", "modules": ["vocabulary"], "activityType": "lesson", "estimatedMinutes": 25},
+          {"dayNumber": 37, "title": "At the Doctor", "modules": ["listening", "phrases"], "activityType": "practice", "estimatedMinutes": 25},
+          {"dayNumber": 38, "title": "Modal Verbs", "modules": ["grammar"], "activityType": "lesson", "estimatedMinutes": 20},
+          {"dayNumber": 39, "title": "Giving Advice", "modules": ["phrases", "grammar"], "activityType": "practice", "estimatedMinutes": 25},
+          {"dayNumber": 40, "title": "Emergency Room", "modules": ["listening", "vocabulary", "phrases"], "activityType": "integrator", "estimatedMinutes": 30},
+          {"dayNumber": 41, "title": "Connected Speech", "modules": ["pronunciation", "listening"], "activityType": "practice", "estimatedMinutes": 15},
+          {"dayNumber": 42, "title": "Week 6 Review", "modules": ["listening", "vocabulary", "grammar"], "activityType": "review", "estimatedMinutes": 20}
+        ]
+      },
+      {
+        "weekNumber": 7, "theme": "Entertainment & Culture",
+        "days": [
+          {"dayNumber": 43, "title": "Movies & Music", "modules": ["vocabulary", "listening"], "activityType": "lesson", "estimatedMinutes": 25},
+          {"dayNumber": 44, "title": "Opinions & Preferences", "modules": ["phrases", "grammar"], "activityType": "lesson", "estimatedMinutes": 25},
+          {"dayNumber": 45, "title": "Comparatives & Superlatives", "modules": ["grammar"], "activityType": "lesson", "estimatedMinutes": 20},
+          {"dayNumber": 46, "title": "Making Recommendations", "modules": ["phrases", "listening"], "activityType": "practice", "estimatedMinutes": 25},
+          {"dayNumber": 47, "title": "Movie Night Discussion", "modules": ["listening", "vocabulary", "phrases"], "activityType": "integrator", "estimatedMinutes": 30},
+          {"dayNumber": 48, "title": "Reduced Forms", "modules": ["pronunciation", "listening"], "activityType": "practice", "estimatedMinutes": 15},
+          {"dayNumber": 49, "title": "Week 7 Review", "modules": ["listening", "vocabulary", "grammar"], "activityType": "review", "estimatedMinutes": 20}
+        ]
+      },
+      {
+        "weekNumber": 8, "theme": "Block 2 Consolidation",
+        "days": [
+          {"dayNumber": 50, "title": "Conditionals Type 1", "modules": ["grammar"], "activityType": "lesson", "estimatedMinutes": 25},
+          {"dayNumber": 51, "title": "Making Decisions", "modules": ["phrases", "grammar"], "activityType": "practice", "estimatedMinutes": 25},
+          {"dayNumber": 52, "title": "Telephone English", "modules": ["listening", "phrases"], "activityType": "practice", "estimatedMinutes": 20},
+          {"dayNumber": 53, "title": "Email Writing Basics", "modules": ["vocabulary", "grammar"], "activityType": "lesson", "estimatedMinutes": 25},
+          {"dayNumber": 54, "title": "Block 2 Integrator", "modules": ["listening", "vocabulary", "grammar", "phrases", "pronunciation"], "activityType": "integrator", "estimatedMinutes": 35},
+          {"dayNumber": 55, "title": "Minimal Pairs", "modules": ["pronunciation"], "activityType": "practice", "estimatedMinutes": 15},
+          {"dayNumber": 56, "title": "Block 2 Mini-Test", "modules": ["listening", "vocabulary", "grammar", "phrases", "pronunciation"], "activityType": "assessment", "estimatedMinutes": 25}
+        ]
+      }
+    ]
+  },
+  {
+    "blockNumber": 3,
+    "name": "Expanding",
+    "description": "Tackle intermediate topics and complex structures",
+    "weeks": [
+      {
+        "weekNumber": 9, "theme": "Travel & Transport",
+        "days": [
+          {"dayNumber": 57, "title": "Airport & Flights", "modules": ["vocabulary", "phrases"], "activityType": "lesson", "estimatedMinutes": 25},
+          {"dayNumber": 58, "title": "Present Perfect", "modules": ["grammar"], "activityType": "lesson", "estimatedMinutes": 25},
+          {"dayNumber": 59, "title": "Travel Stories", "modules": ["listening", "grammar"], "activityType": "practice", "estimatedMinutes": 20},
+          {"dayNumber": 60, "title": "Booking & Reservations", "modules": ["phrases", "listening"], "activityType": "practice", "estimatedMinutes": 25},
+          {"dayNumber": 61, "title": "Airport Adventure", "modules": ["listening", "vocabulary", "phrases"], "activityType": "integrator", "estimatedMinutes": 30},
+          {"dayNumber": 62, "title": "Word Stress Advanced", "modules": ["pronunciation"], "activityType": "practice", "estimatedMinutes": 15},
+          {"dayNumber": 63, "title": "Week 9 Review", "modules": ["listening", "vocabulary", "grammar"], "activityType": "review", "estimatedMinutes": 20}
+        ]
+      },
+      {
+        "weekNumber": 10, "theme": "Technology & Media",
+        "days": [
+          {"dayNumber": 64, "title": "Tech Vocabulary", "modules": ["vocabulary"], "activityType": "lesson", "estimatedMinutes": 25},
+          {"dayNumber": 65, "title": "Passive Voice", "modules": ["grammar"], "activityType": "lesson", "estimatedMinutes": 25},
+          {"dayNumber": 66, "title": "News Reports", "modules": ["listening", "vocabulary"], "activityType": "practice", "estimatedMinutes": 20},
+          {"dayNumber": 67, "title": "Expressing Opinions", "modules": ["phrases", "grammar"], "activityType": "practice", "estimatedMinutes": 25},
+          {"dayNumber": 68, "title": "Tech Debate", "modules": ["listening", "vocabulary", "phrases"], "activityType": "integrator", "estimatedMinutes": 30},
+          {"dayNumber": 69, "title": "Sentence Rhythm", "modules": ["pronunciation"], "activityType": "practice", "estimatedMinutes": 15},
+          {"dayNumber": 70, "title": "Week 10 Review", "modules": ["listening", "vocabulary", "grammar"], "activityType": "review", "estimatedMinutes": 20}
+        ]
+      },
+      {
+        "weekNumber": 11, "theme": "Society & Environment",
+        "days": [
+          {"dayNumber": 71, "title": "Environment Vocabulary", "modules": ["vocabulary"], "activityType": "lesson", "estimatedMinutes": 25},
+          {"dayNumber": 72, "title": "Reported Speech", "modules": ["grammar"], "activityType": "lesson", "estimatedMinutes": 25},
+          {"dayNumber": 73, "title": "Documentaries", "modules": ["listening", "vocabulary"], "activityType": "practice", "estimatedMinutes": 20},
+          {"dayNumber": 74, "title": "Debate Skills", "modules": ["phrases", "grammar"], "activityType": "practice", "estimatedMinutes": 25},
+          {"dayNumber": 75, "title": "Environmental Summit", "modules": ["listening", "vocabulary", "phrases"], "activityType": "integrator", "estimatedMinutes": 30},
+          {"dayNumber": 76, "title": "Linking Sounds", "modules": ["pronunciation"], "activityType": "practice", "estimatedMinutes": 15},
+          {"dayNumber": 77, "title": "Week 11 Review", "modules": ["listening", "vocabulary", "grammar"], "activityType": "review", "estimatedMinutes": 20}
+        ]
+      },
+      {
+        "weekNumber": 12, "theme": "Block 3 Consolidation",
+        "days": [
+          {"dayNumber": 78, "title": "Conditionals Type 2 & 3", "modules": ["grammar"], "activityType": "lesson", "estimatedMinutes": 25},
+          {"dayNumber": 79, "title": "Hypothetical Situations", "modules": ["phrases", "grammar"], "activityType": "practice", "estimatedMinutes": 25},
+          {"dayNumber": 80, "title": "Presentations", "modules": ["listening", "phrases"], "activityType": "practice", "estimatedMinutes": 20},
+          {"dayNumber": 81, "title": "Academic Vocabulary", "modules": ["vocabulary"], "activityType": "lesson", "estimatedMinutes": 25},
+          {"dayNumber": 82, "title": "Block 3 Integrator", "modules": ["listening", "vocabulary", "grammar", "phrases", "pronunciation"], "activityType": "integrator", "estimatedMinutes": 35},
+          {"dayNumber": 83, "title": "Shadowing Practice", "modules": ["pronunciation", "listening"], "activityType": "practice", "estimatedMinutes": 15},
+          {"dayNumber": 84, "title": "Block 3 Mini-Test", "modules": ["listening", "vocabulary", "grammar", "phrases", "pronunciation"], "activityType": "assessment", "estimatedMinutes": 25}
+        ]
+      }
+    ]
+  },
+  {
+    "blockNumber": 4,
+    "name": "Mastering",
+    "description": "Consolidate skills and achieve fluency goals",
+    "weeks": [
+      {
+        "weekNumber": 13, "theme": "Business English",
+        "days": [
+          {"dayNumber": 85, "title": "Business Idioms", "modules": ["vocabulary", "phrases"], "activityType": "lesson", "estimatedMinutes": 25},
+          {"dayNumber": 86, "title": "Negotiations", "modules": ["listening", "phrases"], "activityType": "practice", "estimatedMinutes": 25},
+          {"dayNumber": 87, "title": "Relative Clauses", "modules": ["grammar"], "activityType": "lesson", "estimatedMinutes": 20},
+          {"dayNumber": 88, "title": "Meeting Skills", "modules": ["phrases", "listening"], "activityType": "practice", "estimatedMinutes": 25},
+          {"dayNumber": 89, "title": "Business Meeting", "modules": ["listening", "vocabulary", "phrases"], "activityType": "integrator", "estimatedMinutes": 30},
+          {"dayNumber": 90, "title": "Professional Tone", "modules": ["pronunciation"], "activityType": "practice", "estimatedMinutes": 15},
+          {"dayNumber": 91, "title": "Week 13 Review", "modules": ["listening", "vocabulary", "grammar"], "activityType": "review", "estimatedMinutes": 20}
+        ]
+      },
+      {
+        "weekNumber": 14, "theme": "Advanced Communication",
+        "days": [
+          {"dayNumber": 92, "title": "Phrasal Verbs Advanced", "modules": ["vocabulary"], "activityType": "lesson", "estimatedMinutes": 25},
+          {"dayNumber": 93, "title": "Persuasion Techniques", "modules": ["phrases", "listening"], "activityType": "practice", "estimatedMinutes": 25},
+          {"dayNumber": 94, "title": "Mixed Conditionals", "modules": ["grammar"], "activityType": "lesson", "estimatedMinutes": 20},
+          {"dayNumber": 95, "title": "Storytelling Advanced", "modules": ["phrases", "grammar"], "activityType": "practice", "estimatedMinutes": 25},
+          {"dayNumber": 96, "title": "TED Talk Style", "modules": ["listening", "vocabulary", "phrases"], "activityType": "integrator", "estimatedMinutes": 30},
+          {"dayNumber": 97, "title": "Accent Awareness", "modules": ["pronunciation", "listening"], "activityType": "practice", "estimatedMinutes": 15},
+          {"dayNumber": 98, "title": "Week 14 Review", "modules": ["listening", "vocabulary", "grammar"], "activityType": "review", "estimatedMinutes": 20}
+        ]
+      },
+      {
+        "weekNumber": 15, "theme": "Real World Practice",
+        "days": [
+          {"dayNumber": 99, "title": "Collocations", "modules": ["vocabulary"], "activityType": "lesson", "estimatedMinutes": 25},
+          {"dayNumber": 100, "title": "Podcast Comprehension", "modules": ["listening"], "activityType": "practice", "estimatedMinutes": 25},
+          {"dayNumber": 101, "title": "Inversion & Emphasis", "modules": ["grammar"], "activityType": "lesson", "estimatedMinutes": 20},
+          {"dayNumber": 102, "title": "Social English", "modules": ["phrases", "listening"], "activityType": "practice", "estimatedMinutes": 25},
+          {"dayNumber": 103, "title": "Social Gathering", "modules": ["listening", "vocabulary", "phrases"], "activityType": "integrator", "estimatedMinutes": 30},
+          {"dayNumber": 104, "title": "Fluency Drills", "modules": ["pronunciation"], "activityType": "practice", "estimatedMinutes": 15},
+          {"dayNumber": 105, "title": "Week 15 Review", "modules": ["listening", "vocabulary", "grammar"], "activityType": "review", "estimatedMinutes": 20}
+        ]
+      },
+      {
+        "weekNumber": 16, "theme": "Final Consolidation",
+        "days": [
+          {"dayNumber": 106, "title": "Advanced Idioms", "modules": ["vocabulary", "phrases"], "activityType": "lesson", "estimatedMinutes": 25},
+          {"dayNumber": 107, "title": "Debate Final", "modules": ["listening", "phrases"], "activityType": "practice", "estimatedMinutes": 25},
+          {"dayNumber": 108, "title": "Grammar Review", "modules": ["grammar"], "activityType": "review", "estimatedMinutes": 20},
+          {"dayNumber": 109, "title": "All Skills Practice", "modules": ["listening", "vocabulary", "grammar", "phrases", "pronunciation"], "activityType": "practice", "estimatedMinutes": 30},
+          {"dayNumber": 110, "title": "Final Integrator", "modules": ["listening", "vocabulary", "grammar", "phrases", "pronunciation"], "activityType": "integrator", "estimatedMinutes": 35},
+          {"dayNumber": 111, "title": "Pronunciation Mastery", "modules": ["pronunciation"], "activityType": "practice", "estimatedMinutes": 15},
+          {"dayNumber": 112, "title": "Final Assessment", "modules": ["listening", "vocabulary", "grammar", "phrases", "pronunciation"], "activityType": "assessment", "estimatedMinutes": 30}
+        ]
+      }
+    ]
+  }
+]

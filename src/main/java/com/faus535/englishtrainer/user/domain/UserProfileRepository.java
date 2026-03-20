@@ -1,9 +1,14 @@
 package com.faus535.englishtrainer.user.domain;
 
+import com.faus535.englishtrainer.user.domain.error.UserProfileNotFoundException;
+
 import java.util.Optional;
-import java.util.UUID;
 
 public interface UserProfileRepository {
-    Optional<UserProfile> findById(UUID id);
+
+    Optional<UserProfile> findById(UserProfileId id);
+
     UserProfile save(UserProfile profile);
+
+    void deleteById(UserProfileId id);
 }

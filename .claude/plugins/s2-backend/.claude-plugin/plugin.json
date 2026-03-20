@@ -1,0 +1,31 @@
+{
+  "name": "s2-backend",
+  "description": "Plugin for generating and validating Java backend code following DDD: package-per-aggregate, checked exceptions, one-controller-per-action, Object Mothers, Modulith Use Cases.",
+  "version": "1.6.1",
+  "author": {
+    "name": "S2Grupo",
+    "url": "https://www.s2grupo.es"
+  },
+  "commands": {
+    "s2-setup-claude": {
+      "description": "Generates CLAUDE.md with skill references based on the chosen architectural style",
+      "source": "./commands/s2-setup-claude.md"
+    },
+    "s2-create-plan": {
+      "description": "Creates an implementation plan with vertical phases and public contracts",
+      "source": "./commands/s2-create-plan.md"
+    },
+    "s2-execute-plan": {
+      "description": "Executes the current phase of the implementation plan",
+      "source": "./commands/s2-execute-plan.md"
+    },
+    "s2-review": {
+      "description": "Validates architecture, naming conventions, and code quality",
+      "source": "./commands/s2-review.md"
+    },
+    "s2-generate-api-docs": {
+      "description": "Generates API documentation in Markdown for the frontend team from Java controllers",
+      "source": "./commands/s2-generate-api-docs.md"
+    }
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "name": "s2-docs",
+  "description": "Plugin for creating professional documents with S2GRUPO branding: PPTX presentations, spreadsheets, and more. Includes animated terminals, code blocks, cards, tables, and the complete corporate identity.",
+  "version": "1.3.0",
+  "author": {
+    "name": "S2Grupo",
+    "url": "https://www.s2grupo.es"
+  },
+  "commands": {
+    "s2-create-pptx": {
+      "description": "Creates a professional PPTX presentation with S2GRUPO branding, animated terminals, and corporate visual components",
+      "source": "./commands/s2-create-pptx.md"
+    },
+    "s2-create-training": {
+      "description": "Generates a complete training package (guide + PPTX) with S2GRUPO branding",
+      "source": "./commands/s2-create-training.md"
+    }
+  }
+}

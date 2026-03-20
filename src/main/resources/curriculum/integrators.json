@@ -1,0 +1,17 @@
+[
+  {"theme": "At the Restaurant", "level": "a1", "description": "Order food, understand menus, and interact with waitstaff", "modules": ["listening", "vocabulary", "phrases"]},
+  {"theme": "Shopping Trip", "level": "a1", "description": "Navigate stores, ask about products, and make purchases", "modules": ["listening", "vocabulary", "phrases"]},
+  {"theme": "Hotel Check-in", "level": "a1", "description": "Book rooms, check in, and handle hotel situations", "modules": ["listening", "vocabulary", "phrases"]},
+  {"theme": "Doctor Visit", "level": "a2", "description": "Describe symptoms, understand medical advice", "modules": ["listening", "vocabulary", "phrases", "pronunciation"]},
+  {"theme": "Job Interview", "level": "a2", "description": "Present yourself, answer common interview questions", "modules": ["listening", "vocabulary", "phrases", "grammar"]},
+  {"theme": "Airport Adventure", "level": "a2", "description": "Navigate airports, handle boarding, customs", "modules": ["listening", "vocabulary", "phrases"]},
+  {"theme": "Work Meeting", "level": "b1", "description": "Participate in meetings, present ideas, take notes", "modules": ["listening", "vocabulary", "phrases", "grammar"]},
+  {"theme": "News Discussion", "level": "b1", "description": "Discuss current events, express opinions", "modules": ["listening", "vocabulary", "phrases", "grammar"]},
+  {"theme": "University Lecture", "level": "b1", "description": "Follow academic lectures, take notes, ask questions", "modules": ["listening", "vocabulary", "grammar"]},
+  {"theme": "Business Negotiation", "level": "b2", "description": "Negotiate deals, handle objections, reach agreements", "modules": ["listening", "vocabulary", "phrases", "grammar"]},
+  {"theme": "Academic Presentation", "level": "b2", "description": "Give presentations, handle Q&A, use formal register", "modules": ["listening", "vocabulary", "phrases", "pronunciation"]},
+  {"theme": "Panel Discussion", "level": "b2", "description": "Debate topics, defend positions, synthesize views", "modules": ["listening", "vocabulary", "phrases", "grammar"]},
+  {"theme": "Conference Keynote", "level": "c1", "description": "Deliver and analyze keynote speeches", "modules": ["listening", "vocabulary", "phrases", "pronunciation"]},
+  {"theme": "Diplomatic Meeting", "level": "c1", "description": "Use diplomatic language, navigate sensitive topics", "modules": ["listening", "vocabulary", "phrases", "grammar"]},
+  {"theme": "TED-style Talk", "level": "c1", "description": "Prepare and deliver inspiring talks on complex topics", "modules": ["listening", "vocabulary", "phrases", "pronunciation", "grammar"]}
+]
