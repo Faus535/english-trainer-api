@@ -4,11 +4,12 @@ import com.faus535.englishtrainer.moduleprogress.domain.ModuleLevel;
 import com.faus535.englishtrainer.moduleprogress.domain.ModuleName;
 import com.faus535.englishtrainer.moduleprogress.domain.ModuleProgress;
 import com.faus535.englishtrainer.moduleprogress.domain.ModuleProgressRepository;
-import com.faus535.englishtrainer.shared.domain.annotation.UseCase;
+import com.faus535.englishtrainer.shared.application.annotation.UseCase;
 import com.faus535.englishtrainer.user.domain.UserProfileId;
+import org.springframework.transaction.annotation.Transactional;
 
 @UseCase
-public final class InitModuleProgressUseCase {
+public class InitModuleProgressUseCase {
 
     private final ModuleProgressRepository repository;
 
@@ -16,6 +17,7 @@ public final class InitModuleProgressUseCase {
         this.repository = repository;
     }
 
+    @Transactional
     public ModuleProgress execute(UserProfileId userId, ModuleName moduleName, ModuleLevel level) {
         ModuleProgress progress = ModuleProgress.create(userId, moduleName, level);
         return repository.save(progress);

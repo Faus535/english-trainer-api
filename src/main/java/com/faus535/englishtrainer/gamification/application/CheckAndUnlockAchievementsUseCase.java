@@ -5,30 +5,36 @@ import com.faus535.englishtrainer.gamification.domain.AchievementId;
 import com.faus535.englishtrainer.gamification.domain.AchievementRepository;
 import com.faus535.englishtrainer.gamification.domain.UserAchievement;
 import com.faus535.englishtrainer.gamification.domain.UserAchievementRepository;
-import com.faus535.englishtrainer.shared.domain.annotation.UseCase;
+import com.faus535.englishtrainer.shared.application.annotation.UseCase;
 import com.faus535.englishtrainer.user.domain.UserProfile;
 import com.faus535.englishtrainer.user.domain.UserProfileId;
 import com.faus535.englishtrainer.user.domain.UserProfileRepository;
 import com.faus535.englishtrainer.user.domain.error.UserProfileNotFoundException;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @UseCase
-public final class CheckAndUnlockAchievementsUseCase {
+public class CheckAndUnlockAchievementsUseCase {
 
     private final UserProfileRepository userProfileRepository;
     private final AchievementRepository achievementRepository;
     private final UserAchievementRepository userAchievementRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
     public CheckAndUnlockAchievementsUseCase(UserProfileRepository userProfileRepository,
                                               AchievementRepository achievementRepository,
-                                              UserAchievementRepository userAchievementRepository) {
+                                              UserAchievementRepository userAchievementRepository,
+                                              ApplicationEventPublisher eventPublisher) {
         this.userProfileRepository = userProfileRepository;
         this.achievementRepository = achievementRepository;
         this.userAchievementRepository = userAchievementRepository;
+        this.eventPublisher = eventPublisher;
     }
 
+    @Transactional
     public List<Achievement> execute(UserProfileId userId) throws UserProfileNotFoundException {
         UserProfile profile = userProfileRepository.findById(userId)
                 .orElseThrow(() -> new UserProfileNotFoundException(userId));
@@ -60,6 +66,7 @@ public final class CheckAndUnlockAchievementsUseCase {
         achievementRepository.findById(achievementId).ifPresent(achievement -> {
             UserAchievement userAchievement = UserAchievement.create(userId, achievementId);
             userAchievementRepository.save(userAchievement);
+            userAchievement.pullDomainEvents().forEach(eventPublisher::publishEvent);
             newlyUnlocked.add(achievement);
         });
     }

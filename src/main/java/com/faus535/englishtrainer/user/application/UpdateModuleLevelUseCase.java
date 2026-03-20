@@ -1,6 +1,6 @@
 package com.faus535.englishtrainer.user.application;
 
-import com.faus535.englishtrainer.shared.domain.annotation.UseCase;
+import com.faus535.englishtrainer.shared.application.annotation.UseCase;
 import com.faus535.englishtrainer.user.domain.UserLevel;
 import com.faus535.englishtrainer.user.domain.UserProfile;
 import com.faus535.englishtrainer.user.domain.UserProfileId;
@@ -8,8 +8,10 @@ import com.faus535.englishtrainer.user.domain.UserProfileRepository;
 import com.faus535.englishtrainer.user.domain.error.InvalidModuleException;
 import com.faus535.englishtrainer.user.domain.error.UserProfileNotFoundException;
 
+import org.springframework.transaction.annotation.Transactional;
+
 @UseCase
-public final class UpdateModuleLevelUseCase {
+public class UpdateModuleLevelUseCase {
 
     private final UserProfileRepository repository;
 
@@ -17,6 +19,7 @@ public final class UpdateModuleLevelUseCase {
         this.repository = repository;
     }
 
+    @Transactional
     public void execute(UserProfileId id, String module, UserLevel level) throws UserProfileNotFoundException, InvalidModuleException {
         UserProfile profile = repository.findById(id)
                 .orElseThrow(() -> new UserProfileNotFoundException(id));

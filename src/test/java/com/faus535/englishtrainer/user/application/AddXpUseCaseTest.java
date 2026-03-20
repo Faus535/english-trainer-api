@@ -7,6 +7,7 @@ import com.faus535.englishtrainer.user.domain.error.UserProfileNotFoundException
 import com.faus535.englishtrainer.user.infrastructure.InMemoryUserProfileRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.context.ApplicationEventPublisher;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -18,7 +19,8 @@ final class AddXpUseCaseTest {
     @BeforeEach
     void setUp() {
         repository = new InMemoryUserProfileRepository();
-        useCase = new AddXpUseCase(repository);
+        ApplicationEventPublisher publisher = event -> {};
+        useCase = new AddXpUseCase(repository, publisher);
     }
 
     @Test

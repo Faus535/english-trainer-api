@@ -1,7 +1,8 @@
 package com.faus535.englishtrainer.assessment.application;
 
 import com.faus535.englishtrainer.assessment.domain.TestQuestion;
-import com.faus535.englishtrainer.shared.domain.annotation.UseCase;
+import com.faus535.englishtrainer.shared.application.annotation.UseCase;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 @UseCase
-public final class GetMiniTestQuestionsUseCase {
+public class GetMiniTestQuestionsUseCase {
 
     private static final Map<String, Map<String, List<TestQuestion>>> QUESTION_BANK = new HashMap<>();
 
@@ -127,6 +128,7 @@ public final class GetMiniTestQuestionsUseCase {
         QUESTION_BANK.put("pronunciation", pronByLevel);
     }
 
+    @Transactional(readOnly = true)
     public List<TestQuestion> execute(String moduleName, String level) {
         Map<String, List<TestQuestion>> moduleQuestions = QUESTION_BANK.get(moduleName.toLowerCase());
         if (moduleQuestions == null) {

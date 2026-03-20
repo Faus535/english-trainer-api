@@ -1,13 +1,15 @@
 package com.faus535.englishtrainer.assessment.application;
 
 import com.faus535.englishtrainer.assessment.domain.TestQuestion;
-import com.faus535.englishtrainer.shared.domain.annotation.UseCase;
+import com.faus535.englishtrainer.shared.application.annotation.UseCase;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @UseCase
-public final class GetLevelTestQuestionsUseCase {
+public class GetLevelTestQuestionsUseCase {
 
+    @Transactional(readOnly = true)
     public List<TestQuestion> execute() {
         return List.of(
                 // Vocabulary A1

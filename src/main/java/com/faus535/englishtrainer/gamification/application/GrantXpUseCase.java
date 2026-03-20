@@ -1,14 +1,15 @@
 package com.faus535.englishtrainer.gamification.application;
 
-import com.faus535.englishtrainer.shared.domain.annotation.UseCase;
+import com.faus535.englishtrainer.shared.application.annotation.UseCase;
 import com.faus535.englishtrainer.user.domain.UserProfile;
 import com.faus535.englishtrainer.user.domain.UserProfileId;
 import com.faus535.englishtrainer.user.domain.UserProfileRepository;
 import com.faus535.englishtrainer.user.domain.error.InvalidXpAmountException;
 import com.faus535.englishtrainer.user.domain.error.UserProfileNotFoundException;
+import org.springframework.transaction.annotation.Transactional;
 
 @UseCase
-public final class GrantXpUseCase {
+public class GrantXpUseCase {
 
     private final UserProfileRepository userProfileRepository;
 
@@ -18,6 +19,7 @@ public final class GrantXpUseCase {
 
     public record XpGrantResult(int xpGranted, int totalXp) {}
 
+    @Transactional
     public XpGrantResult execute(UserProfileId userId, int baseXp, String reason) throws UserProfileNotFoundException, InvalidXpAmountException {
         UserProfile profile = userProfileRepository.findById(userId)
                 .orElseThrow(() -> new UserProfileNotFoundException(userId));

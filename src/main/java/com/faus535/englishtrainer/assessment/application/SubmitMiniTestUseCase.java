@@ -3,14 +3,16 @@ package com.faus535.englishtrainer.assessment.application;
 import com.faus535.englishtrainer.assessment.domain.MiniTestResult;
 import com.faus535.englishtrainer.assessment.domain.MiniTestResultRepository;
 import com.faus535.englishtrainer.assessment.domain.TestQuestion;
-import com.faus535.englishtrainer.shared.domain.annotation.UseCase;
+import com.faus535.englishtrainer.shared.application.annotation.UseCase;
 import com.faus535.englishtrainer.user.domain.UserProfileId;
+
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
 
 @UseCase
-public final class SubmitMiniTestUseCase {
+public class SubmitMiniTestUseCase {
 
     private final MiniTestResultRepository miniTestResultRepository;
     private final GetMiniTestQuestionsUseCase getMiniTestQuestionsUseCase;
@@ -21,6 +23,7 @@ public final class SubmitMiniTestUseCase {
         this.getMiniTestQuestionsUseCase = getMiniTestQuestionsUseCase;
     }
 
+    @Transactional
     public MiniTestResult execute(UserProfileId userId, String moduleName, String level, Map<String, String> answers) {
         List<TestQuestion> questions = getMiniTestQuestionsUseCase.execute(moduleName, level);
 

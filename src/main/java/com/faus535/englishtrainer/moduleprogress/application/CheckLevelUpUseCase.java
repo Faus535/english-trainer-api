@@ -5,11 +5,12 @@ import com.faus535.englishtrainer.moduleprogress.domain.ModuleName;
 import com.faus535.englishtrainer.moduleprogress.domain.ModuleProgress;
 import com.faus535.englishtrainer.moduleprogress.domain.ModuleProgressRepository;
 import com.faus535.englishtrainer.moduleprogress.domain.error.ModuleProgressNotFoundException;
-import com.faus535.englishtrainer.shared.domain.annotation.UseCase;
+import com.faus535.englishtrainer.shared.application.annotation.UseCase;
 import com.faus535.englishtrainer.user.domain.UserProfileId;
+import org.springframework.transaction.annotation.Transactional;
 
 @UseCase
-public final class CheckLevelUpUseCase {
+public class CheckLevelUpUseCase {
 
     private static final int REQUIRED_UNITS = 10;
 
@@ -19,6 +20,7 @@ public final class CheckLevelUpUseCase {
         this.repository = repository;
     }
 
+    @Transactional
     public LevelUpResult execute(UserProfileId userId, ModuleName moduleName, ModuleLevel level)
             throws ModuleProgressNotFoundException {
         ModuleProgress progress = repository.findByUserAndModuleAndLevel(userId, moduleName, level)

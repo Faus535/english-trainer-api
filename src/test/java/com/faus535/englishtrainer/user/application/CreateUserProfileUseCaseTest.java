@@ -4,6 +4,7 @@ import com.faus535.englishtrainer.user.domain.UserProfile;
 import com.faus535.englishtrainer.user.infrastructure.InMemoryUserProfileRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.context.ApplicationEventPublisher;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -15,7 +16,8 @@ final class CreateUserProfileUseCaseTest {
     @BeforeEach
     void setUp() {
         repository = new InMemoryUserProfileRepository();
-        useCase = new CreateUserProfileUseCase(repository);
+        ApplicationEventPublisher publisher = event -> {};
+        useCase = new CreateUserProfileUseCase(repository, publisher);
     }
 
     @Test

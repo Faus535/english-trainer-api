@@ -1,4 +1,4 @@
-package com.faus535.englishtrainer.shared.domain.annotation;
+package com.faus535.englishtrainer.shared.application.annotation;
 
 import org.springframework.stereotype.Service;
 

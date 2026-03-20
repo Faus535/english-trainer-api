@@ -3,13 +3,14 @@ package com.faus535.englishtrainer.auth.application;
 import com.faus535.englishtrainer.auth.domain.AuthUser;
 import com.faus535.englishtrainer.auth.domain.AuthUserRepository;
 import com.faus535.englishtrainer.auth.domain.error.EmailAlreadyExistsException;
-import com.faus535.englishtrainer.shared.domain.annotation.UseCase;
+import com.faus535.englishtrainer.shared.application.annotation.UseCase;
 import com.faus535.englishtrainer.user.domain.UserProfile;
 import com.faus535.englishtrainer.user.domain.UserProfileRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.transaction.annotation.Transactional;
 
 @UseCase
-public final class RegisterUserUseCase {
+public class RegisterUserUseCase {
 
     private final AuthUserRepository authUserRepository;
     private final UserProfileRepository userProfileRepository;
@@ -23,6 +24,7 @@ public final class RegisterUserUseCase {
         this.passwordEncoder = passwordEncoder;
     }
 
+    @Transactional
     public AuthUser execute(String email, String password) throws EmailAlreadyExistsException {
         if (authUserRepository.existsByEmail(email)) {
             throw new EmailAlreadyExistsException(email);

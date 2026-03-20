@@ -3,11 +3,12 @@ package com.faus535.englishtrainer.auth.application;
 import com.faus535.englishtrainer.auth.domain.AuthUser;
 import com.faus535.englishtrainer.auth.domain.AuthUserRepository;
 import com.faus535.englishtrainer.auth.domain.error.InvalidCredentialsException;
-import com.faus535.englishtrainer.shared.domain.annotation.UseCase;
+import com.faus535.englishtrainer.shared.application.annotation.UseCase;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.transaction.annotation.Transactional;
 
 @UseCase
-public final class LoginUserUseCase {
+public class LoginUserUseCase {
 
     private final AuthUserRepository authUserRepository;
     private final PasswordEncoder passwordEncoder;
@@ -17,6 +18,7 @@ public final class LoginUserUseCase {
         this.passwordEncoder = passwordEncoder;
     }
 
+    @Transactional(readOnly = true)
     public AuthUser execute(String email, String password) throws InvalidCredentialsException {
         AuthUser user = authUserRepository.findByEmail(email)
                 .orElseThrow(InvalidCredentialsException::new);

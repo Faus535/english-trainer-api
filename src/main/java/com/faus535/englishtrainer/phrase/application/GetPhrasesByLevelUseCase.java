@@ -2,13 +2,15 @@ package com.faus535.englishtrainer.phrase.application;
 
 import com.faus535.englishtrainer.phrase.domain.Phrase;
 import com.faus535.englishtrainer.phrase.domain.PhraseRepository;
-import com.faus535.englishtrainer.shared.domain.annotation.UseCase;
+import com.faus535.englishtrainer.shared.application.annotation.UseCase;
 import com.faus535.englishtrainer.vocabulary.domain.VocabLevel;
+
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @UseCase
-public final class GetPhrasesByLevelUseCase {
+public class GetPhrasesByLevelUseCase {
 
     private final PhraseRepository repository;
 
@@ -16,6 +18,7 @@ public final class GetPhrasesByLevelUseCase {
         this.repository = repository;
     }
 
+    @Transactional(readOnly = true)
     public List<Phrase> execute(VocabLevel level) {
         return repository.findByLevel(level);
     }

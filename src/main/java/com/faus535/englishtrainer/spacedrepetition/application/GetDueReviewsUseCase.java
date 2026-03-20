@@ -1,15 +1,16 @@
 package com.faus535.englishtrainer.spacedrepetition.application;
 
-import com.faus535.englishtrainer.shared.domain.annotation.UseCase;
+import com.faus535.englishtrainer.shared.application.annotation.UseCase;
 import com.faus535.englishtrainer.spacedrepetition.domain.SpacedRepetitionItem;
 import com.faus535.englishtrainer.spacedrepetition.domain.SpacedRepetitionRepository;
 import com.faus535.englishtrainer.user.domain.UserProfileId;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
 
 @UseCase
-public final class GetDueReviewsUseCase {
+public class GetDueReviewsUseCase {
 
     private final SpacedRepetitionRepository repository;
 
@@ -17,6 +18,7 @@ public final class GetDueReviewsUseCase {
         this.repository = repository;
     }
 
+    @Transactional(readOnly = true)
     public List<SpacedRepetitionItem> execute(UserProfileId userId) {
         return repository.findDueByUser(userId, LocalDate.now());
     }

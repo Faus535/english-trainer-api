@@ -4,7 +4,7 @@ import com.faus535.englishtrainer.assessment.domain.LevelAssigner;
 import com.faus535.englishtrainer.assessment.domain.LevelTestResult;
 import com.faus535.englishtrainer.assessment.domain.LevelTestResultRepository;
 import com.faus535.englishtrainer.assessment.domain.TestQuestion;
-import com.faus535.englishtrainer.shared.domain.annotation.UseCase;
+import com.faus535.englishtrainer.shared.application.annotation.UseCase;
 import com.faus535.englishtrainer.user.domain.UserLevel;
 import com.faus535.englishtrainer.user.domain.UserProfile;
 import com.faus535.englishtrainer.user.domain.UserProfileId;
@@ -12,25 +12,32 @@ import com.faus535.englishtrainer.user.domain.UserProfileRepository;
 import com.faus535.englishtrainer.user.domain.error.InvalidModuleException;
 import com.faus535.englishtrainer.user.domain.error.UserProfileNotFoundException;
 
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @UseCase
-public final class SubmitLevelTestUseCase {
+public class SubmitLevelTestUseCase {
 
     private final UserProfileRepository userProfileRepository;
     private final LevelTestResultRepository levelTestResultRepository;
     private final GetLevelTestQuestionsUseCase getLevelTestQuestionsUseCase;
+    private final ApplicationEventPublisher eventPublisher;
 
     public SubmitLevelTestUseCase(UserProfileRepository userProfileRepository,
                                   LevelTestResultRepository levelTestResultRepository,
-                                  GetLevelTestQuestionsUseCase getLevelTestQuestionsUseCase) {
+                                  GetLevelTestQuestionsUseCase getLevelTestQuestionsUseCase,
+                                  ApplicationEventPublisher eventPublisher) {
         this.userProfileRepository = userProfileRepository;
         this.levelTestResultRepository = levelTestResultRepository;
         this.getLevelTestQuestionsUseCase = getLevelTestQuestionsUseCase;
+        this.eventPublisher = eventPublisher;
     }
 
+    @Transactional
     public LevelTestResult execute(UserProfileId userId, Map<String, String> answers) throws UserProfileNotFoundException, InvalidModuleException {
         UserProfile profile = userProfileRepository.findById(userId)
                 .orElseThrow(() -> new UserProfileNotFoundException(userId));
@@ -56,6 +63,7 @@ public final class SubmitLevelTestUseCase {
 
         LevelTestResult result = LevelTestResult.create(userId, vocabScore, grammarScore, listeningScore, pronScore, assignedLevels);
         LevelTestResult saved = levelTestResultRepository.save(result);
+        result.pullDomainEvents().forEach(eventPublisher::publishEvent);
 
         UserProfile updated = profile.markTestCompleted();
         for (Map.Entry<String, String> entry : assignedLevels.entrySet()) {
