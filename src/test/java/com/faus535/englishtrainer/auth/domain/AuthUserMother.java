@@ -30,4 +30,18 @@ public final class AuthUserMother {
                 profileId
         );
     }
+
+    public static AuthUser googleUser() {
+        return AuthUser.createFromGoogle(
+                "google@example.com",
+                UserProfileId.generate()
+        );
+    }
+
+    public static AuthUser googleUserWithEmail(String email) {
+        return AuthUser.createFromGoogle(
+                email,
+                UserProfileId.generate()
+        );
+    }
 }

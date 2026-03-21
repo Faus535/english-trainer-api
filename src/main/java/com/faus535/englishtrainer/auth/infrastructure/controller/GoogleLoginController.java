@@ -1,9 +1,8 @@
 package com.faus535.englishtrainer.auth.infrastructure.controller;
 
-import com.faus535.englishtrainer.auth.application.LoginUserUseCase;
+import com.faus535.englishtrainer.auth.application.GoogleLoginUseCase;
 import com.faus535.englishtrainer.auth.domain.AuthUser;
-import com.faus535.englishtrainer.auth.domain.error.AccountUsesGoogleException;
-import com.faus535.englishtrainer.auth.domain.error.InvalidCredentialsException;
+import com.faus535.englishtrainer.auth.domain.error.GoogleAuthException;
 import com.faus535.englishtrainer.auth.infrastructure.jwt.JwtService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -13,23 +12,23 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-class LoginController {
+class GoogleLoginController {
 
-    private final LoginUserUseCase useCase;
+    private final GoogleLoginUseCase useCase;
     private final JwtService jwtService;
 
-    LoginController(LoginUserUseCase useCase, JwtService jwtService) {
+    GoogleLoginController(GoogleLoginUseCase useCase, JwtService jwtService) {
         this.useCase = useCase;
         this.jwtService = jwtService;
     }
 
-    record LoginRequest(@NotBlank String email, @NotBlank String password) {}
+    record GoogleLoginRequest(@NotBlank(message = "idToken is required") String idToken) {}
 
     record AuthResponse(String token, String refreshToken, String profileId, String email) {}
 
-    @PostMapping("/api/auth/login")
-    ResponseEntity<AuthResponse> handle(@Valid @RequestBody LoginRequest request) throws InvalidCredentialsException, AccountUsesGoogleException {
-        AuthUser user = useCase.execute(request.email(), request.password());
+    @PostMapping("/api/auth/google")
+    ResponseEntity<AuthResponse> handle(@Valid @RequestBody GoogleLoginRequest request) throws GoogleAuthException {
+        AuthUser user = useCase.execute(request.idToken());
 
         String token = jwtService.generateToken(user);
         String refreshToken = jwtService.generateRefreshToken(user);

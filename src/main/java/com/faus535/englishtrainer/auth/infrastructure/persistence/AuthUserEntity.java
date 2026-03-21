@@ -30,7 +30,7 @@ class AuthUserEntity implements Persistable<UUID> {
     @Column(nullable = false, unique = true)
     private String email;
 
-    @Column(name = "password_hash", nullable = false)
+    @Column(name = "password_hash")
     private String passwordHash;
 
     @Column(name = "user_profile_id")
@@ -41,6 +41,9 @@ class AuthUserEntity implements Persistable<UUID> {
 
     @Column(nullable = false)
     private boolean active;
+
+    @Column(name = "auth_provider", nullable = false)
+    private String authProvider;
 
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
@@ -59,6 +62,7 @@ class AuthUserEntity implements Persistable<UUID> {
         entity.userProfileId = aggregate.userProfileId().value();
         entity.role = aggregate.role();
         entity.active = aggregate.active();
+        entity.authProvider = aggregate.authProvider();
         entity.createdAt = aggregate.createdAt();
         entity.updatedAt = aggregate.updatedAt();
         return entity;
@@ -72,6 +76,7 @@ class AuthUserEntity implements Persistable<UUID> {
                 new UserProfileId(userProfileId),
                 role,
                 active,
+                authProvider,
                 createdAt,
                 updatedAt
         );

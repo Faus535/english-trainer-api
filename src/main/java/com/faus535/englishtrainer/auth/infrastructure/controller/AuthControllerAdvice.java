@@ -1,6 +1,8 @@
 package com.faus535.englishtrainer.auth.infrastructure.controller;
 
+import com.faus535.englishtrainer.auth.domain.error.AccountUsesGoogleException;
 import com.faus535.englishtrainer.auth.domain.error.EmailAlreadyExistsException;
+import com.faus535.englishtrainer.auth.domain.error.GoogleAuthException;
 import com.faus535.englishtrainer.auth.domain.error.InvalidCredentialsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,5 +30,19 @@ class AuthControllerAdvice {
         log.error("Email already exists: {}", ex.getMessage());
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(new ApiError("already_exists", "Email already registered"));
+    }
+
+    @ExceptionHandler(GoogleAuthException.class)
+    ResponseEntity<ApiError> handleGoogleAuth(GoogleAuthException ex) {
+        log.error("Google auth error: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(new ApiError("google_auth_error", ex.getMessage()));
+    }
+
+    @ExceptionHandler(AccountUsesGoogleException.class)
+    ResponseEntity<ApiError> handleAccountUsesGoogle(AccountUsesGoogleException ex) {
+        log.error("Account uses Google: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(new ApiError("account_uses_google", "This account uses Google Sign-In"));
     }
 }
