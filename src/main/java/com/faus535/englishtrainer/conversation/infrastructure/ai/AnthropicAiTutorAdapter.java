@@ -22,10 +22,13 @@ class AnthropicAiTutorAdapter implements AiTutorPort {
 
     private static final Logger log = LoggerFactory.getLogger(AnthropicAiTutorAdapter.class);
     private static final Pattern FEEDBACK_PATTERN =
-            Pattern.compile("\\|\\|\\|FEEDBACK\\|\\|\\|(.*?)\\|\\|\\|END_FEEDBACK\\|\\|\\|", Pattern.DOTALL);
+            Pattern.compile("<<F>>(.*?)<<F>>", Pattern.DOTALL);
     private static final ObjectMapper MAPPER = new ObjectMapper();
-    private static final int FEEDBACK_EVERY_N_USER_TURNS = 3;
+    private static final int FEEDBACK_EVERY_N_USER_TURNS = 5;
     private static final Map<String, AiTutorResponse> GREETING_CACHE = new ConcurrentHashMap<>();
+    private static final int GREETING_MAX_TOKENS = 150;
+    private static final int NO_FEEDBACK_MAX_TOKENS = 200;
+    private static final int SUMMARY_MAX_TOKENS = 200;
 
     private final RestClient restClient;
     private final String model;
@@ -58,9 +61,9 @@ class AnthropicAiTutorAdapter implements AiTutorPort {
                 return cached;
             }
             messages.add(Map.of("role", "user",
-                    "content", "Start the conversation. Greet the student and introduce the topic."));
+                    "content", "Start. Greet student, introduce topic."));
             String systemPrompt = SystemPromptBuilder.build(level, topic, confidence, false);
-            String rawResponse = callClaude(systemPrompt, messages);
+            String rawResponse = callClaude(systemPrompt, messages, GREETING_MAX_TOKENS);
             AiTutorResponse response = parseResponse(rawResponse);
             GREETING_CACHE.put(cacheKey, response);
             return response;
@@ -69,25 +72,26 @@ class AnthropicAiTutorAdapter implements AiTutorPort {
         long userTurnCount = turns.stream().filter(t -> "user".equals(t.role())).count();
         boolean includeFeedback = userTurnCount % FEEDBACK_EVERY_N_USER_TURNS == 0;
         String systemPrompt = SystemPromptBuilder.build(level, topic, confidence, includeFeedback);
-        String rawResponse = callClaude(systemPrompt, messages);
+        int tokens = includeFeedback ? maxTokens : NO_FEEDBACK_MAX_TOKENS;
+        String rawResponse = callClaude(systemPrompt, messages, tokens);
         return parseResponse(rawResponse);
     }
 
     @Override
     public String summarize(ConversationLevel level, List<ConversationTurn> turns) throws AiTutorException {
         String systemPrompt = SystemPromptBuilder.buildSummaryPrompt();
-        StringBuilder conversationText = new StringBuilder("Here is the conversation to summarize:\n\n");
+        StringBuilder conversationText = new StringBuilder("Conversation:\n");
         for (ConversationTurn turn : turns) {
-            conversationText.append(turn.role().toUpperCase()).append(": ").append(turn.content()).append("\n");
+            conversationText.append(turn.role().charAt(0)).append(":").append(turn.content()).append("\n");
         }
 
         List<Map<String, String>> messages = List.of(
                 Map.of("role", "user", "content", conversationText.toString()));
 
-        return callClaude(systemPrompt, messages);
+        return callClaude(systemPrompt, messages, SUMMARY_MAX_TOKENS);
     }
 
-    private String callClaude(String systemPrompt, List<Map<String, String>> messages) throws AiTutorException {
+    private String callClaude(String systemPrompt, List<Map<String, String>> messages, int tokensLimit) throws AiTutorException {
         List<Map<String, Object>> systemBlocks = List.of(
                 Map.of("type", "text", "text", systemPrompt,
                         "cache_control", Map.of("type", "ephemeral"))
@@ -95,7 +99,7 @@ class AnthropicAiTutorAdapter implements AiTutorPort {
 
         Map<String, Object> requestBody = Map.of(
                 "model", model,
-                "max_tokens", maxTokens,
+                "max_tokens", tokensLimit,
                 "system", systemBlocks,
                 "messages", messages
         );
@@ -128,30 +132,58 @@ class AnthropicAiTutorAdapter implements AiTutorPort {
         }
     }
 
-    private static final int RECENT_TURNS_FULL = 6;
-    private static final int OLD_MESSAGE_MAX_CHARS = 150;
+    private static final int RECENT_TURNS_FULL = 4;
+    private static final int SUMMARY_THRESHOLD = 5;
+    private static final int OLD_TURN_MAX_CHARS = 60;
 
     private List<Map<String, String>> buildMessages(List<ConversationTurn> turns) {
         List<Map<String, String>> messages = new ArrayList<>();
         int cutoff = Math.max(0, turns.size() - RECENT_TURNS_FULL);
-        for (int i = 0; i < turns.size(); i++) {
-            ConversationTurn turn = turns.get(i);
-            String content = turn.content();
-            if (i < cutoff && content.length() > OLD_MESSAGE_MAX_CHARS) {
-                content = content.substring(0, OLD_MESSAGE_MAX_CHARS) + "...";
+
+        if (cutoff > 0 && turns.size() >= SUMMARY_THRESHOLD) {
+            // Condense old turns into a single context summary (no API call needed)
+            StringBuilder summary = new StringBuilder("[Prior context] ");
+            for (int i = 0; i < cutoff; i++) {
+                ConversationTurn turn = turns.get(i);
+                String content = turn.content();
+                if (content.length() > OLD_TURN_MAX_CHARS) {
+                    content = content.substring(0, OLD_TURN_MAX_CHARS) + "...";
+                }
+                summary.append(turn.role().charAt(0)).append(":").append(content).append(" ");
             }
-            messages.add(Map.of("role", turn.role(), "content", content));
+            messages.add(Map.of("role", "user", "content", summary.toString().trim()));
+            messages.add(Map.of("role", "assistant", "content", "OK, I have the context. Let's continue."));
+        } else {
+            // Few turns: send them individually
+            for (int i = 0; i < cutoff; i++) {
+                ConversationTurn turn = turns.get(i);
+                messages.add(Map.of("role", turn.role(), "content", turn.content()));
+            }
         }
+
+        // Recent turns: send in full
+        for (int i = cutoff; i < turns.size(); i++) {
+            ConversationTurn turn = turns.get(i);
+            messages.add(Map.of("role", turn.role(), "content", turn.content()));
+        }
+
         return messages;
     }
 
+    @SuppressWarnings("unchecked")
     private AiTutorResponse parseResponse(String rawResponse) {
         Matcher matcher = FEEDBACK_PATTERN.matcher(rawResponse);
         if (matcher.find()) {
             String content = rawResponse.substring(0, matcher.start()).trim();
             String feedbackJson = matcher.group(1).trim();
             try {
-                TutorFeedback feedback = MAPPER.readValue(feedbackJson, TutorFeedback.class);
+                Map<String, Object> map = MAPPER.readValue(feedbackJson, Map.class);
+                // Support both abbreviated (g,v,p,e) and full field names
+                List<String> grammar = toStringList(map.getOrDefault("g", map.get("grammarCorrections")));
+                List<String> vocab = toStringList(map.getOrDefault("v", map.get("vocabularySuggestions")));
+                List<String> pronunciation = toStringList(map.getOrDefault("p", map.get("pronunciationTips")));
+                String encouragement = (String) map.getOrDefault("e", map.get("encouragement"));
+                TutorFeedback feedback = new TutorFeedback(grammar, vocab, pronunciation, encouragement);
                 return new AiTutorResponse(content, feedback);
             } catch (Exception e) {
                 log.warn("Failed to parse feedback JSON: {}", feedbackJson, e);
@@ -159,5 +191,13 @@ class AnthropicAiTutorAdapter implements AiTutorPort {
             }
         }
         return new AiTutorResponse(rawResponse, TutorFeedback.empty());
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<String> toStringList(Object obj) {
+        if (obj instanceof List<?> list) {
+            return list.stream().map(Object::toString).toList();
+        }
+        return List.of();
     }
 }

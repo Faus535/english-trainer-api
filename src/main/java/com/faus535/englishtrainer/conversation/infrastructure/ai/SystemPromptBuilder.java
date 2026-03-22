@@ -3,81 +3,88 @@ package com.faus535.englishtrainer.conversation.infrastructure.ai;
 import com.faus535.englishtrainer.conversation.domain.ConversationLevel;
 
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 class SystemPromptBuilder {
 
     private static final Map<String, String> ROLE_PLAY_SCENARIOS = Map.of(
-            "job-interview", "Role: job interviewer. Ask about experience, skills, motivation.",
-            "restaurant", "Role: waiter. Help order food, describe menu, handle requests.",
-            "doctor-visit", "Role: doctor. Ask symptoms, give advice, explain treatments simply.",
-            "travel", "Role: tourist info officer. Help plan trips, give directions, recommend places.",
-            "hotel-checkin", "Role: hotel receptionist. Help check in, explain amenities, handle requests.",
-            "shopping", "Role: shop assistant. Help find products, compare items, complete purchase."
+            "job-interview", "Roleplay:interviewer. Ask experience,skills,motivation.",
+            "restaurant", "Roleplay:waiter. Menu,orders,requests.",
+            "doctor-visit", "Roleplay:doctor. Symptoms,advice,treatments.",
+            "travel", "Roleplay:tourist-info. Trips,directions,places.",
+            "hotel-checkin", "Roleplay:receptionist. Checkin,amenities,requests.",
+            "shopping", "Roleplay:shop-assistant. Products,compare,purchase."
     );
+
+    private static final Map<String, String> PROMPT_CACHE = new ConcurrentHashMap<>();
 
     static String build(ConversationLevel level, String topic, Float confidence) {
         return build(level, topic, confidence, false);
     }
 
     static String build(ConversationLevel level, String topic, Float confidence, boolean includeFeedback) {
-        StringBuilder prompt = new StringBuilder();
+        String cacheKey = level.value() + ":" + (topic != null ? topic : "") + ":" + includeFeedback
+                + ":" + confidenceBucket(confidence);
+        return PROMPT_CACHE.computeIfAbsent(cacheKey, k -> buildPrompt(level, topic, confidence, includeFeedback));
+    }
+
+    private static String buildPrompt(ConversationLevel level, String topic, Float confidence, boolean includeFeedback) {
+        StringBuilder p = new StringBuilder();
 
         String scenario = topic != null ? ROLE_PLAY_SCENARIOS.get(topic.toLowerCase()) : null;
         if (scenario != null) {
-            prompt.append("English practice scenario. ").append(scenario);
-            prompt.append(" Stay in character + tutor. ");
+            p.append("EN tutor+").append(scenario).append(" Stay in character. ");
         } else {
-            prompt.append("Friendly English tutor. ");
+            p.append("EN tutor. ");
             if (topic != null && !topic.isBlank()) {
-                prompt.append("Topic: ").append(topic).append(". ");
+                p.append("Topic:").append(topic).append(". ");
             }
         }
-        prompt.append("Student level: ").append(level.value().toUpperCase()).append(". ");
+        p.append("Lvl:").append(level.value().toUpperCase()).append(". ");
 
-        appendLevelRules(prompt, level.value());
-        appendConfidenceRules(prompt, confidence);
+        appendLevelRules(p, level.value());
+        appendConfidenceRules(p, confidence);
 
         if (includeFeedback) {
-            appendFeedbackFormat(prompt);
+            appendFeedbackFormat(p);
         } else {
-            prompt.append("Keep responses concise and natural. No feedback block needed.");
+            p.append("Concise,natural. No feedback block.");
         }
 
-        return prompt.toString();
+        return p.toString();
     }
 
     static String buildSummaryPrompt() {
-        return "Summarize this English tutoring session in 2-3 sentences: topics discussed, student strengths, areas to improve. Positive tone. No |||FEEDBACK||| block.";
+        return "Summarize tutoring session in 2-3 sentences: topics,strengths,improvements. Positive. No feedback block.";
     }
 
-    private static void appendLevelRules(StringBuilder prompt, String level) {
+    private static void appendLevelRules(StringBuilder p, String level) {
         switch (level) {
-            case "a1" -> prompt.append(
-                    "A1 rules: very simple vocab, short sentences (5-8 words), present tense, yes/no questions, very tolerant of mistakes. ");
-            case "a2" -> prompt.append(
-                    "A2 rules: basic vocab, simple sentences (8-12 words), past tense + 'going to', correct only major errors, simple open questions. ");
-            case "b1" -> prompt.append(
-                    "B1 rules: moderate vocab (10-15 words), varied tenses + conditionals, gentle grammar corrections with brief explanations, open-ended questions, introduce idioms. ");
-            case "b2" -> prompt.append(
-                    "B2 rules: rich vocab + idioms, complex structures + passive/reported speech, precise corrections including nuance, debate + argumentation. ");
-            case "c1", "c2" -> prompt.append(
-                    "C1/C2 rules: sophisticated/academic language, correct all errors including style/register, complex abstract topics, focus on precision + natural phrasing. ");
+            case "a1" -> p.append("A1:simple vocab,5-8w sentences,present tense,yes/no Qs,tolerant. Max 2 sent. ");
+            case "a2" -> p.append("A2:basic vocab,8-12w,past+'going to',fix major errors,simple Qs. Max 2 sent. ");
+            case "b1" -> p.append("B1:moderate vocab,10-15w,varied tenses+conditionals,gentle fixes+brief explain,open Qs,idioms. Max 3 sent. ");
+            case "b2" -> p.append("B2:rich vocab+idioms,complex structures+passive/reported,precise fixes+nuance,debate. Max 3 sent. ");
+            case "c1", "c2" -> p.append("C1/C2:sophisticated/academic,fix all errors+style/register,abstract topics,precision+natural. Max 4 sent. ");
         }
     }
 
-    private static void appendConfidenceRules(StringBuilder prompt, Float confidence) {
+    private static void appendConfidenceRules(StringBuilder p, Float confidence) {
         if (confidence == null) return;
         if (confidence < 0.5f) {
-            prompt.append("STT confidence LOW (%.0f%%), ask to repeat before correcting. ".formatted(confidence * 100));
+            p.append("STT LOW(%.0f%%),ask repeat. ".formatted(confidence * 100));
         } else if (confidence < 0.75f) {
-            prompt.append("STT confidence moderate (%.0f%%), some words may be misrecognized. ".formatted(confidence * 100));
+            p.append("STT mid(%.0f%%),possible misrecognition. ".formatted(confidence * 100));
         }
     }
 
-    private static void appendFeedbackFormat(StringBuilder prompt) {
-        prompt.append("""
-                After your response, include: \
-                |||FEEDBACK|||{"grammarCorrections":[],"vocabularySuggestions":[],"pronunciationTips":[],"encouragement":""}|||END_FEEDBACK||| \
-                with actual values. Must be valid JSON on its own line.""");
+    private static void appendFeedbackFormat(StringBuilder p) {
+        p.append("After reply add: <<F>>{\"g\":[],\"v\":[],\"p\":[],\"e\":\"\"}<<F>> with values. Valid JSON.");
+    }
+
+    private static String confidenceBucket(Float confidence) {
+        if (confidence == null) return "null";
+        if (confidence < 0.5f) return "low";
+        if (confidence < 0.75f) return "mid";
+        return "high";
     }
 }

@@ -12,7 +12,7 @@ class SystemPromptBuilderTest {
         String prompt = SystemPromptBuilder.build(new ConversationLevel("b1"), null, null);
 
         assertTrue(prompt.contains("B1"));
-        assertTrue(prompt.contains("B1 rules"));
+        assertTrue(prompt.contains("B1:"));
     }
 
     @Test
@@ -34,15 +34,14 @@ class SystemPromptBuilderTest {
     void shouldIncludeModerateConfidenceNote() {
         String prompt = SystemPromptBuilder.build(new ConversationLevel("b1"), null, 0.6f);
 
-        assertTrue(prompt.contains("moderate"));
+        assertTrue(prompt.contains("mid"));
     }
 
     @Test
     void shouldIncludeFeedbackFormatWhenRequested() {
         String prompt = SystemPromptBuilder.build(new ConversationLevel("a1"), null, null, true);
 
-        assertTrue(prompt.contains("|||FEEDBACK|||"));
-        assertTrue(prompt.contains("|||END_FEEDBACK|||"));
+        assertTrue(prompt.contains("<<F>>"));
     }
 
     @Test
@@ -56,7 +55,7 @@ class SystemPromptBuilderTest {
     void shouldBuildA1Rules() {
         String prompt = SystemPromptBuilder.build(new ConversationLevel("a1"), null, null);
 
-        assertTrue(prompt.contains("A1 rules"));
+        assertTrue(prompt.contains("A1:"));
         assertTrue(prompt.contains("simple vocab"));
     }
 
@@ -64,7 +63,7 @@ class SystemPromptBuilderTest {
     void shouldBuildC1Rules() {
         String prompt = SystemPromptBuilder.build(new ConversationLevel("c1"), null, null);
 
-        assertTrue(prompt.contains("C1/C2 rules"));
+        assertTrue(prompt.contains("C1/C2:"));
         assertTrue(prompt.contains("sophisticated"));
     }
 
@@ -72,7 +71,7 @@ class SystemPromptBuilderTest {
     void shouldBuildRolePlayPrompt() {
         String prompt = SystemPromptBuilder.build(new ConversationLevel("b1"), "job-interview", null);
 
-        assertTrue(prompt.contains("Role"));
+        assertTrue(prompt.contains("Roleplay"));
         assertTrue(prompt.contains("interviewer"));
     }
 

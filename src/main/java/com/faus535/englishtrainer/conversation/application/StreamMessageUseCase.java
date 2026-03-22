@@ -14,7 +14,7 @@ import java.util.UUID;
 @UseCase
 public class StreamMessageUseCase {
 
-    private static final int MAX_CONTEXT_TURNS = 10;
+    private static final int MAX_CONTEXT_TURNS = 8;
 
     private final ConversationRepository repository;
     private final AiTutorStreamPort aiTutorStreamPort;

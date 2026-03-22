@@ -47,7 +47,7 @@ class AnthropicAiTutorStreamAdapter implements AiTutorStreamPort {
 
         if (messages.isEmpty()) {
             messages.add(Map.of("role", "user",
-                    "content", "Start the conversation. Greet the student and introduce the topic."));
+                    "content", "Start. Greet student, introduce topic."));
         }
 
         List<Map<String, Object>> systemBlocks = List.of(
@@ -74,20 +74,38 @@ class AnthropicAiTutorStreamAdapter implements AiTutorStreamPort {
                 .doOnError(e -> log.error("Streaming error: {}", e.getMessage()));
     }
 
-    private static final int RECENT_TURNS_FULL = 6;
-    private static final int OLD_MESSAGE_MAX_CHARS = 150;
+    private static final int RECENT_TURNS_FULL = 4;
+    private static final int SUMMARY_THRESHOLD = 5;
+    private static final int OLD_TURN_MAX_CHARS = 60;
 
     private List<Map<String, String>> buildMessages(List<ConversationTurn> turns) {
         List<Map<String, String>> messages = new ArrayList<>();
         int cutoff = Math.max(0, turns.size() - RECENT_TURNS_FULL);
-        for (int i = 0; i < turns.size(); i++) {
-            ConversationTurn turn = turns.get(i);
-            String content = turn.content();
-            if (i < cutoff && content.length() > OLD_MESSAGE_MAX_CHARS) {
-                content = content.substring(0, OLD_MESSAGE_MAX_CHARS) + "...";
+
+        if (cutoff > 0 && turns.size() >= SUMMARY_THRESHOLD) {
+            StringBuilder summary = new StringBuilder("[Prior context] ");
+            for (int i = 0; i < cutoff; i++) {
+                ConversationTurn turn = turns.get(i);
+                String content = turn.content();
+                if (content.length() > OLD_TURN_MAX_CHARS) {
+                    content = content.substring(0, OLD_TURN_MAX_CHARS) + "...";
+                }
+                summary.append(turn.role().charAt(0)).append(":").append(content).append(" ");
             }
-            messages.add(Map.of("role", turn.role(), "content", content));
+            messages.add(Map.of("role", "user", "content", summary.toString().trim()));
+            messages.add(Map.of("role", "assistant", "content", "OK, I have the context. Let's continue."));
+        } else {
+            for (int i = 0; i < cutoff; i++) {
+                ConversationTurn turn = turns.get(i);
+                messages.add(Map.of("role", turn.role(), "content", turn.content()));
+            }
         }
+
+        for (int i = cutoff; i < turns.size(); i++) {
+            ConversationTurn turn = turns.get(i);
+            messages.add(Map.of("role", turn.role(), "content", turn.content()));
+        }
+
         return messages;
     }
 

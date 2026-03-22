@@ -29,7 +29,7 @@ class SendMessageController {
             Float confidence
     ) {}
 
-    record MessageResponse(String content, TutorFeedback feedback) {}
+    record MessageResponse(String content, TutorFeedback feedback, boolean suggestEnd) {}
 
     @PostMapping("/api/conversations/{id}/messages")
     ResponseEntity<MessageResponse> handle(@PathVariable UUID id,
@@ -39,6 +39,6 @@ class SendMessageController {
         SendMessageUseCase.SendMessageResult result = useCase.execute(
                 id, request.transcript(), request.confidence());
 
-        return ResponseEntity.ok(new MessageResponse(result.content(), result.feedback()));
+        return ResponseEntity.ok(new MessageResponse(result.content(), result.feedback(), result.suggestEnd()));
     }
 }

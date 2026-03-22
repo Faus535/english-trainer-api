@@ -8,12 +8,18 @@ import com.faus535.englishtrainer.shared.application.annotation.UseCase;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 @UseCase
 public class SendMessageUseCase {
 
-    private static final int MAX_CONTEXT_TURNS = 10;
+    private static final int MAX_CONTEXT_TURNS = 8;
+    private static final Pattern FAREWELL_PATTERN = Pattern.compile(
+            "\\b(bye|goodbye|good bye|see you|thanks for|thank you|that'?s all|gotta go|have to go|i'?m done|end chat)\\b",
+            Pattern.CASE_INSENSITIVE
+    );
 
     private final ConversationRepository repository;
     private final AiTutorPort aiTutorPort;
@@ -44,8 +50,13 @@ public class SendMessageUseCase {
 
         repository.save(conversation);
 
-        return new SendMessageResult(response.content(), response.feedback());
+        boolean suggestEnd = detectFarewell(transcript);
+        return new SendMessageResult(response.content(), response.feedback(), suggestEnd);
     }
 
-    public record SendMessageResult(String content, TutorFeedback feedback) {}
+    private boolean detectFarewell(String transcript) {
+        return FAREWELL_PATTERN.matcher(transcript).find();
+    }
+
+    public record SendMessageResult(String content, TutorFeedback feedback, boolean suggestEnd) {}
 }
