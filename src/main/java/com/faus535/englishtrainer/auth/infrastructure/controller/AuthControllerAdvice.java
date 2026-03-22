@@ -4,6 +4,8 @@ import com.faus535.englishtrainer.auth.domain.error.AccountUsesGoogleException;
 import com.faus535.englishtrainer.auth.domain.error.EmailAlreadyExistsException;
 import com.faus535.englishtrainer.auth.domain.error.GoogleAuthException;
 import com.faus535.englishtrainer.auth.domain.error.InvalidCredentialsException;
+import com.faus535.englishtrainer.auth.domain.error.InvalidResetTokenException;
+import com.faus535.englishtrainer.auth.domain.error.TooManyResetAttemptsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -44,5 +46,19 @@ class AuthControllerAdvice {
         log.error("Account uses Google: {}", ex.getMessage());
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(new ApiError("account_uses_google", "This account uses Google Sign-In"));
+    }
+
+    @ExceptionHandler(InvalidResetTokenException.class)
+    ResponseEntity<ApiError> handleInvalidResetToken(InvalidResetTokenException ex) {
+        log.error("Invalid reset token: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ApiError("invalid_reset_token", ex.getMessage()));
+    }
+
+    @ExceptionHandler(TooManyResetAttemptsException.class)
+    ResponseEntity<ApiError> handleTooManyResetAttempts(TooManyResetAttemptsException ex) {
+        log.error("Too many reset attempts: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS)
+                .body(new ApiError("too_many_attempts", ex.getMessage()));
     }
 }

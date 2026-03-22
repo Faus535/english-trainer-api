@@ -51,6 +51,15 @@ public class JwtService {
         return extractClaims(token).get("profileId", String.class);
     }
 
+    public String extractRole(String token) {
+        String role = extractClaims(token).get("role", String.class);
+        return role != null ? role : "USER";
+    }
+
+    public long getRefreshExpiration() {
+        return refreshExpiration;
+    }
+
     public boolean isTokenValid(String token) {
         try {
             extractClaims(token);

@@ -70,6 +70,10 @@ public final class AuthUser extends AggregateRoot<AuthUserId> {
         return "GOOGLE".equals(authProvider);
     }
 
+    public AuthUser withPasswordHash(String newPasswordHash) {
+        return new AuthUser(id, email, newPasswordHash, userProfileId, role, active, authProvider, createdAt, Instant.now());
+    }
+
     public AuthUserId id() { return id; }
     public String email() { return email; }
     public String passwordHash() { return passwordHash; }
