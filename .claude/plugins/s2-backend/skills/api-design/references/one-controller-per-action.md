@@ -2,8 +2,8 @@
 
 ## Convention
 
-- **Naming**: `{Action}{HttpMethod}Controller.java`
-- **Location**: `infrastructure/rest/` package
+- **Naming**: `{Action}Controller.java` (e.g., `CreateUserController`, `GetUserProfileController`)
+- **Location**: `infrastructure/controller/` package
 - **Visibility**: Package-private (no `public` modifier)
 - **Method**: Single method named `handle`, delegates entirely to the Use Case
 - **Injection**: Constructor only, no `@Autowired`
@@ -12,10 +12,10 @@
 
 ```java
 @RestController
-class CreateUserPostController {
+class CreateUserController {
     private final CreateUserUseCase useCase;
 
-    CreateUserPostController(CreateUserUseCase useCase) {
+    CreateUserController(CreateUserUseCase useCase) {
         this.useCase = useCase;
     }
 
@@ -36,10 +36,10 @@ class CreateUserPostController {
 
 ```java
 @RestController
-class GetUserByIdGetController {
+class GetUserByIdController {
     private final GetUserByIdUseCase useCase;
 
-    GetUserByIdGetController(GetUserByIdUseCase useCase) {
+    GetUserByIdController(GetUserByIdUseCase useCase) {
         this.useCase = useCase;
     }
 
@@ -56,10 +56,10 @@ All fields required in the body. Idempotent.
 
 ```java
 @RestController
-class UpdateUserPutController {
+class UpdateUserController {
     private final UpdateUserUseCase useCase;
 
-    UpdateUserPutController(UpdateUserUseCase useCase) {
+    UpdateUserController(UpdateUserUseCase useCase) {
         this.useCase = useCase;
     }
 
@@ -84,10 +84,10 @@ Fields are nullable; only non-null fields are applied.
 
 ```java
 @RestController
-class PatchUserPatchController {
+class PatchUserController {
     private final PatchUserUseCase useCase;
 
-    PatchUserPatchController(PatchUserUseCase useCase) {
+    PatchUserController(PatchUserUseCase useCase) {
         this.useCase = useCase;
     }
 
@@ -112,10 +112,10 @@ No response body.
 
 ```java
 @RestController
-class DeleteUserDeleteController {
+class DeleteUserController {
     private final DeleteUserUseCase useCase;
 
-    DeleteUserDeleteController(DeleteUserUseCase useCase) {
+    DeleteUserController(DeleteUserUseCase useCase) {
         this.useCase = useCase;
     }
 

@@ -6,8 +6,8 @@
 - Implement as **records**
 - Annotate with `@DomainEvent` (jmolecules)
 - Name in past tense: `{Entity}{Action}Event`
-- Located in `{module}/events/` package
-- Create `package-info.java` for Spring Modulith
+- Located in `{module}/domain/event/` package
+- Optionally create `package-info.java` for Spring Modulith
 
 ### Benefits
 - **Decoupling**: Modules communicate via events

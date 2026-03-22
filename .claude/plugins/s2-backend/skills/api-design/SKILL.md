@@ -21,7 +21,7 @@ Defines patterns for the REST layer: controllers, request validation, and except
 ### One Controller Per Action
 
 1. **One controller per HTTP operation** (no god controllers)
-2. Naming: `{Action}{HttpMethod}Controller.java`
+2. Naming: `{Action}Controller.java` (e.g., `CreateUserController`, `GetUserProfileController`)
 3. **Package-private** visibility (no `public`)
 4. Single `handle()` method that delegates to the Use Case
 5. Use Case injected via constructor (no `@Autowired`)

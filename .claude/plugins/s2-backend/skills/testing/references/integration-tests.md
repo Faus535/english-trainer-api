@@ -24,6 +24,16 @@ class TestcontainersConfiguration {
 }
 ```
 
+## Base class (optional, for convenience)
+
+```java
+@Tag("integration")
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@Import(TestcontainersConfiguration.class)
+public abstract class IntegrationTestBase {
+}
+```
+
 ## Test class
 
 ```java
@@ -60,3 +70,4 @@ class UserRepositoryIT {
 - `@ServiceConnection` auto-configures `spring.datasource.*` from the running container — no manual property mapping
 - `TestcontainersConfiguration` is shared: all IT tests import the same class, Spring reuses the container when the context is reused
 - No `@Testcontainers` / `@Container` annotations scattered across test classes
+- Using `IntegrationTestBase` as a convenience base is acceptable to reduce boilerplate
