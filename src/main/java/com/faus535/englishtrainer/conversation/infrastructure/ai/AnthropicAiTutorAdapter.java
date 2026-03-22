@@ -13,6 +13,7 @@ import org.springframework.web.client.RestClient;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -23,6 +24,8 @@ class AnthropicAiTutorAdapter implements AiTutorPort {
     private static final Pattern FEEDBACK_PATTERN =
             Pattern.compile("\\|\\|\\|FEEDBACK\\|\\|\\|(.*?)\\|\\|\\|END_FEEDBACK\\|\\|\\|", Pattern.DOTALL);
     private static final ObjectMapper MAPPER = new ObjectMapper();
+    private static final int FEEDBACK_EVERY_N_USER_TURNS = 3;
+    private static final Map<String, AiTutorResponse> GREETING_CACHE = new ConcurrentHashMap<>();
 
     private final RestClient restClient;
     private final String model;
@@ -30,14 +33,15 @@ class AnthropicAiTutorAdapter implements AiTutorPort {
 
     AnthropicAiTutorAdapter(
             @Value("${anthropic.api-key}") String apiKey,
-            @Value("${anthropic.model:claude-sonnet-4-20250514}") String model,
-            @Value("${anthropic.max-tokens:500}") int maxTokens) {
+            @Value("${anthropic.model:claude-haiku-4-5-20251001}") String model,
+            @Value("${anthropic.max-tokens:300}") int maxTokens) {
         this.model = model;
         this.maxTokens = maxTokens;
         this.restClient = RestClient.builder()
                 .baseUrl("https://api.anthropic.com/v1")
                 .defaultHeader("x-api-key", apiKey)
                 .defaultHeader("anthropic-version", "2023-06-01")
+                .defaultHeader("anthropic-beta", "prompt-caching-2024-07-31")
                 .defaultHeader("Content-Type", "application/json")
                 .build();
     }
@@ -45,14 +49,26 @@ class AnthropicAiTutorAdapter implements AiTutorPort {
     @Override
     public AiTutorResponse chat(ConversationLevel level, String topic,
                                  List<ConversationTurn> turns, Float confidence) throws AiTutorException {
-        String systemPrompt = SystemPromptBuilder.build(level, topic, confidence);
         List<Map<String, String>> messages = buildMessages(turns);
 
         if (messages.isEmpty()) {
+            String cacheKey = level.value() + ":" + (topic != null ? topic : "general");
+            AiTutorResponse cached = GREETING_CACHE.get(cacheKey);
+            if (cached != null) {
+                return cached;
+            }
             messages.add(Map.of("role", "user",
                     "content", "Start the conversation. Greet the student and introduce the topic."));
+            String systemPrompt = SystemPromptBuilder.build(level, topic, confidence, false);
+            String rawResponse = callClaude(systemPrompt, messages);
+            AiTutorResponse response = parseResponse(rawResponse);
+            GREETING_CACHE.put(cacheKey, response);
+            return response;
         }
 
+        long userTurnCount = turns.stream().filter(t -> "user".equals(t.role())).count();
+        boolean includeFeedback = userTurnCount % FEEDBACK_EVERY_N_USER_TURNS == 0;
+        String systemPrompt = SystemPromptBuilder.build(level, topic, confidence, includeFeedback);
         String rawResponse = callClaude(systemPrompt, messages);
         return parseResponse(rawResponse);
     }
@@ -72,10 +88,15 @@ class AnthropicAiTutorAdapter implements AiTutorPort {
     }
 
     private String callClaude(String systemPrompt, List<Map<String, String>> messages) throws AiTutorException {
+        List<Map<String, Object>> systemBlocks = List.of(
+                Map.of("type", "text", "text", systemPrompt,
+                        "cache_control", Map.of("type", "ephemeral"))
+        );
+
         Map<String, Object> requestBody = Map.of(
                 "model", model,
                 "max_tokens", maxTokens,
-                "system", systemPrompt,
+                "system", systemBlocks,
                 "messages", messages
         );
 
@@ -107,10 +128,19 @@ class AnthropicAiTutorAdapter implements AiTutorPort {
         }
     }
 
+    private static final int RECENT_TURNS_FULL = 6;
+    private static final int OLD_MESSAGE_MAX_CHARS = 150;
+
     private List<Map<String, String>> buildMessages(List<ConversationTurn> turns) {
         List<Map<String, String>> messages = new ArrayList<>();
-        for (ConversationTurn turn : turns) {
-            messages.add(Map.of("role", turn.role(), "content", turn.content()));
+        int cutoff = Math.max(0, turns.size() - RECENT_TURNS_FULL);
+        for (int i = 0; i < turns.size(); i++) {
+            ConversationTurn turn = turns.get(i);
+            String content = turn.content();
+            if (i < cutoff && content.length() > OLD_MESSAGE_MAX_CHARS) {
+                content = content.substring(0, OLD_MESSAGE_MAX_CHARS) + "...";
+            }
+            messages.add(Map.of("role", turn.role(), "content", content));
         }
         return messages;
     }

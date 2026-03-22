@@ -21,11 +21,14 @@ class AnthropicWritingEvaluatorAdapter implements WritingEvaluatorPort {
 
     private final RestClient restClient;
     private final String model;
+    private final int maxTokens;
 
     AnthropicWritingEvaluatorAdapter(
             @Value("${anthropic.api-key}") String apiKey,
-            @Value("${anthropic.model:claude-sonnet-4-20250514}") String model) {
+            @Value("${anthropic.writing-model:claude-haiku-4-5-20251001}") String model,
+            @Value("${anthropic.writing-max-tokens:600}") int maxTokens) {
         this.model = model;
+        this.maxTokens = maxTokens;
         this.restClient = RestClient.builder()
                 .baseUrl("https://api.anthropic.com/v1")
                 .defaultHeader("x-api-key", apiKey)
@@ -37,25 +40,16 @@ class AnthropicWritingEvaluatorAdapter implements WritingEvaluatorPort {
     @Override
     public WritingFeedback evaluate(String text, String exercisePrompt, String level) throws Exception {
         String systemPrompt = """
-                You are an English writing evaluator for a student at CEFR level %s.
-                Evaluate the following text written in response to the prompt.
-                Respond ONLY with a JSON object in this exact format:
-                {
-                  "grammarScore": 0-100,
-                  "coherenceScore": 0-100,
-                  "vocabularyScore": 0-100,
-                  "overallScore": 0-100,
-                  "levelAssessment": "a1/a2/b1/b2/c1/c2",
-                  "generalFeedback": "brief feedback",
-                  "corrections": ["correction 1", "correction 2"]
-                }
+                English writing evaluator. Student CEFR level: %s.
+                Respond ONLY with JSON:
+                {"grammarScore":0-100,"coherenceScore":0-100,"vocabularyScore":0-100,"overallScore":0-100,"levelAssessment":"a1/a2/b1/b2/c1/c2","generalFeedback":"brief feedback","corrections":["correction 1"]}
                 """.formatted(level);
 
         String userMessage = "Prompt: " + exercisePrompt + "\n\nStudent's text:\n" + text;
 
         Map<String, Object> requestBody = Map.of(
                 "model", model,
-                "max_tokens", 800,
+                "max_tokens", maxTokens,
                 "system", systemPrompt,
                 "messages", List.of(Map.of("role", "user", "content", userMessage))
         );
