@@ -16,11 +16,12 @@ public class AddVocabularyToReviewUseCase {
     }
 
     @Transactional
-    public void execute(UserProfileId userId, String word, String level) {
+    public SpacedRepetitionItem execute(UserProfileId userId, String word, String level) {
         String unitReference = "vocab-" + word.toLowerCase().trim();
-        if (repository.findByUserAndUnitReference(userId, unitReference).isEmpty()) {
-            SpacedRepetitionItem item = SpacedRepetitionItem.createForVocabulary(userId, word, level);
-            repository.save(item);
-        }
+        return repository.findByUserAndUnitReference(userId, unitReference)
+                .orElseGet(() -> {
+                    SpacedRepetitionItem item = SpacedRepetitionItem.createForVocabulary(userId, word, level);
+                    return repository.save(item);
+                });
     }
 }

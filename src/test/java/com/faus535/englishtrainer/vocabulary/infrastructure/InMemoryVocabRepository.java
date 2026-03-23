@@ -38,6 +38,13 @@ public final class InMemoryVocabRepository implements VocabRepository {
     }
 
     @Override
+    public List<VocabEntry> findByLevelAndBlock(VocabLevel level, int block) {
+        return store.values().stream()
+                .filter(entry -> entry.level().equals(level) && entry.block() != null && entry.block() == block)
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public List<VocabEntry> findRandom(int count, VocabLevel level) {
         List<VocabEntry> byLevel = findByLevel(level);
         Collections.shuffle(byLevel);

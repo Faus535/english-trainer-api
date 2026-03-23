@@ -43,6 +43,9 @@ class SpacedRepetitionItemEntity implements Persistable<UUID> {
     @Column(name = "unit_index", nullable = false)
     private int unitIndex;
 
+    @Column(name = "item_type")
+    private String itemType;
+
     @Column(name = "next_review_date", nullable = false)
     private LocalDate nextReviewDate;
 
@@ -69,6 +72,7 @@ class SpacedRepetitionItemEntity implements Persistable<UUID> {
         entity.moduleName = aggregate.moduleName();
         entity.level = aggregate.level();
         entity.unitIndex = aggregate.unitIndex();
+        entity.itemType = aggregate.itemType();
         entity.nextReviewDate = aggregate.nextReviewDate();
         entity.intervalIndex = aggregate.intervalIndex();
         entity.reviewCount = aggregate.reviewCount();
@@ -85,6 +89,7 @@ class SpacedRepetitionItemEntity implements Persistable<UUID> {
                 moduleName,
                 level,
                 unitIndex,
+                itemType,
                 nextReviewDate,
                 intervalIndex,
                 reviewCount,

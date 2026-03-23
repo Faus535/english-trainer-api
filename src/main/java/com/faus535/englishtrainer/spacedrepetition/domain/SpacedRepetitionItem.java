@@ -18,6 +18,7 @@ public final class SpacedRepetitionItem extends AggregateRoot<SpacedRepetitionIt
     private final String moduleName;
     private final String level;
     private final int unitIndex;
+    private final String itemType;
     private final LocalDate nextReviewDate;
     private final int intervalIndex;
     private final int reviewCount;
@@ -25,14 +26,16 @@ public final class SpacedRepetitionItem extends AggregateRoot<SpacedRepetitionIt
     private final Instant createdAt;
 
     private SpacedRepetitionItem(SpacedRepetitionItemId id, UserProfileId userId, String unitReference,
-                                 String moduleName, String level, int unitIndex, LocalDate nextReviewDate,
-                                 int intervalIndex, int reviewCount, boolean graduated, Instant createdAt) {
+                                 String moduleName, String level, int unitIndex, String itemType,
+                                 LocalDate nextReviewDate, int intervalIndex, int reviewCount,
+                                 boolean graduated, Instant createdAt) {
         this.id = id;
         this.userId = userId;
         this.unitReference = unitReference;
         this.moduleName = moduleName;
         this.level = level;
         this.unitIndex = unitIndex;
+        this.itemType = itemType;
         this.nextReviewDate = nextReviewDate;
         this.intervalIndex = intervalIndex;
         this.reviewCount = reviewCount;
@@ -49,6 +52,7 @@ public final class SpacedRepetitionItem extends AggregateRoot<SpacedRepetitionIt
                 moduleName,
                 level,
                 unitIndex,
+                "module-unit",
                 LocalDate.now().plusDays(1),
                 0,
                 0,
@@ -67,6 +71,7 @@ public final class SpacedRepetitionItem extends AggregateRoot<SpacedRepetitionIt
                 "vocabulary-word",
                 level,
                 0,
+                "vocabulary-word",
                 LocalDate.now().plusDays(1),
                 0,
                 0,
@@ -77,10 +82,11 @@ public final class SpacedRepetitionItem extends AggregateRoot<SpacedRepetitionIt
 
     public static SpacedRepetitionItem reconstitute(SpacedRepetitionItemId id, UserProfileId userId,
                                                      String unitReference, String moduleName, String level,
-                                                     int unitIndex, LocalDate nextReviewDate, int intervalIndex,
-                                                     int reviewCount, boolean graduated, Instant createdAt) {
+                                                     int unitIndex, String itemType, LocalDate nextReviewDate,
+                                                     int intervalIndex, int reviewCount, boolean graduated,
+                                                     Instant createdAt) {
         return new SpacedRepetitionItem(id, userId, unitReference, moduleName, level, unitIndex,
-                nextReviewDate, intervalIndex, reviewCount, graduated, createdAt);
+                itemType != null ? itemType : "module-unit", nextReviewDate, intervalIndex, reviewCount, graduated, createdAt);
     }
 
     public SpacedRepetitionItem completeReview() {
@@ -89,7 +95,7 @@ public final class SpacedRepetitionItem extends AggregateRoot<SpacedRepetitionIt
         LocalDate newNextReviewDate = LocalDate.now().plusDays(INTERVALS[newIntervalIndex]);
         boolean newGraduated = newReviewCount >= MAX_REVIEWS;
         SpacedRepetitionItem updated = new SpacedRepetitionItem(id, userId, unitReference, moduleName, level, unitIndex,
-                newNextReviewDate, newIntervalIndex, newReviewCount, newGraduated, createdAt);
+                itemType, newNextReviewDate, newIntervalIndex, newReviewCount, newGraduated, createdAt);
         updated.registerEvent(new ReviewCompletedEvent(id, userId));
         return updated;
     }
@@ -104,6 +110,7 @@ public final class SpacedRepetitionItem extends AggregateRoot<SpacedRepetitionIt
     public String moduleName() { return moduleName; }
     public String level() { return level; }
     public int unitIndex() { return unitIndex; }
+    public String itemType() { return itemType; }
     public LocalDate nextReviewDate() { return nextReviewDate; }
     public int intervalIndex() { return intervalIndex; }
     public int reviewCount() { return reviewCount; }

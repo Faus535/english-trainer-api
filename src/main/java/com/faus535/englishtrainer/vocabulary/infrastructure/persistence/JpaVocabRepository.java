@@ -10,4 +10,6 @@ interface JpaVocabRepository extends JpaRepository<VocabEntryEntity, UUID> {
     List<VocabEntryEntity> findByLevel(String level);
 
     List<VocabEntryEntity> findByEnContainingIgnoreCaseOrEsContainingIgnoreCase(String en, String es);
+
+    List<VocabEntryEntity> findByLevelAndBlock(String level, int block);
 }

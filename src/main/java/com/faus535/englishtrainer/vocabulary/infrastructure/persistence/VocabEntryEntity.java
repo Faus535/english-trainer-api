@@ -41,6 +41,13 @@ class VocabEntryEntity implements Persistable<UUID> {
     @Column(nullable = false)
     private String level;
 
+    private String category;
+
+    private Integer block;
+
+    @Column(name = "block_title")
+    private String blockTitle;
+
     protected VocabEntryEntity() {}
 
     static VocabEntryEntity fromAggregate(VocabEntry aggregate) {
@@ -53,6 +60,9 @@ class VocabEntryEntity implements Persistable<UUID> {
         entity.type = aggregate.type();
         entity.example = aggregate.example();
         entity.level = aggregate.level().value();
+        entity.category = aggregate.category();
+        entity.block = aggregate.block();
+        entity.blockTitle = aggregate.blockTitle();
         return entity;
     }
 
@@ -64,7 +74,10 @@ class VocabEntryEntity implements Persistable<UUID> {
                 es,
                 type,
                 example,
-                new VocabLevel(level)
+                new VocabLevel(level),
+                category,
+                block,
+                blockTitle
         );
     }
 

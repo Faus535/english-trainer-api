@@ -48,6 +48,13 @@ class JpaVocabRepositoryAdapter implements VocabRepository {
     }
 
     @Override
+    public List<VocabEntry> findByLevelAndBlock(VocabLevel level, int block) {
+        return jpaRepository.findByLevelAndBlock(level.value(), block).stream()
+                .map(VocabEntryEntity::toAggregate)
+                .toList();
+    }
+
+    @Override
     public List<VocabEntry> findRandom(int count, VocabLevel level) {
         List<VocabEntry> entries = (level != null) ? findByLevel(level) : findAll();
         List<VocabEntry> mutable = new java.util.ArrayList<>(entries);

@@ -13,4 +13,6 @@ public interface VocabRepository {
     VocabEntry save(VocabEntry entry);
 
     List<VocabEntry> findRandom(int count, VocabLevel level);
+
+    List<VocabEntry> findByLevelAndBlock(VocabLevel level, int block);
 }

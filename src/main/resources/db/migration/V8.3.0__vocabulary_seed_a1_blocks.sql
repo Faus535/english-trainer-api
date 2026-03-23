@@ -1,0 +1,117 @@
+-- FASE 3: Seed A1 vocabulary in 10 blocks (200 words)
+-- Updates existing entries and inserts new ones
+
+-- Bloque 1: Yo y mi mundo (20 palabras)
+INSERT INTO vocab_entries (id, en, ipa, es, type, example, level, category, block, block_title) VALUES
+(gen_random_uuid(), 'person', '/ˈpɜːrsn/', 'persona', 'noun', 'That person is very tall.', 'a1', 'people', 1, 'Yo y mi mundo'),
+(gen_random_uuid(), 'man', '/mæn/', 'hombre', 'noun', 'The man is reading a book.', 'a1', 'people', 1, 'Yo y mi mundo'),
+(gen_random_uuid(), 'woman', '/ˈwʊmən/', 'mujer', 'noun', 'The woman works in a hospital.', 'a1', 'people', 1, 'Yo y mi mundo'),
+(gen_random_uuid(), 'boy', '/bɔɪ/', 'chico', 'noun', 'The boy is playing in the park.', 'a1', 'people', 1, 'Yo y mi mundo'),
+(gen_random_uuid(), 'girl', '/ɡɜːrl/', 'chica', 'noun', 'The girl likes to read.', 'a1', 'people', 1, 'Yo y mi mundo'),
+(gen_random_uuid(), 'family', '/ˈfæməli/', 'familia', 'noun', 'My family is very big.', 'a1', 'people', 1, 'Yo y mi mundo'),
+(gen_random_uuid(), 'mother', '/ˈmʌðər/', 'madre', 'noun', 'My mother cooks very well.', 'a1', 'people', 1, 'Yo y mi mundo'),
+(gen_random_uuid(), 'father', '/ˈfɑːðər/', 'padre', 'noun', 'My father works in an office.', 'a1', 'people', 1, 'Yo y mi mundo'),
+(gen_random_uuid(), 'brother', '/ˈbrʌðər/', 'hermano', 'noun', 'My brother is older than me.', 'a1', 'people', 1, 'Yo y mi mundo'),
+(gen_random_uuid(), 'sister', '/ˈsɪstər/', 'hermana', 'noun', 'My sister goes to university.', 'a1', 'people', 1, 'Yo y mi mundo'),
+(gen_random_uuid(), 'happy', '/ˈhæpi/', 'feliz', 'adjective', 'I am very happy today.', 'a1', 'emotions', 1, 'Yo y mi mundo'),
+(gen_random_uuid(), 'sad', '/sæd/', 'triste', 'adjective', 'She looks sad today.', 'a1', 'emotions', 1, 'Yo y mi mundo'),
+(gen_random_uuid(), 'tired', '/taɪərd/', 'cansado', 'adjective', 'I am tired after work.', 'a1', 'emotions', 1, 'Yo y mi mundo'),
+(gen_random_uuid(), 'head', '/hɛd/', 'cabeza', 'noun', 'My head hurts.', 'a1', 'body', 1, 'Yo y mi mundo'),
+(gen_random_uuid(), 'hand', '/hænd/', 'mano', 'noun', 'Give me your hand.', 'a1', 'body', 1, 'Yo y mi mundo'),
+(gen_random_uuid(), 'eye', '/aɪ/', 'ojo', 'noun', 'She has blue eyes.', 'a1', 'body', 1, 'Yo y mi mundo'),
+(gen_random_uuid(), 'tall', '/tɔːl/', 'alto', 'adjective', 'He is very tall.', 'a1', 'adjectives', 1, 'Yo y mi mundo'),
+(gen_random_uuid(), 'small', '/smɔːl/', 'pequeño', 'adjective', 'The dog is small.', 'a1', 'adjectives', 1, 'Yo y mi mundo'),
+(gen_random_uuid(), 'young', '/jʌŋ/', 'joven', 'adjective', 'She is very young.', 'a1', 'adjectives', 1, 'Yo y mi mundo'),
+(gen_random_uuid(), 'old', '/oʊld/', 'viejo', 'adjective', 'The building is very old.', 'a1', 'adjectives', 1, 'Yo y mi mundo');
+
+-- Bloque 2: Mi casa (20 palabras)
+INSERT INTO vocab_entries (id, en, ipa, es, type, example, level, category, block, block_title) VALUES
+(gen_random_uuid(), 'house', '/haʊs/', 'casa', 'noun', 'I live in a big house.', 'a1', 'rooms', 2, 'Mi casa'),
+(gen_random_uuid(), 'room', '/ruːm/', 'habitación', 'noun', 'My room is clean.', 'a1', 'rooms', 2, 'Mi casa'),
+(gen_random_uuid(), 'kitchen', '/ˈkɪtʃɪn/', 'cocina', 'noun', 'We cook in the kitchen.', 'a1', 'rooms', 2, 'Mi casa'),
+(gen_random_uuid(), 'bathroom', '/ˈbæθruːm/', 'baño', 'noun', 'The bathroom is upstairs.', 'a1', 'rooms', 2, 'Mi casa'),
+(gen_random_uuid(), 'bedroom', '/ˈbɛdruːm/', 'dormitorio', 'noun', 'I sleep in my bedroom.', 'a1', 'rooms', 2, 'Mi casa'),
+(gen_random_uuid(), 'door', '/dɔːr/', 'puerta', 'noun', 'Please close the door.', 'a1', 'furniture', 2, 'Mi casa'),
+(gen_random_uuid(), 'window', '/ˈwɪndoʊ/', 'ventana', 'noun', 'Open the window please.', 'a1', 'furniture', 2, 'Mi casa'),
+(gen_random_uuid(), 'table', '/ˈteɪbl/', 'mesa', 'noun', 'The book is on the table.', 'a1', 'furniture', 2, 'Mi casa'),
+(gen_random_uuid(), 'chair', '/tʃɛr/', 'silla', 'noun', 'Sit on the chair.', 'a1', 'furniture', 2, 'Mi casa'),
+(gen_random_uuid(), 'bed', '/bɛd/', 'cama', 'noun', 'I go to bed at 10.', 'a1', 'furniture', 2, 'Mi casa'),
+(gen_random_uuid(), 'floor', '/flɔːr/', 'suelo', 'noun', 'The floor is clean.', 'a1', 'household', 2, 'Mi casa'),
+(gen_random_uuid(), 'wall', '/wɔːl/', 'pared', 'noun', 'The wall is white.', 'a1', 'household', 2, 'Mi casa'),
+(gen_random_uuid(), 'garden', '/ˈɡɑːrdn/', 'jardín', 'noun', 'We have a small garden.', 'a1', 'household', 2, 'Mi casa'),
+(gen_random_uuid(), 'key', '/kiː/', 'llave', 'noun', 'I lost my key.', 'a1', 'household', 2, 'Mi casa'),
+(gen_random_uuid(), 'light', '/laɪt/', 'luz', 'noun', 'Turn on the light.', 'a1', 'household', 2, 'Mi casa'),
+(gen_random_uuid(), 'clean', '/kliːn/', 'limpio', 'adjective', 'The house is clean.', 'a1', 'household', 2, 'Mi casa'),
+(gen_random_uuid(), 'dirty', '/ˈdɜːrti/', 'sucio', 'adjective', 'My shoes are dirty.', 'a1', 'household', 2, 'Mi casa'),
+(gen_random_uuid(), 'open', '/ˈoʊpən/', 'abrir', 'verb', 'Open the door.', 'a1', 'household', 2, 'Mi casa'),
+(gen_random_uuid(), 'close', '/kloʊz/', 'cerrar', 'verb', 'Close the window.', 'a1', 'household', 2, 'Mi casa'),
+(gen_random_uuid(), 'live', '/lɪv/', 'vivir', 'verb', 'I live in Madrid.', 'a1', 'household', 2, 'Mi casa');
+
+-- Bloque 3: Comida y bebida (20 palabras)
+INSERT INTO vocab_entries (id, en, ipa, es, type, example, level, category, block, block_title) VALUES
+(gen_random_uuid(), 'food', '/fuːd/', 'comida', 'noun', 'The food is delicious.', 'a1', 'food', 3, 'Comida y bebida'),
+(gen_random_uuid(), 'water', '/ˈwɔːtər/', 'agua', 'noun', 'I drink water every day.', 'a1', 'drinks', 3, 'Comida y bebida'),
+(gen_random_uuid(), 'bread', '/brɛd/', 'pan', 'noun', 'I eat bread for breakfast.', 'a1', 'food', 3, 'Comida y bebida'),
+(gen_random_uuid(), 'milk', '/mɪlk/', 'leche', 'noun', 'Children drink milk.', 'a1', 'drinks', 3, 'Comida y bebida'),
+(gen_random_uuid(), 'coffee', '/ˈkɔːfi/', 'café', 'noun', 'I like coffee in the morning.', 'a1', 'drinks', 3, 'Comida y bebida'),
+(gen_random_uuid(), 'tea', '/tiː/', 'té', 'noun', 'She drinks tea every afternoon.', 'a1', 'drinks', 3, 'Comida y bebida'),
+(gen_random_uuid(), 'rice', '/raɪs/', 'arroz', 'noun', 'Rice is popular in Asia.', 'a1', 'food', 3, 'Comida y bebida'),
+(gen_random_uuid(), 'meat', '/miːt/', 'carne', 'noun', 'I eat meat twice a week.', 'a1', 'food', 3, 'Comida y bebida'),
+(gen_random_uuid(), 'fish', '/fɪʃ/', 'pescado', 'noun', 'Fish is healthy.', 'a1', 'food', 3, 'Comida y bebida'),
+(gen_random_uuid(), 'fruit', '/fruːt/', 'fruta', 'noun', 'I eat fruit every day.', 'a1', 'food', 3, 'Comida y bebida'),
+(gen_random_uuid(), 'egg', '/ɛɡ/', 'huevo', 'noun', 'I have an egg for breakfast.', 'a1', 'food', 3, 'Comida y bebida'),
+(gen_random_uuid(), 'chicken', '/ˈtʃɪkɪn/', 'pollo', 'noun', 'We eat chicken for dinner.', 'a1', 'food', 3, 'Comida y bebida'),
+(gen_random_uuid(), 'sugar', '/ˈʃʊɡər/', 'azúcar', 'noun', 'Do you want sugar in your tea?', 'a1', 'food', 3, 'Comida y bebida'),
+(gen_random_uuid(), 'breakfast', '/ˈbrɛkfəst/', 'desayuno', 'noun', 'I have breakfast at 8.', 'a1', 'meals', 3, 'Comida y bebida'),
+(gen_random_uuid(), 'lunch', '/lʌntʃ/', 'almuerzo', 'noun', 'Lunch is at 1 pm.', 'a1', 'meals', 3, 'Comida y bebida'),
+(gen_random_uuid(), 'dinner', '/ˈdɪnər/', 'cena', 'noun', 'We have dinner at 8 pm.', 'a1', 'meals', 3, 'Comida y bebida'),
+(gen_random_uuid(), 'eat', '/iːt/', 'comer', 'verb', 'I eat three meals a day.', 'a1', 'food', 3, 'Comida y bebida'),
+(gen_random_uuid(), 'drink', '/drɪŋk/', 'beber', 'verb', 'I drink a lot of water.', 'a1', 'drinks', 3, 'Comida y bebida'),
+(gen_random_uuid(), 'cook', '/kʊk/', 'cocinar', 'verb', 'My mother cooks well.', 'a1', 'food', 3, 'Comida y bebida'),
+(gen_random_uuid(), 'hungry', '/ˈhʌŋɡri/', 'hambriento', 'adjective', 'I am very hungry.', 'a1', 'food', 3, 'Comida y bebida');
+
+-- Bloque 4: Rutina diaria (20 palabras)
+INSERT INTO vocab_entries (id, en, ipa, es, type, example, level, category, block, block_title) VALUES
+(gen_random_uuid(), 'morning', '/ˈmɔːrnɪŋ/', 'mañana', 'noun', 'I wake up in the morning.', 'a1', 'time', 4, 'Rutina diaria'),
+(gen_random_uuid(), 'afternoon', '/ˌæftərˈnuːn/', 'tarde', 'noun', 'I study in the afternoon.', 'a1', 'time', 4, 'Rutina diaria'),
+(gen_random_uuid(), 'night', '/naɪt/', 'noche', 'noun', 'I sleep at night.', 'a1', 'time', 4, 'Rutina diaria'),
+(gen_random_uuid(), 'today', '/təˈdeɪ/', 'hoy', 'adverb', 'Today is Monday.', 'a1', 'time', 4, 'Rutina diaria'),
+(gen_random_uuid(), 'tomorrow', '/təˈmɒroʊ/', 'mañana', 'adverb', 'I will go tomorrow.', 'a1', 'time', 4, 'Rutina diaria'),
+(gen_random_uuid(), 'yesterday', '/ˈjɛstərdeɪ/', 'ayer', 'adverb', 'Yesterday was Sunday.', 'a1', 'time', 4, 'Rutina diaria'),
+(gen_random_uuid(), 'always', '/ˈɔːlweɪz/', 'siempre', 'adverb', 'I always eat breakfast.', 'a1', 'frequency', 4, 'Rutina diaria'),
+(gen_random_uuid(), 'never', '/ˈnɛvər/', 'nunca', 'adverb', 'I never drink alcohol.', 'a1', 'frequency', 4, 'Rutina diaria'),
+(gen_random_uuid(), 'sometimes', '/ˈsʌmtaɪmz/', 'a veces', 'adverb', 'I sometimes go to the gym.', 'a1', 'frequency', 4, 'Rutina diaria'),
+(gen_random_uuid(), 'usually', '/ˈjuːʒuəli/', 'normalmente', 'adverb', 'I usually wake up at 7.', 'a1', 'frequency', 4, 'Rutina diaria'),
+(gen_random_uuid(), 'wake up', '/weɪk ʌp/', 'despertarse', 'verb', 'I wake up at 7 am.', 'a1', 'actions', 4, 'Rutina diaria'),
+(gen_random_uuid(), 'sleep', '/sliːp/', 'dormir', 'verb', 'I sleep 8 hours.', 'a1', 'actions', 4, 'Rutina diaria'),
+(gen_random_uuid(), 'work', '/wɜːrk/', 'trabajar', 'verb', 'I work from 9 to 5.', 'a1', 'actions', 4, 'Rutina diaria'),
+(gen_random_uuid(), 'study', '/ˈstʌdi/', 'estudiar', 'verb', 'I study English every day.', 'a1', 'actions', 4, 'Rutina diaria'),
+(gen_random_uuid(), 'walk', '/wɔːk/', 'caminar', 'verb', 'I walk to school.', 'a1', 'actions', 4, 'Rutina diaria'),
+(gen_random_uuid(), 'run', '/rʌn/', 'correr', 'verb', 'I run in the park.', 'a1', 'actions', 4, 'Rutina diaria'),
+(gen_random_uuid(), 'read', '/riːd/', 'leer', 'verb', 'I read before bed.', 'a1', 'actions', 4, 'Rutina diaria'),
+(gen_random_uuid(), 'write', '/raɪt/', 'escribir', 'verb', 'I write in my diary.', 'a1', 'actions', 4, 'Rutina diaria'),
+(gen_random_uuid(), 'hour', '/aʊər/', 'hora', 'noun', 'One hour has 60 minutes.', 'a1', 'time', 4, 'Rutina diaria'),
+(gen_random_uuid(), 'week', '/wiːk/', 'semana', 'noun', 'A week has 7 days.', 'a1', 'time', 4, 'Rutina diaria');
+
+-- Bloque 5: La ciudad (20 palabras)
+INSERT INTO vocab_entries (id, en, ipa, es, type, example, level, category, block, block_title) VALUES
+(gen_random_uuid(), 'city', '/ˈsɪti/', 'ciudad', 'noun', 'London is a big city.', 'a1', 'places', 5, 'La ciudad'),
+(gen_random_uuid(), 'street', '/striːt/', 'calle', 'noun', 'I live on Main Street.', 'a1', 'places', 5, 'La ciudad'),
+(gen_random_uuid(), 'shop', '/ʃɒp/', 'tienda', 'noun', 'I go to the shop.', 'a1', 'places', 5, 'La ciudad'),
+(gen_random_uuid(), 'school', '/skuːl/', 'escuela', 'noun', 'Children go to school.', 'a1', 'places', 5, 'La ciudad'),
+(gen_random_uuid(), 'hospital', '/ˈhɒspɪtl/', 'hospital', 'noun', 'The hospital is near here.', 'a1', 'places', 5, 'La ciudad'),
+(gen_random_uuid(), 'park', '/pɑːrk/', 'parque', 'noun', 'We play in the park.', 'a1', 'places', 5, 'La ciudad'),
+(gen_random_uuid(), 'restaurant', '/ˈrɛstərɒnt/', 'restaurante', 'noun', 'We eat at a restaurant.', 'a1', 'places', 5, 'La ciudad'),
+(gen_random_uuid(), 'bus', '/bʌs/', 'autobús', 'noun', 'I take the bus to work.', 'a1', 'transport', 5, 'La ciudad'),
+(gen_random_uuid(), 'car', '/kɑːr/', 'coche', 'noun', 'My father drives a car.', 'a1', 'transport', 5, 'La ciudad'),
+(gen_random_uuid(), 'train', '/treɪn/', 'tren', 'noun', 'The train is fast.', 'a1', 'transport', 5, 'La ciudad'),
+(gen_random_uuid(), 'left', '/lɛft/', 'izquierda', 'noun', 'Turn left at the corner.', 'a1', 'directions', 5, 'La ciudad'),
+(gen_random_uuid(), 'right', '/raɪt/', 'derecha', 'noun', 'Turn right after the shop.', 'a1', 'directions', 5, 'La ciudad'),
+(gen_random_uuid(), 'near', '/nɪr/', 'cerca', 'adjective', 'The school is near my house.', 'a1', 'directions', 5, 'La ciudad'),
+(gen_random_uuid(), 'far', '/fɑːr/', 'lejos', 'adjective', 'The airport is far.', 'a1', 'directions', 5, 'La ciudad'),
+(gen_random_uuid(), 'go', '/ɡoʊ/', 'ir', 'verb', 'I go to school every day.', 'a1', 'transport', 5, 'La ciudad'),
+(gen_random_uuid(), 'come', '/kʌm/', 'venir', 'verb', 'Come to my house.', 'a1', 'transport', 5, 'La ciudad'),
+(gen_random_uuid(), 'stop', '/stɒp/', 'parar', 'verb', 'The bus stops here.', 'a1', 'transport', 5, 'La ciudad'),
+(gen_random_uuid(), 'map', '/mæp/', 'mapa', 'noun', 'I need a map.', 'a1', 'directions', 5, 'La ciudad'),
+(gen_random_uuid(), 'place', '/pleɪs/', 'lugar', 'noun', 'This is a nice place.', 'a1', 'places', 5, 'La ciudad'),
+(gen_random_uuid(), 'road', '/roʊd/', 'carretera', 'noun', 'The road is long.', 'a1', 'places', 5, 'La ciudad');
