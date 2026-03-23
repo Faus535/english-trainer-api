@@ -22,13 +22,14 @@ public final class UserProfile extends AggregateRoot<UserProfileId> {
     private final int sessionsThisWeek;
     private final LocalDate weekStart;
     private final int xp;
+    private final Instant lastTestAt;
     private final Instant createdAt;
     private final Instant updatedAt;
 
     private UserProfile(UserProfileId id, boolean testCompleted, UserLevel levelListening,
                         UserLevel levelVocabulary, UserLevel levelGrammar, UserLevel levelPhrases,
                         UserLevel levelPronunciation, int sessionCount, int sessionsThisWeek,
-                        LocalDate weekStart, int xp, Instant createdAt, Instant updatedAt) {
+                        LocalDate weekStart, int xp, Instant lastTestAt, Instant createdAt, Instant updatedAt) {
         this.id = id;
         this.testCompleted = testCompleted;
         this.levelListening = levelListening;
@@ -40,6 +41,7 @@ public final class UserProfile extends AggregateRoot<UserProfileId> {
         this.sessionsThisWeek = sessionsThisWeek;
         this.weekStart = weekStart;
         this.xp = xp;
+        this.lastTestAt = lastTestAt;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
@@ -59,6 +61,7 @@ public final class UserProfile extends AggregateRoot<UserProfileId> {
                 0,
                 null,
                 0,
+                null,
                 now,
                 now
         );
@@ -69,35 +72,40 @@ public final class UserProfile extends AggregateRoot<UserProfileId> {
     public static UserProfile reconstitute(UserProfileId id, boolean testCompleted, UserLevel levelListening,
                                            UserLevel levelVocabulary, UserLevel levelGrammar, UserLevel levelPhrases,
                                            UserLevel levelPronunciation, int sessionCount, int sessionsThisWeek,
-                                           LocalDate weekStart, int xp, Instant createdAt, Instant updatedAt) {
+                                           LocalDate weekStart, int xp, Instant lastTestAt, Instant createdAt, Instant updatedAt) {
         return new UserProfile(id, testCompleted, levelListening, levelVocabulary, levelGrammar,
-                levelPhrases, levelPronunciation, sessionCount, sessionsThisWeek, weekStart, xp, createdAt, updatedAt);
+                levelPhrases, levelPronunciation, sessionCount, sessionsThisWeek, weekStart, xp, lastTestAt, createdAt, updatedAt);
     }
 
     public UserProfile markTestCompleted() {
         return new UserProfile(id, true, levelListening, levelVocabulary, levelGrammar,
-                levelPhrases, levelPronunciation, sessionCount, sessionsThisWeek, weekStart, xp, createdAt, Instant.now());
+                levelPhrases, levelPronunciation, sessionCount, sessionsThisWeek, weekStart, xp, Instant.now(), createdAt, Instant.now());
+    }
+
+    public UserProfile resetTest() {
+        return new UserProfile(id, false, levelListening, levelVocabulary, levelGrammar,
+                levelPhrases, levelPronunciation, sessionCount, sessionsThisWeek, weekStart, xp, lastTestAt, createdAt, Instant.now());
     }
 
     public UserProfile updateModuleLevel(String module, UserLevel level) throws InvalidModuleException {
         return switch (module.toLowerCase()) {
             case "listening" -> new UserProfile(id, testCompleted, level, levelVocabulary, levelGrammar,
-                    levelPhrases, levelPronunciation, sessionCount, sessionsThisWeek, weekStart, xp, createdAt, Instant.now());
+                    levelPhrases, levelPronunciation, sessionCount, sessionsThisWeek, weekStart, xp, lastTestAt, createdAt, Instant.now());
             case "vocabulary" -> new UserProfile(id, testCompleted, levelListening, level, levelGrammar,
-                    levelPhrases, levelPronunciation, sessionCount, sessionsThisWeek, weekStart, xp, createdAt, Instant.now());
+                    levelPhrases, levelPronunciation, sessionCount, sessionsThisWeek, weekStart, xp, lastTestAt, createdAt, Instant.now());
             case "grammar" -> new UserProfile(id, testCompleted, levelListening, levelVocabulary, level,
-                    levelPhrases, levelPronunciation, sessionCount, sessionsThisWeek, weekStart, xp, createdAt, Instant.now());
+                    levelPhrases, levelPronunciation, sessionCount, sessionsThisWeek, weekStart, xp, lastTestAt, createdAt, Instant.now());
             case "phrases" -> new UserProfile(id, testCompleted, levelListening, levelVocabulary, levelGrammar,
-                    level, levelPronunciation, sessionCount, sessionsThisWeek, weekStart, xp, createdAt, Instant.now());
+                    level, levelPronunciation, sessionCount, sessionsThisWeek, weekStart, xp, lastTestAt, createdAt, Instant.now());
             case "pronunciation" -> new UserProfile(id, testCompleted, levelListening, levelVocabulary, levelGrammar,
-                    levelPhrases, level, sessionCount, sessionsThisWeek, weekStart, xp, createdAt, Instant.now());
+                    levelPhrases, level, sessionCount, sessionsThisWeek, weekStart, xp, lastTestAt, createdAt, Instant.now());
             default -> throw new InvalidModuleException(module);
         };
     }
 
     public UserProfile recordSession() {
         return new UserProfile(id, testCompleted, levelListening, levelVocabulary, levelGrammar,
-                levelPhrases, levelPronunciation, sessionCount + 1, sessionsThisWeek + 1, weekStart, xp, createdAt, Instant.now());
+                levelPhrases, levelPronunciation, sessionCount + 1, sessionsThisWeek + 1, weekStart, xp, lastTestAt, createdAt, Instant.now());
     }
 
     public UserProfile addXp(int amount) throws InvalidXpAmountException {
@@ -105,14 +113,14 @@ public final class UserProfile extends AggregateRoot<UserProfileId> {
             throw new InvalidXpAmountException(amount);
         }
         UserProfile updated = new UserProfile(id, testCompleted, levelListening, levelVocabulary, levelGrammar,
-                levelPhrases, levelPronunciation, sessionCount, sessionsThisWeek, weekStart, xp + amount, createdAt, Instant.now());
+                levelPhrases, levelPronunciation, sessionCount, sessionsThisWeek, weekStart, xp + amount, lastTestAt, createdAt, Instant.now());
         updated.registerEvent(new XpGrantedEvent(id, amount, xp + amount));
         return updated;
     }
 
     public UserProfile resetWeeklyCounters() {
         return new UserProfile(id, testCompleted, levelListening, levelVocabulary, levelGrammar,
-                levelPhrases, levelPronunciation, sessionCount, 0, LocalDate.now(), xp, createdAt, Instant.now());
+                levelPhrases, levelPronunciation, sessionCount, 0, LocalDate.now(), xp, lastTestAt, createdAt, Instant.now());
     }
 
     public UserProfileId id() { return id; }
@@ -126,6 +134,14 @@ public final class UserProfile extends AggregateRoot<UserProfileId> {
     public int sessionsThisWeek() { return sessionsThisWeek; }
     public LocalDate weekStart() { return weekStart; }
     public int xp() { return xp; }
+    public Instant lastTestAt() { return lastTestAt; }
     public Instant createdAt() { return createdAt; }
     public Instant updatedAt() { return updatedAt; }
+
+    public boolean canRetakeTest() {
+        if (lastTestAt == null) {
+            return true;
+        }
+        return Instant.now().isAfter(lastTestAt.plusSeconds(24 * 60 * 60));
+    }
 }

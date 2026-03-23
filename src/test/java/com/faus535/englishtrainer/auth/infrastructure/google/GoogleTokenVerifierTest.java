@@ -20,7 +20,7 @@ class GoogleTokenVerifierTest {
     @BeforeEach
     void setUp() {
         googleIdTokenVerifier = mock(GoogleIdTokenVerifier.class);
-        tokenVerifier = new GoogleTokenVerifier(googleIdTokenVerifier);
+        tokenVerifier = new GoogleTokenVerifier("test-client-id");
     }
 
     @Test

@@ -26,8 +26,8 @@ class GetMiniTestQuestionsController {
     ResponseEntity<List<TestQuestionResponse>> handle(@RequestParam String module, @RequestParam String level) {
         List<TestQuestion> questions = useCase.execute(module, level);
         List<TestQuestionResponse> response = questions.stream()
-                .map(q -> new TestQuestionResponse(q.id(), q.type(), q.question(), q.options(), q.level()))
-                .collect(Collectors.toList());
+                .map(q -> new TestQuestionResponse(q.id().toString(), q.type(), q.question(), q.options(), q.level()))
+                .toList();
         return ResponseEntity.ok(response);
     }
 }

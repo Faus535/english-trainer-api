@@ -58,6 +58,9 @@ class UserProfileEntity implements Persistable<UUID> {
     @Column(nullable = false)
     private int xp;
 
+    @Column(name = "last_test_at")
+    private Instant lastTestAt;
+
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
 
@@ -80,6 +83,7 @@ class UserProfileEntity implements Persistable<UUID> {
         entity.sessionsThisWeek = aggregate.sessionsThisWeek();
         entity.weekStart = aggregate.weekStart();
         entity.xp = aggregate.xp();
+        entity.lastTestAt = aggregate.lastTestAt();
         entity.createdAt = aggregate.createdAt();
         entity.updatedAt = aggregate.updatedAt();
         return entity;
@@ -98,6 +102,7 @@ class UserProfileEntity implements Persistable<UUID> {
                 sessionsThisWeek,
                 weekStart,
                 xp,
+                lastTestAt,
                 createdAt,
                 updatedAt
         );

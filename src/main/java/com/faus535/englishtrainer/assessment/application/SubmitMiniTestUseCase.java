@@ -30,7 +30,7 @@ public class SubmitMiniTestUseCase {
         int totalQuestions = questions.size();
         int correctAnswers = 0;
         for (TestQuestion q : questions) {
-            String answer = answers.get(q.id());
+            String answer = answers.get(q.id().toString());
             if (answer != null && answer.equals(q.correctAnswer())) {
                 correctAnswers++;
             }
