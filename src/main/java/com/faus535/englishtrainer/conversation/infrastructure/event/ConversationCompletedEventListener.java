@@ -6,8 +6,10 @@ import com.faus535.englishtrainer.conversation.domain.event.ConversationComplete
 import com.faus535.englishtrainer.user.application.AddXpUseCase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.event.TransactionalEventListener;
 
 @Component
 class ConversationCompletedEventListener {
@@ -24,7 +26,8 @@ class ConversationCompletedEventListener {
         this.addXpUseCase = addXpUseCase;
     }
 
-    @EventListener
+    @TransactionalEventListener
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     void handleConversationCompleted(ConversationCompletedEvent event) {
         try {
             authUserRepository.findById(new AuthUserId(event.userId()))
