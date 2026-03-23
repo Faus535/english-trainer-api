@@ -30,7 +30,7 @@ class TestQuestionEntity {
     @Column(name = "correct_answer", nullable = false, columnDefinition = "TEXT")
     private String correctAnswer;
 
-    @Column(name = "audio_speed")
+    @Column(name = "audio_speed", columnDefinition = "NUMERIC(3,2)")
     private Double audioSpeed;
 
     @Column(nullable = false)
