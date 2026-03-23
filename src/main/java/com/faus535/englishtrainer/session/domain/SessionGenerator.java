@@ -2,6 +2,7 @@ package com.faus535.englishtrainer.session.domain;
 
 import com.faus535.englishtrainer.user.domain.UserProfileId;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -19,7 +20,17 @@ public final class SessionGenerator {
     }
 
     public static Session generateNormal(UserProfileId userId, SessionMode mode, int sessionCount) {
+        return generateNormal(userId, mode, sessionCount, null);
+    }
+
+    public static Session generateNormal(UserProfileId userId, SessionMode mode, int sessionCount,
+                                         List<ModuleWeight> weights) {
         int[] durations = MODE_DURATIONS.get(mode.value());
+
+        if (weights != null && !weights.isEmpty()) {
+            return generateWeighted(userId, mode, durations, weights);
+        }
+
         String secondaryModule = SECONDARY_MODULES[sessionCount % SECONDARY_MODULES.length];
 
         List<SessionBlock> blocks = List.of(
@@ -31,6 +42,36 @@ public final class SessionGenerator {
 
         return Session.create(userId, mode, new SessionType("normal"),
                 "listening", secondaryModule, null, blocks);
+    }
+
+    private static Session generateWeighted(UserProfileId userId, SessionMode mode,
+                                            int[] durations, List<ModuleWeight> weights) {
+        int totalModuleTime = durations[1] + durations[2];
+        List<SessionBlock> blocks = new ArrayList<>();
+        blocks.add(new SessionBlock("warmup", "review", durations[0]));
+
+        String primaryModule = weights.stream()
+                .max((a, b) -> Double.compare(a.weight(), b.weight()))
+                .map(ModuleWeight::moduleName)
+                .orElse("listening");
+
+        for (ModuleWeight mw : weights) {
+            int blockDuration = Math.max(1, (int) Math.round(totalModuleTime * mw.weight()));
+            blocks.add(new SessionBlock("weighted", mw.moduleName(), blockDuration));
+        }
+
+        blocks.add(new SessionBlock("practice", "mixed", durations[3]));
+
+        String secondaryModule = weights.size() > 1
+                ? weights.stream()
+                    .filter(w -> !w.moduleName().equals(primaryModule))
+                    .max((a, b) -> Double.compare(a.weight(), b.weight()))
+                    .map(ModuleWeight::moduleName)
+                    .orElse("mixed")
+                : primaryModule;
+
+        return Session.create(userId, mode, new SessionType("normal"),
+                primaryModule, secondaryModule, null, List.copyOf(blocks));
     }
 
     public static Session generateIntegrator(UserProfileId userId, SessionMode mode, String theme) {

@@ -1,6 +1,7 @@
 package com.faus535.englishtrainer.session.infrastructure.controller;
 
 import com.faus535.englishtrainer.session.application.GenerateSessionUseCase;
+import com.faus535.englishtrainer.session.domain.ModuleWeight;
 import com.faus535.englishtrainer.session.domain.Session;
 import com.faus535.englishtrainer.session.domain.SessionBlock;
 import com.faus535.englishtrainer.session.domain.SessionMode;
@@ -16,6 +17,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 class GenerateSessionController {
 
@@ -25,7 +28,9 @@ class GenerateSessionController {
         this.useCase = useCase;
     }
 
-    record GenerateSessionRequest(@NotBlank String mode) {
+    record WeightRequest(String moduleName, double weight) {}
+
+    record GenerateSessionRequest(@NotBlank String mode, List<WeightRequest> weights) {
     }
 
     @PostMapping("/api/profiles/{userId}/sessions/generate")
@@ -33,9 +38,16 @@ class GenerateSessionController {
                                            @Valid @RequestBody GenerateSessionRequest request)
             throws UserProfileNotFoundException, ActiveSessionExistsException {
 
+        List<ModuleWeight> weights = request.weights() != null
+                ? request.weights().stream()
+                    .map(w -> new ModuleWeight(w.moduleName(), w.weight()))
+                    .toList()
+                : null;
+
         Session session = useCase.execute(
                 UserProfileId.fromString(userId),
-                new SessionMode(request.mode())
+                new SessionMode(request.mode()),
+                weights
         );
 
         return ResponseEntity.status(HttpStatus.CREATED).body(toResponse(session));
