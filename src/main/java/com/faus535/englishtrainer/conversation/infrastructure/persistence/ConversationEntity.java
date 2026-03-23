@@ -1,5 +1,7 @@
 package com.faus535.englishtrainer.conversation.infrastructure.persistence;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.faus535.englishtrainer.conversation.domain.*;
 import jakarta.persistence.*;
 import org.springframework.data.domain.Persistable;
@@ -12,6 +14,8 @@ import java.util.UUID;
 @Entity
 @Table(name = "conversations")
 class ConversationEntity implements Persistable<UUID> {
+
+    private static final ObjectMapper MAPPER = new ObjectMapper();
 
     @Id
     private UUID id;
@@ -37,6 +41,12 @@ class ConversationEntity implements Persistable<UUID> {
     @Column(columnDefinition = "TEXT")
     private String summary;
 
+    @Column(name = "evaluation_json", columnDefinition = "TEXT")
+    private String evaluationJson;
+
+    @Column(name = "goals_json", columnDefinition = "TEXT")
+    private String goalsJson;
+
     @Column(name = "started_at", nullable = false)
     private Instant startedAt;
 
@@ -58,6 +68,8 @@ class ConversationEntity implements Persistable<UUID> {
         entity.topic = aggregate.topic();
         entity.status = aggregate.status().value();
         entity.summary = aggregate.summary();
+        entity.evaluationJson = serializeEvaluation(aggregate.evaluation());
+        entity.goalsJson = serializeGoals(aggregate.goals());
         entity.startedAt = aggregate.startedAt();
         entity.endedAt = aggregate.endedAt();
         entity.turnEntities = aggregate.turns().stream()
@@ -73,6 +85,7 @@ class ConversationEntity implements Persistable<UUID> {
         return Conversation.reconstitute(
                 new ConversationId(id), userId, new ConversationLevel(level),
                 topic, ConversationStatus.fromString(status), summary,
+                deserializeEvaluation(evaluationJson), deserializeGoals(goalsJson),
                 startedAt, endedAt, turns);
     }
 
@@ -84,6 +97,8 @@ class ConversationEntity implements Persistable<UUID> {
         this.status = aggregate.status().value();
         this.summary = aggregate.summary();
         this.endedAt = aggregate.endedAt();
+        this.evaluationJson = serializeEvaluation(aggregate.evaluation());
+        this.goalsJson = serializeGoals(aggregate.goals());
 
         List<UUID> existingTurnIds = turnEntities.stream()
                 .map(ConversationTurnEntity::getId)
@@ -93,6 +108,42 @@ class ConversationEntity implements Persistable<UUID> {
             if (!existingTurnIds.contains(turn.id().value())) {
                 turnEntities.add(ConversationTurnEntity.fromTurn(turn, this));
             }
+        }
+    }
+
+    private static String serializeEvaluation(ConversationEvaluation evaluation) {
+        if (evaluation == null) return null;
+        try {
+            return MAPPER.writeValueAsString(evaluation);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    private static ConversationEvaluation deserializeEvaluation(String json) {
+        if (json == null || json.isBlank()) return null;
+        try {
+            return MAPPER.readValue(json, ConversationEvaluation.class);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    private static String serializeGoals(List<ConversationGoal> goals) {
+        if (goals == null || goals.isEmpty()) return null;
+        try {
+            return MAPPER.writeValueAsString(goals);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    private static List<ConversationGoal> deserializeGoals(String json) {
+        if (json == null || json.isBlank()) return List.of();
+        try {
+            return MAPPER.readValue(json, new TypeReference<>() {});
+        } catch (Exception e) {
+            return List.of();
         }
     }
 

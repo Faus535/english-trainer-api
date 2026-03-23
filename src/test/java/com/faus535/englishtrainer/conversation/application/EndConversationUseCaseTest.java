@@ -38,11 +38,12 @@ class EndConversationUseCaseTest {
         repository.save(conversation);
         aiTutorPort.willSummarize("Great session! You practiced travel vocabulary.");
 
-        Conversation result = useCase.execute(conversation.id().value());
+        EndConversationUseCase.EndConversationResult result = useCase.execute(conversation.id().value());
 
-        assertEquals(ConversationStatus.COMPLETED, result.status());
-        assertEquals("Great session! You practiced travel vocabulary.", result.summary());
-        assertNotNull(result.endedAt());
+        assertEquals(ConversationStatus.COMPLETED, result.conversation().status());
+        assertEquals("Great session! You practiced travel vocabulary.", result.conversation().summary());
+        assertNotNull(result.conversation().endedAt());
+        assertNotNull(result.evaluation());
     }
 
     @Test

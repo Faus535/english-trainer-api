@@ -1,8 +1,6 @@
 package com.faus535.englishtrainer.conversation.infrastructure.controller;
 
-import com.faus535.englishtrainer.conversation.domain.Conversation;
-import com.faus535.englishtrainer.conversation.domain.ConversationTurn;
-import com.faus535.englishtrainer.conversation.domain.TutorFeedback;
+import com.faus535.englishtrainer.conversation.domain.*;
 
 import java.time.Instant;
 import java.util.List;
@@ -14,6 +12,8 @@ record ConversationResponse(
         String topic,
         String status,
         String summary,
+        ConversationEvaluation evaluation,
+        List<ConversationGoal> goals,
         Instant startedAt,
         Instant endedAt,
         List<TurnResponse> turns
@@ -47,6 +47,8 @@ record ConversationResponse(
                 conversation.topic(),
                 conversation.status().value(),
                 conversation.summary(),
+                conversation.evaluation(),
+                conversation.goals(),
                 conversation.startedAt(),
                 conversation.endedAt(),
                 conversation.turns().stream().map(TurnResponse::from).toList()

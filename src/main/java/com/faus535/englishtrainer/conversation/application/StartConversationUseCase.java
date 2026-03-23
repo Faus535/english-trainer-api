@@ -7,6 +7,7 @@ import com.faus535.englishtrainer.shared.application.annotation.UseCase;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.UUID;
 
 @UseCase
@@ -28,6 +29,12 @@ public class StartConversationUseCase {
     @Transactional
     public Conversation execute(UUID userId, String level, String topic)
             throws MaxConversationsExceededException, AiTutorException {
+        return execute(userId, level, topic, List.of());
+    }
+
+    @Transactional
+    public Conversation execute(UUID userId, String level, String topic, List<ConversationGoal> goals)
+            throws MaxConversationsExceededException, AiTutorException {
 
         int activeCount = repository.countActiveByUserId(userId);
         if (activeCount >= MAX_ACTIVE_CONVERSATIONS) {
@@ -35,7 +42,7 @@ public class StartConversationUseCase {
         }
 
         ConversationLevel conversationLevel = new ConversationLevel(level);
-        Conversation conversation = Conversation.start(userId, conversationLevel, topic);
+        Conversation conversation = Conversation.start(userId, conversationLevel, topic, goals);
 
         AiTutorPort.AiTutorResponse opening = aiTutorPort.chat(
                 conversationLevel, topic, conversation.turns(), null);

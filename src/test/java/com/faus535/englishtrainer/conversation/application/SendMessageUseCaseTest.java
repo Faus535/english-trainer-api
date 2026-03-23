@@ -8,6 +8,7 @@ import com.faus535.englishtrainer.conversation.infrastructure.InMemoryConversati
 import com.faus535.englishtrainer.conversation.infrastructure.StubAiTutorPort;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.List;
 import java.util.UUID;
@@ -19,12 +20,13 @@ class SendMessageUseCaseTest {
     private InMemoryConversationRepository repository;
     private StubAiTutorPort aiTutorPort;
     private SendMessageUseCase useCase;
+    private final ApplicationEventPublisher eventPublisher = event -> {};
 
     @BeforeEach
     void setUp() {
         repository = new InMemoryConversationRepository();
         aiTutorPort = new StubAiTutorPort();
-        useCase = new SendMessageUseCase(repository, aiTutorPort);
+        useCase = new SendMessageUseCase(repository, aiTutorPort, eventPublisher);
     }
 
     @Test

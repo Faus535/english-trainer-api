@@ -57,6 +57,24 @@ public final class SpacedRepetitionItem extends AggregateRoot<SpacedRepetitionIt
         );
     }
 
+    public static SpacedRepetitionItem createForVocabulary(UserProfileId userId, String word, String level) {
+        String normalizedWord = word.toLowerCase().trim();
+        String unitReference = "vocab-" + normalizedWord;
+        return new SpacedRepetitionItem(
+                SpacedRepetitionItemId.generate(),
+                userId,
+                unitReference,
+                "vocabulary-word",
+                level,
+                0,
+                LocalDate.now().plusDays(1),
+                0,
+                0,
+                false,
+                Instant.now()
+        );
+    }
+
     public static SpacedRepetitionItem reconstitute(SpacedRepetitionItemId id, UserProfileId userId,
                                                      String unitReference, String moduleName, String level,
                                                      int unitIndex, LocalDate nextReviewDate, int intervalIndex,

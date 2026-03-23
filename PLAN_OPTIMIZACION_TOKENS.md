@@ -37,10 +37,10 @@
 - [x] Max tokens: 300 conversacion, 600 writing
 - [x] Feedback JSON solo cada 3 turnos de usuario
 
-### FASE 3 - Arquitectura (completada parcialmente)
+### FASE 3 - Arquitectura (completada)
 - [x] Mensajes antiguos truncados a 150 chars (ultimos 6 completos)
 - [x] Cache in-memory del greeting por nivel+topic
-- [ ] Tool use para writing (pendiente)
+- [x] Tool use para writing
 
 ---
 

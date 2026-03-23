@@ -1,7 +1,9 @@
 package com.faus535.englishtrainer.conversation.infrastructure.ai;
 
+import com.faus535.englishtrainer.conversation.domain.ConversationGoal;
 import com.faus535.englishtrainer.conversation.domain.ConversationLevel;
 
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -23,12 +25,20 @@ class SystemPromptBuilder {
     }
 
     static String build(ConversationLevel level, String topic, Float confidence, boolean includeFeedback) {
-        String cacheKey = level.value() + ":" + (topic != null ? topic : "") + ":" + includeFeedback
-                + ":" + confidenceBucket(confidence);
-        return PROMPT_CACHE.computeIfAbsent(cacheKey, k -> buildPrompt(level, topic, confidence, includeFeedback));
+        return build(level, topic, confidence, includeFeedback, List.of());
     }
 
-    private static String buildPrompt(ConversationLevel level, String topic, Float confidence, boolean includeFeedback) {
+    static String build(ConversationLevel level, String topic, Float confidence, boolean includeFeedback,
+                         List<ConversationGoal> goals) {
+        String goalsKey = goals != null && !goals.isEmpty() ? String.valueOf(goals.hashCode()) : "";
+        String cacheKey = level.value() + ":" + (topic != null ? topic : "") + ":" + includeFeedback
+                + ":" + confidenceBucket(confidence) + ":" + goalsKey;
+        return PROMPT_CACHE.computeIfAbsent(cacheKey,
+                k -> buildPrompt(level, topic, confidence, includeFeedback, goals));
+    }
+
+    private static String buildPrompt(ConversationLevel level, String topic, Float confidence,
+                                       boolean includeFeedback, List<ConversationGoal> goals) {
         StringBuilder p = new StringBuilder();
 
         String scenario = topic != null ? ROLE_PLAY_SCENARIOS.get(topic.toLowerCase()) : null;
@@ -44,6 +54,7 @@ class SystemPromptBuilder {
 
         appendLevelRules(p, level.value());
         appendConfidenceRules(p, confidence);
+        appendGoals(p, goals);
 
         if (includeFeedback) {
             appendFeedbackFormat(p);
@@ -75,6 +86,20 @@ class SystemPromptBuilder {
         } else if (confidence < 0.75f) {
             p.append("STT mid(%.0f%%),possible misrecognition. ".formatted(confidence * 100));
         }
+    }
+
+    private static void appendGoals(StringBuilder p, List<ConversationGoal> goals) {
+        if (goals == null || goals.isEmpty()) return;
+        p.append("Goals:");
+        for (int i = 0; i < goals.size(); i++) {
+            ConversationGoal goal = goals.get(i);
+            p.append(i + 1).append(")").append(goal.description());
+            if (!goal.targetItems().isEmpty()) {
+                p.append("(").append(String.join(",", goal.targetItems())).append(")");
+            }
+            p.append(" ");
+        }
+        p.append("Guide conversation toward goals. ");
     }
 
     private static void appendFeedbackFormat(StringBuilder p) {

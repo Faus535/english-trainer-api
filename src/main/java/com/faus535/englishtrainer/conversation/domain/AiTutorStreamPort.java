@@ -7,6 +7,11 @@ import java.util.List;
 
 public interface AiTutorStreamPort {
 
-    Flux<String> chatStream(ConversationLevel level, String topic, List<ConversationTurn> turns,
-                            Float confidence) throws AiTutorException;
+    Flux<StreamEvent> chatStream(ConversationLevel level, String topic, List<ConversationTurn> turns,
+                                  Float confidence) throws AiTutorException;
+
+    sealed interface StreamEvent permits StreamEvent.TextChunk, StreamEvent.Feedback {
+        record TextChunk(String text) implements StreamEvent {}
+        record Feedback(TutorFeedback feedback, String fullContent) implements StreamEvent {}
+    }
 }

@@ -19,6 +19,25 @@ class AnthropicWritingEvaluatorAdapter implements WritingEvaluatorPort {
     private static final Logger log = LoggerFactory.getLogger(AnthropicWritingEvaluatorAdapter.class);
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
+    private static final Map<String, Object> EVALUATE_TOOL = Map.of(
+            "name", "evaluate_writing",
+            "description", "Evaluate a student's English writing exercise",
+            "input_schema", Map.of(
+                    "type", "object",
+                    "properties", Map.of(
+                            "grammarScore", Map.of("type", "number", "description", "Grammar score 0-100"),
+                            "coherenceScore", Map.of("type", "number", "description", "Coherence score 0-100"),
+                            "vocabularyScore", Map.of("type", "number", "description", "Vocabulary score 0-100"),
+                            "overallScore", Map.of("type", "number", "description", "Overall score 0-100"),
+                            "levelAssessment", Map.of("type", "string", "description", "CEFR level: a1, a2, b1, b2, c1, or c2"),
+                            "generalFeedback", Map.of("type", "string", "description", "Brief constructive feedback"),
+                            "corrections", Map.of("type", "array", "items", Map.of("type", "string"), "description", "List of specific corrections")
+                    ),
+                    "required", List.of("grammarScore", "coherenceScore", "vocabularyScore", "overallScore",
+                            "levelAssessment", "generalFeedback", "corrections")
+            )
+    );
+
     private final RestClient restClient;
     private final String model;
     private final int maxTokens;
@@ -39,11 +58,8 @@ class AnthropicWritingEvaluatorAdapter implements WritingEvaluatorPort {
 
     @Override
     public WritingFeedback evaluate(String text, String exercisePrompt, String level) throws Exception {
-        String systemPrompt = """
-                English writing evaluator. Student CEFR level: %s.
-                Respond ONLY with JSON:
-                {"grammarScore":0-100,"coherenceScore":0-100,"vocabularyScore":0-100,"overallScore":0-100,"levelAssessment":"a1/a2/b1/b2/c1/c2","generalFeedback":"brief feedback","corrections":["correction 1"]}
-                """.formatted(level);
+        String systemPrompt = "English writing evaluator. Student CEFR level: " + level +
+                ". Use the evaluate_writing tool to return your evaluation.";
 
         String userMessage = "Prompt: " + exercisePrompt + "\n\nStudent's text:\n" + text;
 
@@ -51,6 +67,8 @@ class AnthropicWritingEvaluatorAdapter implements WritingEvaluatorPort {
                 "model", model,
                 "max_tokens", maxTokens,
                 "system", systemPrompt,
+                "tools", List.of(EVALUATE_TOOL),
+                "tool_choice", Map.of("type", "tool", "name", "evaluate_writing"),
                 "messages", List.of(Map.of("role", "user", "content", userMessage))
         );
 
@@ -64,19 +82,23 @@ class AnthropicWritingEvaluatorAdapter implements WritingEvaluatorPort {
 
         if (response == null) throw new Exception("Empty response from Claude API");
 
-        @SuppressWarnings("unchecked")
-        List<Map<String, Object>> content = (List<Map<String, Object>>) response.get("content");
-        String rawText = (String) content.getFirst().get("text");
+        return extractFeedbackFromToolUse(response);
+    }
 
-        // Extract JSON from response
-        int jsonStart = rawText.indexOf('{');
-        int jsonEnd = rawText.lastIndexOf('}') + 1;
-        if (jsonStart >= 0 && jsonEnd > jsonStart) {
-            String json = rawText.substring(jsonStart, jsonEnd);
-            return MAPPER.readValue(json, WritingFeedback.class);
+    @SuppressWarnings("unchecked")
+    private WritingFeedback extractFeedbackFromToolUse(Map<String, Object> response) throws Exception {
+        List<Map<String, Object>> content = (List<Map<String, Object>>) response.get("content");
+        if (content == null) throw new Exception("No content in Claude API response");
+
+        for (Map<String, Object> block : content) {
+            if ("tool_use".equals(block.get("type"))) {
+                Object input = block.get("input");
+                String json = MAPPER.writeValueAsString(input);
+                return MAPPER.readValue(json, WritingFeedback.class);
+            }
         }
 
-        log.warn("Could not parse writing feedback from response: {}", rawText);
+        log.warn("No tool_use block found in response: {}", response);
         return WritingFeedback.empty();
     }
 }

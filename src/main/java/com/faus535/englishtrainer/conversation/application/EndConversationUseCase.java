@@ -25,7 +25,7 @@ public class EndConversationUseCase {
     }
 
     @Transactional
-    public Conversation execute(UUID conversationIdValue)
+    public EndConversationResult execute(UUID conversationIdValue)
             throws ConversationNotFoundException, ConversationAlreadyEndedException, AiTutorException {
 
         ConversationId conversationId = new ConversationId(conversationIdValue);
@@ -33,10 +33,16 @@ public class EndConversationUseCase {
                 .orElseThrow(() -> new ConversationNotFoundException(conversationId));
 
         String summary = aiTutorPort.summarize(conversation.level(), conversation.turns());
-        conversation = conversation.end(summary);
+        ConversationEvaluation evaluation = aiTutorPort.evaluate(
+                conversation.level(), conversation.turns(), conversation.goals());
+
+        conversation = conversation.end(summary, evaluation);
 
         Conversation saved = repository.save(conversation);
         conversation.pullDomainEvents().forEach(eventPublisher::publishEvent);
-        return saved;
+
+        return new EndConversationResult(saved, evaluation);
     }
+
+    public record EndConversationResult(Conversation conversation, ConversationEvaluation evaluation) {}
 }

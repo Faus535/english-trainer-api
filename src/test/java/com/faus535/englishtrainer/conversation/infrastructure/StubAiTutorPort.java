@@ -38,6 +38,17 @@ public final class StubAiTutorPort implements AiTutorPort {
         this.nextSummary = summary;
     }
 
+    @Override
+    public ConversationEvaluation evaluate(ConversationLevel level, List<ConversationTurn> turns,
+                                            List<ConversationGoal> goals) {
+        return ConversationEvaluation.empty();
+    }
+
+    @Override
+    public List<ConversationGoal> generateGoals(ConversationLevel level, String topic) {
+        return List.of();
+    }
+
     public void willFail() {
         this.shouldFail = true;
     }

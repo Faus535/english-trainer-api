@@ -56,13 +56,13 @@ Turn-based REST: receives user transcript, calls Claude, returns response + stru
 
 - [x] `EndConversationUseCase` — call Claude to summarize conversation highlights
 - [x] Grant XP on conversation completion (integrate with gamification module)
-- [ ] Add new vocabulary from feedback to spaced repetition queue (requires extending SR model to word-level)
+- [x] Add new vocabulary from feedback to spaced repetition queue (requires extending SR model to word-level)
 - [x] Rate limiting: max concurrent conversations per user
 - [x] Error handling: Claude API timeouts, rate limits, fallback responses
 
 ## Phase 5 — Advanced (future)
 
-- [ ] SSE streaming for Claude responses (faster perceived latency)
+- [x] SSE streaming for Claude responses (faster perceived latency)
 - [x] Role-play scenarios: job interview, restaurant, doctor visit, travel, hotel check-in, shopping
-- [ ] Conversation analytics: common mistakes over time, vocabulary growth tracking
-- [ ] Topic suggestions based on level + past conversations
+- [x] Conversation analytics: common mistakes over time, vocabulary growth tracking
+- [x] Topic suggestions based on level + past conversations

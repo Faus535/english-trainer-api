@@ -4,7 +4,9 @@ import com.faus535.englishtrainer.conversation.domain.*;
 import com.faus535.englishtrainer.conversation.domain.error.AiTutorException;
 import com.faus535.englishtrainer.conversation.domain.error.ConversationAlreadyEndedException;
 import com.faus535.englishtrainer.conversation.domain.error.ConversationNotFoundException;
+import com.faus535.englishtrainer.errorpattern.infrastructure.event.GrammarFeedbackEvent;
 import com.faus535.englishtrainer.shared.application.annotation.UseCase;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -23,10 +25,13 @@ public class SendMessageUseCase {
 
     private final ConversationRepository repository;
     private final AiTutorPort aiTutorPort;
+    private final ApplicationEventPublisher eventPublisher;
 
-    public SendMessageUseCase(ConversationRepository repository, AiTutorPort aiTutorPort) {
+    public SendMessageUseCase(ConversationRepository repository, AiTutorPort aiTutorPort,
+                              ApplicationEventPublisher eventPublisher) {
         this.repository = repository;
         this.aiTutorPort = aiTutorPort;
+        this.eventPublisher = eventPublisher;
     }
 
     @Transactional
@@ -50,8 +55,22 @@ public class SendMessageUseCase {
 
         repository.save(conversation);
 
+        publishVocabularyEvent(conversation, response.feedback());
+
         boolean suggestEnd = detectFarewell(transcript);
         return new SendMessageResult(response.content(), response.feedback(), suggestEnd);
+    }
+
+    private void publishVocabularyEvent(Conversation conversation, TutorFeedback feedback) {
+        if (feedback == null) return;
+        if (!feedback.vocabularySuggestions().isEmpty()) {
+            eventPublisher.publishEvent(new VocabularyFeedbackEvent(
+                    conversation.userId(), conversation.level().value(), feedback.vocabularySuggestions()));
+        }
+        if (!feedback.grammarCorrections().isEmpty()) {
+            eventPublisher.publishEvent(new GrammarFeedbackEvent(
+                    conversation.userId(), feedback.grammarCorrections()));
+        }
     }
 
     private boolean detectFarewell(String transcript) {

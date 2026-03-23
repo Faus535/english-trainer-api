@@ -11,5 +11,10 @@ public interface AiTutorPort {
 
     String summarize(ConversationLevel level, List<ConversationTurn> turns) throws AiTutorException;
 
+    ConversationEvaluation evaluate(ConversationLevel level, List<ConversationTurn> turns,
+                                     List<ConversationGoal> goals) throws AiTutorException;
+
+    List<ConversationGoal> generateGoals(ConversationLevel level, String topic) throws AiTutorException;
+
     record AiTutorResponse(String content, TutorFeedback feedback) {}
 }
