@@ -8,12 +8,12 @@ import org.springframework.web.reactive.function.client.WebClient;
 import java.util.List;
 import java.util.Map;
 
-@Service
-class AnthropicExerciseGeneratorAdapter implements ExerciseGeneratorPort {
+@Service("tutorErrorExerciseGenerator")
+class AnthropicTutorErrorExerciseGeneratorAdapter implements ExerciseGeneratorPort {
 
     private final WebClient webClient;
 
-    AnthropicExerciseGeneratorAdapter(@Value("${anthropic.api-key}") String apiKey) {
+    AnthropicTutorErrorExerciseGeneratorAdapter(@Value("${anthropic.api-key}") String apiKey) {
         this.webClient = WebClient.builder()
                 .baseUrl("https://api.anthropic.com/v1")
                 .defaultHeader("x-api-key", apiKey)
