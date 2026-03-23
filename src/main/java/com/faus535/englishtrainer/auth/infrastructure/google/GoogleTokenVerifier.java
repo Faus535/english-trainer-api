@@ -24,6 +24,10 @@ public class GoogleTokenVerifier {
                 .build();
     }
 
+    GoogleTokenVerifier(GoogleIdTokenVerifier verifier) {
+        this.verifier = verifier;
+    }
+
     public GoogleUserInfo verify(String idToken) throws GoogleAuthException {
         try {
             GoogleIdToken token = verifier.verify(idToken);
