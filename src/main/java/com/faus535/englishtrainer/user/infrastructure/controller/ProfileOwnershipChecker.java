@@ -7,12 +7,12 @@ import org.springframework.security.core.Authentication;
 import java.util.Map;
 import java.util.UUID;
 
-final class ProfileOwnershipChecker {
+public final class ProfileOwnershipChecker {
 
     private ProfileOwnershipChecker() {}
 
     @SuppressWarnings("unchecked")
-    static void check(Authentication authentication, UUID profileId) throws ProfileOwnershipException {
+    public static void check(Authentication authentication, UUID profileId) throws ProfileOwnershipException {
         if (authentication == null || authentication.getDetails() == null) {
             throw new ProfileOwnershipException(new UserProfileId(profileId));
         }

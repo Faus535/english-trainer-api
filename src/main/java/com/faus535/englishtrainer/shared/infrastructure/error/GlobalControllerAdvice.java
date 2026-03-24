@@ -3,6 +3,7 @@ package com.faus535.englishtrainer.shared.infrastructure.error;
 import com.faus535.englishtrainer.shared.domain.error.AlreadyExistsException;
 import com.faus535.englishtrainer.shared.domain.error.InvalidValueException;
 import com.faus535.englishtrainer.shared.domain.error.NotFoundException;
+import com.faus535.englishtrainer.user.domain.error.ProfileOwnershipException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -44,5 +45,12 @@ class GlobalControllerAdvice {
         log.error("Invalid value: {}", ex.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(new ApiError("invalid_value", ex.getMessage()));
+    }
+
+    @ExceptionHandler(ProfileOwnershipException.class)
+    ResponseEntity<ApiError> handleOwnership(ProfileOwnershipException ex) {
+        log.warn("Profile ownership violation: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(new ApiError("forbidden", "Cannot access another user's profile"));
     }
 }

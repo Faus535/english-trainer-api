@@ -3,8 +3,10 @@ package com.faus535.englishtrainer.user.infrastructure.controller;
 import com.faus535.englishtrainer.user.application.RecordSessionUseCase;
 import com.faus535.englishtrainer.user.domain.UserProfile;
 import com.faus535.englishtrainer.user.domain.UserProfileId;
+import com.faus535.englishtrainer.user.domain.error.ProfileOwnershipException;
 import com.faus535.englishtrainer.user.domain.error.UserProfileNotFoundException;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,7 +27,9 @@ final class RecordSessionController {
                                int sessionCount, int sessionsThisWeek, int xp) {}
 
     @PostMapping("/api/profiles/{id}/sessions")
-    ResponseEntity<UserProfileResponse> handle(@PathVariable UUID id) throws UserProfileNotFoundException {
+    ResponseEntity<UserProfileResponse> handle(@PathVariable UUID id, Authentication authentication)
+            throws UserProfileNotFoundException, ProfileOwnershipException {
+        ProfileOwnershipChecker.check(authentication, id);
         UserProfile profile = useCase.execute(new UserProfileId(id));
         return ResponseEntity.ok(toResponse(profile));
     }

@@ -3,14 +3,18 @@ package com.faus535.englishtrainer.activity.infrastructure.controller;
 import com.faus535.englishtrainer.activity.application.RecordActivityUseCase;
 import com.faus535.englishtrainer.activity.domain.ActivityDate;
 import com.faus535.englishtrainer.user.domain.UserProfileId;
+import com.faus535.englishtrainer.user.domain.error.ProfileOwnershipException;
+import com.faus535.englishtrainer.user.infrastructure.controller.ProfileOwnershipChecker;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 @RestController
 class RecordActivityController {
@@ -27,7 +31,10 @@ class RecordActivityController {
 
     @PostMapping("/api/profiles/{userId}/activity")
     ResponseEntity<ActivityResponse> handle(@PathVariable String userId,
-                                            @RequestBody(required = false) RecordActivityRequest request) {
+                                            @RequestBody(required = false) RecordActivityRequest request,
+                                            Authentication authentication)
+            throws ProfileOwnershipException {
+        ProfileOwnershipChecker.check(authentication, UUID.fromString(userId));
         UserProfileId userProfileId = UserProfileId.fromString(userId);
         LocalDate date = (request != null && request.date() != null && !request.date().isBlank())
                 ? LocalDate.parse(request.date())

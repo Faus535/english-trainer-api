@@ -2,8 +2,12 @@ package com.faus535.englishtrainer.auth.infrastructure.jwt;
 
 import com.faus535.englishtrainer.auth.domain.AuthUser;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SignatureException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +17,8 @@ import java.util.Date;
 
 @Service
 public class JwtService {
+
+    private static final Logger log = LoggerFactory.getLogger(JwtService.class);
 
     @Value("${jwt.secret}")
     private String secret;
@@ -64,7 +70,14 @@ public class JwtService {
         try {
             extractClaims(token);
             return true;
+        } catch (ExpiredJwtException e) {
+            log.debug("Token expired for subject {}", e.getClaims().getSubject());
+            return false;
+        } catch (SignatureException e) {
+            log.warn("Invalid token signature");
+            return false;
         } catch (Exception e) {
+            log.warn("Token validation failed: {}", e.getMessage());
             return false;
         }
     }
