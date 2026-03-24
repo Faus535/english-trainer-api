@@ -2,6 +2,7 @@ package com.faus535.englishtrainer.user.infrastructure.controller;
 
 import com.faus535.englishtrainer.user.domain.error.InvalidModuleException;
 import com.faus535.englishtrainer.user.domain.error.InvalidXpAmountException;
+import com.faus535.englishtrainer.user.domain.error.ProfileOwnershipException;
 import com.faus535.englishtrainer.user.domain.error.UserProfileNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,6 +30,13 @@ class UserProfileControllerAdvice {
         log.error("Invalid module: {}", ex.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(new ApiError("invalid_module", ex.getMessage()));
+    }
+
+    @ExceptionHandler(ProfileOwnershipException.class)
+    ResponseEntity<ApiError> handleOwnership(ProfileOwnershipException ex) {
+        log.warn("Profile ownership violation: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(new ApiError("forbidden", "Cannot modify another user's profile"));
     }
 
     @ExceptionHandler(InvalidXpAmountException.class)
