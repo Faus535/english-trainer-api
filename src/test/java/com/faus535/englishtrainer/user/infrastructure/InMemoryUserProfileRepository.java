@@ -18,6 +18,11 @@ public final class InMemoryUserProfileRepository implements UserProfileRepositor
     }
 
     @Override
+    public Optional<UserProfile> findByIdForUpdate(UserProfileId id) {
+        return findById(id);
+    }
+
+    @Override
     public UserProfile save(UserProfile profile) {
         store.put(profile.id(), profile);
         return profile;

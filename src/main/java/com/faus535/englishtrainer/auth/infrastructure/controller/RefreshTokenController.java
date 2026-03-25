@@ -8,8 +8,12 @@ import com.faus535.englishtrainer.auth.domain.RefreshTokenRepository;
 import com.faus535.englishtrainer.auth.infrastructure.jwt.JwtService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,6 +27,8 @@ import java.util.Optional;
 
 @RestController
 class RefreshTokenController {
+
+    private static final Logger log = LoggerFactory.getLogger(RefreshTokenController.class);
 
     private final JwtService jwtService;
     private final AuthUserRepository authUserRepository;
@@ -39,6 +45,7 @@ class RefreshTokenController {
 
     record AuthResponse(String token, String refreshToken, String profileId, String email) {}
 
+    @Transactional
     @PostMapping("/api/auth/refresh")
     ResponseEntity<AuthResponse> handle(@Valid @RequestBody RefreshRequest request) {
         if (!jwtService.isTokenValid(request.refreshToken())) {
@@ -68,11 +75,16 @@ class RefreshTokenController {
         String newAccessToken = jwtService.generateToken(user);
         String newRefreshToken = jwtService.generateRefreshToken(user);
 
-        // Store new refresh token
+        // Store new refresh token, handling concurrent duplicate gracefully
         String newTokenHash = hashToken(newRefreshToken);
         Instant expiresAt = Instant.now().plusMillis(jwtService.getRefreshExpiration());
         RefreshToken newStoredToken = RefreshToken.create(authUserId, newTokenHash, expiresAt);
-        refreshTokenRepository.save(newStoredToken);
+        try {
+            refreshTokenRepository.save(newStoredToken);
+        } catch (DataIntegrityViolationException e) {
+            log.warn("Concurrent refresh token request detected for user {}", authUserId);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
 
         return ResponseEntity.ok(
                 new AuthResponse(newAccessToken, newRefreshToken,

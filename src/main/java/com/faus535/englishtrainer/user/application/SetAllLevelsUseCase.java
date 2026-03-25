@@ -24,7 +24,7 @@ public class SetAllLevelsUseCase {
     @Transactional
     public void execute(UserProfileId id, Map<String, UserLevel> levels)
             throws UserProfileNotFoundException, InvalidModuleException {
-        UserProfile profile = repository.findById(id)
+        UserProfile profile = repository.findByIdForUpdate(id)
                 .orElseThrow(() -> new UserProfileNotFoundException(id));
 
         for (var entry : levels.entrySet()) {

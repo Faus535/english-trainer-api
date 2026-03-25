@@ -23,6 +23,12 @@ class JpaUserProfileRepositoryAdapter implements UserProfileRepository {
     }
 
     @Override
+    public Optional<UserProfile> findByIdForUpdate(UserProfileId id) {
+        return jpaRepository.findByIdForUpdate(id.value())
+                .map(UserProfileEntity::toAggregate);
+    }
+
+    @Override
     public void deleteById(UserProfileId id) {
         jpaRepository.deleteById(id.value());
     }
@@ -30,9 +36,6 @@ class JpaUserProfileRepositoryAdapter implements UserProfileRepository {
     @Override
     public UserProfile save(UserProfile profile) {
         UserProfileEntity entity = UserProfileEntity.fromAggregate(profile);
-        if (jpaRepository.existsById(profile.id().value())) {
-            entity.markAsExisting();
-        }
         return jpaRepository.save(entity).toAggregate();
     }
 }

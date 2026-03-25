@@ -8,6 +8,8 @@ public interface UserProfileRepository {
 
     Optional<UserProfile> findById(UserProfileId id);
 
+    Optional<UserProfile> findByIdForUpdate(UserProfileId id);
+
     UserProfile save(UserProfile profile);
 
     void deleteById(UserProfileId id);

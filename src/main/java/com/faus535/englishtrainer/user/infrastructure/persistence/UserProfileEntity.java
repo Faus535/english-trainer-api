@@ -72,7 +72,8 @@ class UserProfileEntity implements Persistable<UUID> {
     static UserProfileEntity fromAggregate(UserProfile aggregate) {
         UserProfileEntity entity = new UserProfileEntity();
         entity.id = aggregate.id().value();
-        entity.isNew = true;
+        entity.version = aggregate.version();
+        entity.isNew = aggregate.version() == null;
         entity.testCompleted = aggregate.testCompleted();
         entity.levelListening = aggregate.levelListening().value();
         entity.levelVocabulary = aggregate.levelVocabulary().value();
@@ -92,6 +93,7 @@ class UserProfileEntity implements Persistable<UUID> {
     UserProfile toAggregate() {
         return UserProfile.reconstitute(
                 new UserProfileId(id),
+                version,
                 testCompleted,
                 new UserLevel(levelListening),
                 new UserLevel(levelVocabulary),
@@ -106,10 +108,6 @@ class UserProfileEntity implements Persistable<UUID> {
                 createdAt,
                 updatedAt
         );
-    }
-
-    void markAsExisting() {
-        this.isNew = false;
     }
 
     @Override
