@@ -125,14 +125,19 @@ class AnthropicAiTutorStreamAdapter implements AiTutorStreamPort {
     static boolean shouldIncludeFeedback(ConversationLevel level, long userTurnCount) {
         if (userTurnCount == 0) return false;
         int frequency = feedbackFrequency(level);
+        if (frequency == 0) return false;
         return userTurnCount % frequency == 0;
     }
 
     static int feedbackFrequency(ConversationLevel level) {
         return switch (level.value()) {
-            case "a1", "a2" -> 2;
-            case "b1", "b2" -> 3;
-            default -> 5;
+            case "a1" -> 0;       // Never — only encouragement via conversation
+            case "a2" -> 4;       // Every 4 turns — only communication breakdowns
+            case "b1" -> 3;       // Every 3 turns — 1 grammar + 1 vocab max
+            case "b2" -> 2;       // Every 2 turns — grammar, vocab, collocations
+            case "c1" -> 2;       // Every 2 turns — all including register/style
+            case "c2" -> 1;       // Every turn — detailed nuance feedback
+            default -> 3;
         };
     }
 

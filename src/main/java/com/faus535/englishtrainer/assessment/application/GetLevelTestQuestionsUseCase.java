@@ -19,10 +19,10 @@ public class GetLevelTestQuestionsUseCase {
     private final TestQuestionHistoryRepository historyRepository;
 
     private static final Map<String, Map<String, Integer>> QUESTION_DISTRIBUTION = Map.of(
-            "vocabulary", Map.of("a1", 5, "a2", 3, "b1", 2, "b2", 2, "c1", 3),
-            "grammar", Map.of("a1", 5, "a2", 2, "b1", 2, "b2", 2, "c1", 1),
-            "listening", Map.of("a1", 3, "a2", 2, "b1", 2, "b2", 2, "c1", 1),
-            "pronunciation", Map.of("a1", 3, "a2", 2, "b1", 2, "b2", 1, "c1", 1)
+            "vocabulary", Map.of("a1", 4, "a2", 3, "b1", 2, "b2", 2, "c1", 2, "c2", 2),
+            "grammar", Map.of("a1", 4, "a2", 2, "b1", 2, "b2", 2, "c1", 1, "c2", 1),
+            "listening", Map.of("a1", 3, "a2", 2, "b1", 2, "b2", 1, "c1", 1, "c2", 1),
+            "pronunciation", Map.of("a1", 2, "a2", 2, "b1", 2, "b2", 1, "c1", 1, "c2", 1)
     );
 
     public GetLevelTestQuestionsUseCase(TestQuestionRepository testQuestionRepository,

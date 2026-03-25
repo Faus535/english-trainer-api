@@ -24,13 +24,15 @@ class AnthropicContextGeneratorAdapter implements ContextGeneratorPort {
 
     @Override
     public String generateSentences(String word, String level) throws Exception {
+        String levelConstraints = getLevelConstraints(level);
         String prompt = String.format(
-                "Generate 2-3 example sentences for the English word \"%s\" appropriate for CEFR level %s. " +
+                "Generate 2-3 example sentences for the English word \"%s\" at CEFR level %s.\n\n" +
+                "LEVEL CONSTRAINTS:\n%s\n\n" +
                 "Return ONLY a JSON array with no additional text. Each element must have: " +
                 "\"text\" (the full sentence) and \"highlight\" (an array of two integers [start, end] " +
                 "representing the character positions where the word appears in the sentence). " +
                 "Example format: [{\"text\": \"sentence here\", \"highlight\": [0, 5]}]",
-                word, level.toUpperCase()
+                word, level.toUpperCase(), levelConstraints
         );
 
         Map<String, Object> requestBody = Map.of(
@@ -58,5 +60,17 @@ class AnthropicContextGeneratorAdapter implements ContextGeneratorPort {
         }
 
         return (String) content.get(0).get("text");
+    }
+
+    private String getLevelConstraints(String level) {
+        return switch (level.toLowerCase()) {
+            case "a1" -> "- Use only present simple tense.\n- Max 5 words per sentence.\n- Use only top-300 frequency words (except the target word).";
+            case "a2" -> "- Use present simple or past simple only.\n- Max 8 words per sentence.\n- Use only top-800 frequency words (except the target word).";
+            case "b1" -> "- Any basic tense allowed.\n- Max 12 words per sentence.\n- Can include one phrasal verb.";
+            case "b2" -> "- Any tense including passive allowed.\n- Max 16 words per sentence.\n- Can include idioms and collocations.";
+            case "c1" -> "- Any grammatical structure allowed.\n- Natural sentence length.\n- Use academic register.";
+            case "c2" -> "- Any structure allowed.\n- Showcase the word in a nuanced, context-rich sentence.\n- Use sophisticated, varied vocabulary.";
+            default -> "- Appropriate for intermediate level.";
+        };
     }
 }

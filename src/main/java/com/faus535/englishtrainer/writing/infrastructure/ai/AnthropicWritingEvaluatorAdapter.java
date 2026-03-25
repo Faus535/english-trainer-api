@@ -58,8 +58,9 @@ class AnthropicWritingEvaluatorAdapter implements WritingEvaluatorPort {
 
     @Override
     public WritingFeedback evaluate(String text, String exercisePrompt, String level) throws Exception {
-        String systemPrompt = "English writing evaluator. Student CEFR level: " + level +
-                ". Use the evaluate_writing tool to return your evaluation.";
+        String rubric = WritingRubricProvider.getRubric(level);
+        String systemPrompt = "You are an English writing evaluator.\n\n" + rubric +
+                "\n\nUse the evaluate_writing tool to return your evaluation.";
 
         String userMessage = "Prompt: " + exercisePrompt + "\n\nStudent's text:\n" + text;
 

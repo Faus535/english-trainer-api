@@ -2,6 +2,8 @@ package com.faus535.englishtrainer.conversation.infrastructure.ai;
 
 import com.faus535.englishtrainer.conversation.domain.ConversationGoal;
 import com.faus535.englishtrainer.conversation.domain.ConversationLevel;
+import com.faus535.englishtrainer.conversation.domain.LevelProfile;
+import com.faus535.englishtrainer.conversation.domain.LevelProfiles;
 
 import java.util.List;
 import java.util.Map;
@@ -43,23 +45,23 @@ class SystemPromptBuilder {
 
         String scenario = topic != null ? ROLE_PLAY_SCENARIOS.get(topic.toLowerCase()) : null;
         if (scenario != null) {
-            p.append("EN tutor+").append(scenario).append(" Stay in character. ");
+            p.append("You are an English tutor in a roleplay scenario. ").append(scenario).append(" Stay in character.\n\n");
         } else {
-            p.append("EN tutor. ");
+            p.append("You are an English tutor having a conversation with a student.\n");
             if (topic != null && !topic.isBlank()) {
-                p.append("Topic:").append(topic).append(". ");
+                p.append("Topic: ").append(topic).append(".\n");
             }
+            p.append("\n");
         }
-        p.append("Lvl:").append(level.value().toUpperCase()).append(". ");
 
         appendLevelRules(p, level.value());
         appendConfidenceRules(p, confidence);
         appendGoals(p, goals);
 
         if (includeFeedback) {
-            appendFeedbackFormat(p);
+            appendFeedbackFormat(p, level.value());
         } else {
-            p.append("Concise,natural. No feedback block.");
+            p.append("Be concise and natural. Do not include any feedback block.\n");
         }
 
         return p.toString();
@@ -70,40 +72,83 @@ class SystemPromptBuilder {
     }
 
     private static void appendLevelRules(StringBuilder p, String level) {
-        switch (level) {
-            case "a1" -> p.append("A1:simple vocab,5-8w sentences,present tense,yes/no Qs,tolerant. Max 2 sent. ");
-            case "a2" -> p.append("A2:basic vocab,8-12w,past+'going to',fix major errors,simple Qs. Max 2 sent. ");
-            case "b1" -> p.append("B1:moderate vocab,10-15w,varied tenses+conditionals,gentle fixes+brief explain,open Qs,idioms. Max 3 sent. ");
-            case "b2" -> p.append("B2:rich vocab+idioms,complex structures+passive/reported,precise fixes+nuance,debate. Max 3 sent. ");
-            case "c1", "c2" -> p.append("C1/C2:sophisticated/academic,fix all errors+style/register,abstract topics,precision+natural. Max 4 sent. ");
+        LevelProfile profile = LevelProfiles.forLevel(level);
+
+        p.append("=== STUDENT LEVEL: ").append(level.toUpperCase()).append(" ===\n\n");
+
+        p.append("SENTENCE RULES:\n");
+        p.append("- Your sentences must be ").append(profile.sentenceLength()).append(" long.\n");
+        p.append("- Maximum ").append(profile.maxSentences()).append(" sentence(s) per turn.\n\n");
+
+        p.append("ALLOWED TENSES:\n");
+        for (String tense : profile.allowedTenses()) {
+            p.append("- ").append(tense).append("\n");
         }
+        p.append("- Do NOT use any tense not listed above.\n\n");
+
+        p.append("TOPICS TO DISCUSS:\n");
+        for (String topic : profile.topicExamples()) {
+            p.append("- ").append(topic).append("\n");
+        }
+        p.append("\n");
+
+        if (!profile.forbiddenTopics().isEmpty()) {
+            p.append("FORBIDDEN TOPICS (never bring these up):\n");
+            for (String forbidden : profile.forbiddenTopics()) {
+                p.append("- ").append(forbidden).append("\n");
+            }
+            p.append("\n");
+        }
+
+        p.append("VOCABULARY:\n");
+        p.append("- ").append(profile.vocabularyBand()).append("\n\n");
+
+        p.append("ERROR CORRECTION:\n");
+        p.append("- ").append(profile.errorCorrectionStyle()).append("\n\n");
+
+        p.append("QUESTION STYLE:\n");
+        p.append("- ").append(profile.questionStyle()).append("\n\n");
+
+        p.append("CONVERSATION GOAL:\n");
+        p.append("- ").append(profile.conversationGoal()).append("\n\n");
     }
 
     private static void appendConfidenceRules(StringBuilder p, Float confidence) {
         if (confidence == null) return;
         if (confidence < 0.5f) {
-            p.append("STT LOW(%.0f%%),ask repeat. ".formatted(confidence * 100));
+            p.append("SPEECH RECOGNITION: Low confidence (%.0f%%). The student's audio was unclear. Ask them to repeat.\n\n".formatted(confidence * 100));
         } else if (confidence < 0.75f) {
-            p.append("STT mid(%.0f%%),possible misrecognition. ".formatted(confidence * 100));
+            p.append("SPEECH RECOGNITION: Medium confidence (%.0f%%). Possible misrecognition. Proceed but clarify if meaning is unclear.\n\n".formatted(confidence * 100));
         }
     }
 
     private static void appendGoals(StringBuilder p, List<ConversationGoal> goals) {
         if (goals == null || goals.isEmpty()) return;
-        p.append("Goals:");
+        p.append("CONVERSATION GOALS:\n");
         for (int i = 0; i < goals.size(); i++) {
             ConversationGoal goal = goals.get(i);
-            p.append(i + 1).append(")").append(goal.description());
+            p.append(i + 1).append(") ").append(goal.description());
             if (!goal.targetItems().isEmpty()) {
-                p.append("(").append(String.join(",", goal.targetItems())).append(")");
+                p.append(" (target: ").append(String.join(", ", goal.targetItems())).append(")");
             }
-            p.append(" ");
+            p.append("\n");
         }
-        p.append("Guide conversation toward goals. ");
+        p.append("Guide the conversation toward these goals.\n\n");
     }
 
-    private static void appendFeedbackFormat(StringBuilder p) {
-        p.append("After reply add: <<F>>{\"g\":[],\"v\":[],\"p\":[],\"e\":\"\"}<<F>> with values. Valid JSON.");
+    private static void appendFeedbackFormat(StringBuilder p, String level) {
+        p.append("After your reply, add a feedback block in this exact format:\n");
+        p.append("<<F>>{");
+
+        switch (level) {
+            case "a1", "a2" -> p.append("\"e\":\"encouragement message\"");
+            case "b1" -> p.append("\"g\":[\"max 1 grammar correction\"],\"e\":\"encouragement\"");
+            case "b2" -> p.append("\"g\":[\"grammar corrections\"],\"v\":[\"vocabulary suggestions\"],\"e\":\"encouragement\"");
+            default -> p.append("\"g\":[\"grammar corrections\"],\"v\":[\"vocabulary suggestions\"],\"p\":[\"pronunciation/style tips\"],\"e\":\"encouragement\"");
+        }
+
+        p.append("}<<F>>\n");
+        p.append("Use valid JSON. Include only the categories listed above for this level.\n");
     }
 
     private static String confidenceBucket(Float confidence) {
