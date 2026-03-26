@@ -1,8 +1,10 @@
 package com.faus535.englishtrainer.tutorerror.infrastructure.controller;
 
 import com.faus535.englishtrainer.tutorerror.application.GetErrorTrendUseCase;
+import com.faus535.englishtrainer.shared.infrastructure.security.RequireProfileOwnership;
 import com.faus535.englishtrainer.user.domain.UserProfileId;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -22,9 +24,11 @@ class GetErrorTrendController {
     }
 
     @GetMapping("/api/profiles/{userId}/tutor/errors/trend")
+    @RequireProfileOwnership
     ResponseEntity<List<Map<String, Object>>> handle(
             @PathVariable UUID userId,
-            @RequestParam(defaultValue = "8") int weeks) {
+            @RequestParam(defaultValue = "8") int weeks,
+            Authentication authentication) {
 
         List<Map<String, Object>> trend = useCase.execute(new UserProfileId(userId), weeks);
         return ResponseEntity.ok(trend);

@@ -4,9 +4,11 @@ import com.faus535.englishtrainer.moduleprogress.application.InitModuleProgressU
 import com.faus535.englishtrainer.moduleprogress.domain.ModuleLevel;
 import com.faus535.englishtrainer.moduleprogress.domain.ModuleName;
 import com.faus535.englishtrainer.moduleprogress.domain.ModuleProgress;
+import com.faus535.englishtrainer.shared.infrastructure.security.RequireProfileOwnership;
 import com.faus535.englishtrainer.user.domain.UserProfileId;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,9 +31,11 @@ class InitModuleProgressController {
                                   Map<Integer, Integer> scores) {}
 
     @PostMapping("/api/profiles/{userId}/modules/{module}/levels/{level}")
+    @RequireProfileOwnership
     ResponseEntity<ModuleProgressResponse> handle(@PathVariable UUID userId,
                                                   @PathVariable String module,
-                                                  @PathVariable String level) {
+                                                  @PathVariable String level,
+                                                  Authentication authentication) {
         ModuleProgress progress = useCase.execute(
                 new UserProfileId(userId),
                 new ModuleName(module),

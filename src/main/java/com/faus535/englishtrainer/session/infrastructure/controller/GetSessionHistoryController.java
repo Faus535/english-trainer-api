@@ -2,8 +2,10 @@ package com.faus535.englishtrainer.session.infrastructure.controller;
 
 import com.faus535.englishtrainer.session.application.GetSessionHistoryUseCase;
 import com.faus535.englishtrainer.session.domain.Session;
+import com.faus535.englishtrainer.shared.infrastructure.security.RequireProfileOwnership;
 import com.faus535.englishtrainer.user.domain.UserProfileId;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,7 +22,9 @@ class GetSessionHistoryController {
     }
 
     @GetMapping("/api/profiles/{userId}/sessions")
-    ResponseEntity<List<SessionSummaryResponse>> handle(@PathVariable String userId) {
+    @RequireProfileOwnership
+    ResponseEntity<List<SessionSummaryResponse>> handle(@PathVariable String userId,
+                                                         Authentication authentication) {
         List<Session> sessions = useCase.execute(UserProfileId.fromString(userId));
 
         List<SessionSummaryResponse> response = sessions.stream()

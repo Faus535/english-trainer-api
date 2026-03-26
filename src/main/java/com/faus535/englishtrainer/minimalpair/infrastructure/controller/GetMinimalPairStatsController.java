@@ -2,8 +2,10 @@ package com.faus535.englishtrainer.minimalpair.infrastructure.controller;
 
 import com.faus535.englishtrainer.minimalpair.application.GetMinimalPairStatsUseCase;
 import com.faus535.englishtrainer.minimalpair.domain.MinimalPairResultRepository.CategoryAccuracy;
+import com.faus535.englishtrainer.shared.infrastructure.security.RequireProfileOwnership;
 import com.faus535.englishtrainer.user.domain.UserProfileId;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,7 +27,9 @@ class GetMinimalPairStatsController {
     record StatsResponse(List<CategoryStatResponse> categories) {}
 
     @GetMapping("/api/profiles/{userId}/pronunciation/minimal-pairs/stats")
-    ResponseEntity<StatsResponse> handle(@PathVariable UUID userId) {
+    @RequireProfileOwnership
+    ResponseEntity<StatsResponse> handle(@PathVariable UUID userId,
+                                          Authentication authentication) {
 
         List<CategoryStatResponse> stats = useCase.execute(new UserProfileId(userId)).stream()
                 .map(this::toResponse)

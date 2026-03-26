@@ -3,8 +3,10 @@ package com.faus535.englishtrainer.assessment.infrastructure.controller;
 import com.faus535.englishtrainer.assessment.application.GetTestHistoryUseCase;
 import com.faus535.englishtrainer.assessment.domain.LevelTestResult;
 import com.faus535.englishtrainer.assessment.domain.MiniTestResult;
+import com.faus535.englishtrainer.shared.infrastructure.security.RequireProfileOwnership;
 import com.faus535.englishtrainer.user.domain.UserProfileId;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
@@ -37,7 +39,9 @@ class GetTestHistoryController {
     }
 
     @GetMapping("/api/profiles/{userId}/assessments/history")
-    ResponseEntity<TestHistoryResponse> handle(@PathVariable UUID userId) {
+    @RequireProfileOwnership
+    ResponseEntity<TestHistoryResponse> handle(@PathVariable UUID userId,
+                                                Authentication authentication) {
         GetTestHistoryUseCase.TestHistory history = useCase.execute(new UserProfileId(userId));
 
         List<LevelTestResultResponse> levelTestResponses = history.levelTests().stream()

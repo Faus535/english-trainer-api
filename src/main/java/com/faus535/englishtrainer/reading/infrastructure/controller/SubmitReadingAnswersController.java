@@ -2,6 +2,7 @@ package com.faus535.englishtrainer.reading.infrastructure.controller;
 
 import com.faus535.englishtrainer.reading.application.SubmitReadingAnswersUseCase;
 import com.faus535.englishtrainer.shared.domain.error.NotFoundException;
+import com.faus535.englishtrainer.shared.infrastructure.security.RequireProfileOwnership;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -29,6 +30,7 @@ class SubmitReadingAnswersController {
     record SubmitResponse(double score, int correctAnswers, int totalQuestions) {}
 
     @PostMapping("/api/profiles/{userId}/reading/submit")
+    @RequireProfileOwnership
     ResponseEntity<SubmitResponse> handle(@PathVariable UUID userId,
                                            @Valid @RequestBody SubmitRequest request,
                                            Authentication authentication) throws NotFoundException {

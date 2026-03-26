@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Deprecated(since = "v9", forRemoval = true)
 public final class ModuleProgress extends AggregateRoot<ModuleProgressId> {
 
     private final ModuleProgressId id;

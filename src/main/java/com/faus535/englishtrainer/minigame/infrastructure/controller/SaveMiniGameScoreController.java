@@ -2,11 +2,14 @@ package com.faus535.englishtrainer.minigame.infrastructure.controller;
 
 import com.faus535.englishtrainer.minigame.application.SaveMiniGameScoreUseCase;
 import com.faus535.englishtrainer.user.domain.UserProfileId;
+import com.faus535.englishtrainer.user.domain.error.ProfileOwnershipException;
+import com.faus535.englishtrainer.user.infrastructure.controller.ProfileOwnershipChecker;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -29,7 +32,10 @@ class SaveMiniGameScoreController {
 
     @PostMapping("/api/profiles/{userId}/minigames/scores")
     ResponseEntity<SaveScoreResponse> handle(@PathVariable UUID userId,
-                                              @Valid @RequestBody SaveScoreRequest request) {
+                                              @Valid @RequestBody SaveScoreRequest request,
+                                              Authentication authentication)
+            throws ProfileOwnershipException {
+        ProfileOwnershipChecker.check(authentication, userId);
         UserProfileId profileId = new UserProfileId(userId);
         SaveMiniGameScoreUseCase.SaveScoreResult result = useCase.execute(profileId, request.gameType(), request.score());
         return ResponseEntity.ok(new SaveScoreResponse(result.xpEarned(), result.score(), result.gameType()));

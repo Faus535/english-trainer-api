@@ -2,8 +2,10 @@ package com.faus535.englishtrainer.pronunciation.infrastructure.controller;
 
 import com.faus535.englishtrainer.pronunciation.application.GetFrequentErrorsUseCase;
 import com.faus535.englishtrainer.pronunciation.domain.PronunciationError;
+import com.faus535.englishtrainer.shared.infrastructure.security.RequireProfileOwnership;
 import com.faus535.englishtrainer.user.domain.UserProfileId;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -26,9 +28,11 @@ class GetFrequentErrorsController {
                                        Instant lastOccurred, Instant createdAt) {}
 
     @GetMapping("/api/profiles/{userId}/pronunciation/errors")
+    @RequireProfileOwnership
     ResponseEntity<List<PronunciationErrorResponse>> handle(
             @PathVariable String userId,
-            @RequestParam(defaultValue = "20") int limit) {
+            @RequestParam(defaultValue = "20") int limit,
+            Authentication authentication) {
 
         UserProfileId userProfileId = UserProfileId.fromString(userId);
         List<PronunciationError> errors = useCase.execute(userProfileId, limit);

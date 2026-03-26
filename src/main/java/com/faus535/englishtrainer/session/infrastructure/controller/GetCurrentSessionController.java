@@ -2,8 +2,10 @@ package com.faus535.englishtrainer.session.infrastructure.controller;
 
 import com.faus535.englishtrainer.session.application.GetCurrentSessionUseCase;
 import com.faus535.englishtrainer.session.domain.Session;
+import com.faus535.englishtrainer.shared.infrastructure.security.RequireProfileOwnership;
 import com.faus535.englishtrainer.user.domain.UserProfileId;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,7 +22,9 @@ class GetCurrentSessionController {
     }
 
     @GetMapping("/api/profiles/{userId}/sessions/current")
-    ResponseEntity<SessionResponse> handle(@PathVariable String userId) {
+    @RequireProfileOwnership
+    ResponseEntity<SessionResponse> handle(@PathVariable String userId,
+                                            Authentication authentication) {
         Optional<Session> session = useCase.execute(UserProfileId.fromString(userId));
 
         return session

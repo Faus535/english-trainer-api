@@ -2,12 +2,14 @@ package com.faus535.englishtrainer.tutorerror.infrastructure.controller;
 
 import com.faus535.englishtrainer.tutorerror.application.RecordTutorErrorUseCase;
 import com.faus535.englishtrainer.tutorerror.domain.TutorError;
+import com.faus535.englishtrainer.shared.infrastructure.security.RequireProfileOwnership;
 import com.faus535.englishtrainer.user.domain.UserProfileId;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -32,9 +34,11 @@ class RecordTutorErrorController {
     ) {}
 
     @PostMapping("/api/profiles/{userId}/tutor/errors")
+    @RequireProfileOwnership
     ResponseEntity<TutorErrorResponse> handle(
             @PathVariable UUID userId,
-            @Valid @RequestBody RecordErrorRequest request) {
+            @Valid @RequestBody RecordErrorRequest request,
+            Authentication authentication) {
 
         TutorError error = useCase.execute(
                 new UserProfileId(userId),

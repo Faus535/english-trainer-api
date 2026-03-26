@@ -57,12 +57,15 @@ class SessionEntity implements Persistable<UUID> {
     @Column(name = "blocks_data")
     private String blocksData;
 
+    @Column(name = "exercises_data")
+    private String exercisesData;
+
     protected SessionEntity() {}
 
     static SessionEntity fromAggregate(UUID id, UUID userId, String mode, String sessionType,
                                        String listeningModule, String secondaryModule, String integratorTheme,
                                        boolean completed, Instant startedAt, Instant completedAt,
-                                       Integer durationMinutes, String blocksData) {
+                                       Integer durationMinutes, String blocksData, String exercisesData) {
         SessionEntity entity = new SessionEntity();
         entity.id = id;
         entity.isNew = true;
@@ -77,6 +80,7 @@ class SessionEntity implements Persistable<UUID> {
         entity.completedAt = completedAt;
         entity.durationMinutes = durationMinutes;
         entity.blocksData = blocksData;
+        entity.exercisesData = exercisesData;
         return entity;
     }
 
@@ -101,4 +105,5 @@ class SessionEntity implements Persistable<UUID> {
     Instant completedAt() { return completedAt; }
     Integer durationMinutes() { return durationMinutes; }
     String blocksData() { return blocksData; }
+    String exercisesData() { return exercisesData; }
 }

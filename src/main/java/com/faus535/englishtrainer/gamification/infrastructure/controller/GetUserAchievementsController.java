@@ -2,8 +2,10 @@ package com.faus535.englishtrainer.gamification.infrastructure.controller;
 
 import com.faus535.englishtrainer.gamification.application.GetUserAchievementsUseCase;
 import com.faus535.englishtrainer.gamification.domain.UserAchievement;
+import com.faus535.englishtrainer.shared.infrastructure.security.RequireProfileOwnership;
 import com.faus535.englishtrainer.user.domain.UserProfileId;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,7 +25,9 @@ class GetUserAchievementsController {
     record UserAchievementResponse(String id, String userId, String achievementId, String unlockedAt) {}
 
     @GetMapping("/api/profiles/{userId}/achievements")
-    ResponseEntity<List<UserAchievementResponse>> handle(@PathVariable UUID userId) {
+    @RequireProfileOwnership
+    ResponseEntity<List<UserAchievementResponse>> handle(@PathVariable UUID userId,
+                                                          Authentication authentication) {
         List<UserAchievementResponse> responses = useCase.execute(new UserProfileId(userId)).stream()
                 .map(this::toResponse)
                 .toList();

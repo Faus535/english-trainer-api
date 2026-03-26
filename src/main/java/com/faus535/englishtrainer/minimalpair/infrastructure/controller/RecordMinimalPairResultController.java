@@ -3,10 +3,12 @@ package com.faus535.englishtrainer.minimalpair.infrastructure.controller;
 import com.faus535.englishtrainer.minimalpair.application.RecordMinimalPairResultUseCase;
 import com.faus535.englishtrainer.minimalpair.domain.MinimalPairId;
 import com.faus535.englishtrainer.minimalpair.domain.MinimalPairResult;
+import com.faus535.englishtrainer.shared.infrastructure.security.RequireProfileOwnership;
 import com.faus535.englishtrainer.user.domain.UserProfileId;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,8 +30,10 @@ class RecordMinimalPairResultController {
     record RecordResponse(String id, String userId, String pairId, boolean correct, String answeredAt) {}
 
     @PostMapping("/api/profiles/{userId}/pronunciation/minimal-pairs/results")
+    @RequireProfileOwnership
     ResponseEntity<RecordResponse> handle(@PathVariable UUID userId,
-                                           @Valid @RequestBody RecordRequest request) {
+                                           @Valid @RequestBody RecordRequest request,
+                                           Authentication authentication) {
 
         MinimalPairResult result = useCase.execute(
                 new UserProfileId(userId),

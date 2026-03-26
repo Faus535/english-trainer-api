@@ -3,12 +3,14 @@ package com.faus535.englishtrainer.user.infrastructure.controller;
 import com.faus535.englishtrainer.user.application.AddXpUseCase;
 import com.faus535.englishtrainer.user.domain.UserProfile;
 import com.faus535.englishtrainer.user.domain.UserProfileId;
+import com.faus535.englishtrainer.shared.infrastructure.security.RequireProfileOwnership;
 import com.faus535.englishtrainer.user.domain.error.InvalidXpAmountException;
 import com.faus535.englishtrainer.user.domain.error.UserProfileNotFoundException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,8 +30,10 @@ final class AddXpController {
     record AddXpRequest(@NotNull @Min(1) Integer amount) {}
 
     @PostMapping("/api/profiles/{id}/xp")
+    @RequireProfileOwnership(pathVariable = "id")
     ResponseEntity<UserProfileResponse> handle(@PathVariable UUID id,
-                                               @Valid @RequestBody AddXpRequest request) throws UserProfileNotFoundException, InvalidXpAmountException {
+                                               @Valid @RequestBody AddXpRequest request,
+                                               Authentication authentication) throws UserProfileNotFoundException, InvalidXpAmountException {
         UserProfile profile = useCase.execute(new UserProfileId(id), request.amount());
         return ResponseEntity.ok(toResponse(profile));
     }

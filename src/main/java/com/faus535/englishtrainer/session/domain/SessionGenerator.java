@@ -5,6 +5,7 @@ import com.faus535.englishtrainer.user.domain.UserProfileId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 public final class SessionGenerator {
 
@@ -15,6 +16,18 @@ public final class SessionGenerator {
             "full", new int[]{3, 7, 7, 4},
             "extended", new int[]{4, 10, 10, 7}
     );
+
+    private static final Map<String, Double> EXERCISES_PER_MINUTE = Map.of(
+            "listening", 1.5,
+            "vocabulary", 2.0,
+            "grammar", 2.5,
+            "pronunciation", 1.0,
+            "phrases", 2.0,
+            "review", 2.0,
+            "mixed", 2.0
+    );
+
+    private static final int MIN_EXERCISES_PER_BLOCK = 3;
 
     private SessionGenerator() {
     }
@@ -89,5 +102,34 @@ public final class SessionGenerator {
 
     public static boolean shouldBeIntegrator(int sessionCount) {
         return sessionCount > 0 && sessionCount % 5 == 0;
+    }
+
+    public static int calculateExerciseCount(String moduleName, int durationMinutes) {
+        double rate = EXERCISES_PER_MINUTE.getOrDefault(moduleName, 2.0);
+        int count = (int) Math.round(rate * durationMinutes);
+        return Math.max(MIN_EXERCISES_PER_BLOCK, count);
+    }
+
+    public static SessionBlock enrichBlock(SessionBlock block, List<UUID> contentIds) {
+        int exerciseCount = calculateExerciseCount(block.moduleName(), block.durationMinutes());
+        return new SessionBlock(block.blockType(), block.moduleName(), block.durationMinutes(),
+                exerciseCount, contentIds);
+    }
+
+    public static List<SessionExercise> buildExercises(List<SessionBlock> enrichedBlocks) {
+        List<SessionExercise> exercises = new ArrayList<>();
+        int index = 0;
+        for (SessionBlock block : enrichedBlocks) {
+            for (int i = 0; i < block.exerciseCount(); i++) {
+                exercises.add(new SessionExercise(
+                        index++,
+                        block.moduleName(),
+                        block.contentIds(),
+                        block.exerciseCount(),
+                        null
+                ));
+            }
+        }
+        return exercises;
     }
 }

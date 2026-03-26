@@ -2,8 +2,10 @@ package com.faus535.englishtrainer.tutorerror.infrastructure.controller;
 
 import com.faus535.englishtrainer.tutorerror.application.GetUserErrorsUseCase;
 import com.faus535.englishtrainer.tutorerror.domain.TutorError;
+import com.faus535.englishtrainer.shared.infrastructure.security.RequireProfileOwnership;
 import com.faus535.englishtrainer.user.domain.UserProfileId;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -24,10 +26,12 @@ class GetUserErrorsController {
     }
 
     @GetMapping("/api/profiles/{userId}/tutor/errors")
+    @RequireProfileOwnership
     ResponseEntity<Map<String, List<TutorErrorResponse>>> handle(
             @PathVariable UUID userId,
             @RequestParam(required = false) String type,
-            @RequestParam(defaultValue = "20") int limit) {
+            @RequestParam(defaultValue = "20") int limit,
+            Authentication authentication) {
 
         Map<String, List<TutorError>> grouped = useCase.execute(
                 new UserProfileId(userId), type, limit);

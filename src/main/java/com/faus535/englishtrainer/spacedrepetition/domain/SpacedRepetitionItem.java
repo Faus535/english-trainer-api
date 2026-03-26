@@ -96,7 +96,7 @@ public final class SpacedRepetitionItem extends AggregateRoot<SpacedRepetitionIt
         boolean newGraduated = newReviewCount >= MAX_REVIEWS;
         SpacedRepetitionItem updated = new SpacedRepetitionItem(id, userId, unitReference, moduleName, level, unitIndex,
                 itemType, newNextReviewDate, newIntervalIndex, newReviewCount, newGraduated, createdAt);
-        updated.registerEvent(new ReviewCompletedEvent(id, userId));
+        updated.registerEvent(new ReviewCompletedEvent(id, userId, newGraduated, itemType, unitReference));
         return updated;
     }
 

@@ -3,8 +3,10 @@ package com.faus535.englishtrainer.dailychallenge.infrastructure.controller;
 import com.faus535.englishtrainer.dailychallenge.application.GetUserChallengeProgressUseCase;
 import com.faus535.englishtrainer.dailychallenge.domain.DailyChallenge;
 import com.faus535.englishtrainer.dailychallenge.domain.error.ChallengeNotFoundException;
+import com.faus535.englishtrainer.shared.infrastructure.security.RequireProfileOwnership;
 import com.faus535.englishtrainer.user.domain.UserProfileId;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,7 +24,9 @@ class GetUserChallengeProgressController {
                              int target, int xpReward, int progress, boolean completed) {}
 
     @GetMapping("/api/profiles/{userId}/challenges/today")
-    ResponseEntity<ProgressResponse> handle(@PathVariable String userId) throws ChallengeNotFoundException {
+    @RequireProfileOwnership
+    ResponseEntity<ProgressResponse> handle(@PathVariable String userId,
+                                             Authentication authentication) throws ChallengeNotFoundException {
         UserProfileId profileId = UserProfileId.fromString(userId);
         GetUserChallengeProgressUseCase.UserChallengeProgress result = useCase.execute(profileId);
         return ResponseEntity.ok(toResponse(result));

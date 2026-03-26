@@ -2,8 +2,10 @@ package com.faus535.englishtrainer.minigame.infrastructure.controller;
 
 import com.faus535.englishtrainer.minigame.domain.MiniGameScore;
 import com.faus535.englishtrainer.minigame.domain.MiniGameScoreRepository;
+import com.faus535.englishtrainer.shared.infrastructure.security.RequireProfileOwnership;
 import com.faus535.englishtrainer.user.domain.UserProfileId;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -25,8 +27,10 @@ class GetMiniGameScoresController {
     record MiniGameScoreResponse(UUID id, String gameType, int score, int xpEarned, LocalDateTime playedAt) {}
 
     @GetMapping("/api/profiles/{userId}/minigames/scores")
+    @RequireProfileOwnership
     ResponseEntity<List<MiniGameScoreResponse>> handle(@PathVariable UUID userId,
-                                                        @RequestParam String type) {
+                                                        @RequestParam String type,
+                                                        Authentication authentication) {
         UserProfileId profileId = new UserProfileId(userId);
         List<MiniGameScore> scores = scoreRepository.findByUserIdAndGameType(profileId, type);
         List<MiniGameScoreResponse> response = scores.stream()

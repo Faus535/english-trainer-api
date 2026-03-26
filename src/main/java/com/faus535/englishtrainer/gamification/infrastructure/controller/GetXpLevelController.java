@@ -3,8 +3,10 @@ package com.faus535.englishtrainer.gamification.infrastructure.controller;
 import com.faus535.englishtrainer.gamification.application.GetXpLevelUseCase;
 import com.faus535.englishtrainer.gamification.domain.XpLevel;
 import com.faus535.englishtrainer.user.domain.UserProfileId;
+import com.faus535.englishtrainer.shared.infrastructure.security.RequireProfileOwnership;
 import com.faus535.englishtrainer.user.domain.error.UserProfileNotFoundException;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,7 +26,9 @@ class GetXpLevelController {
                            int xpForNextLevel, double progress) {}
 
     @GetMapping("/api/profiles/{userId}/xp-level")
-    ResponseEntity<XpLevelResponse> handle(@PathVariable UUID userId) throws UserProfileNotFoundException {
+    @RequireProfileOwnership
+    ResponseEntity<XpLevelResponse> handle(@PathVariable UUID userId,
+                                            Authentication authentication) throws UserProfileNotFoundException {
         XpLevel xpLevel = useCase.execute(new UserProfileId(userId));
         return ResponseEntity.ok(toResponse(xpLevel));
     }

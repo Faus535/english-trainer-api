@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.faus535.englishtrainer.session.domain.Session;
 import com.faus535.englishtrainer.session.domain.SessionBlock;
+import com.faus535.englishtrainer.session.domain.SessionExercise;
 import com.faus535.englishtrainer.session.domain.SessionId;
 import com.faus535.englishtrainer.session.domain.SessionMode;
 import com.faus535.englishtrainer.session.domain.SessionRepository;
@@ -60,7 +61,8 @@ class JpaSessionRepositoryAdapter implements SessionRepository {
                 session.startedAt(),
                 session.completedAt(),
                 session.durationMinutes(),
-                serializeBlocks(session.blocks())
+                serializeBlocks(session.blocks()),
+                serializeExercises(session.exercises())
         );
         if (jpaRepository.existsById(session.id().value())) {
             entity.markAsExisting();
@@ -71,6 +73,7 @@ class JpaSessionRepositoryAdapter implements SessionRepository {
 
     private Session toDomain(SessionEntity entity) {
         List<SessionBlock> blocks = deserializeBlocks(entity.blocksData());
+        List<SessionExercise> exercises = deserializeExercises(entity.exercisesData());
         return Session.reconstitute(
                 new SessionId(entity.getId()),
                 new UserProfileId(entity.userId()),
@@ -80,6 +83,7 @@ class JpaSessionRepositoryAdapter implements SessionRepository {
                 entity.secondaryModule(),
                 entity.integratorTheme(),
                 blocks,
+                exercises,
                 entity.completed(),
                 entity.startedAt(),
                 entity.completedAt(),
@@ -103,6 +107,28 @@ class JpaSessionRepositoryAdapter implements SessionRepository {
             return objectMapper.readValue(json, new TypeReference<>() {});
         } catch (JsonProcessingException e) {
             throw new IllegalStateException("Failed to deserialize session blocks", e);
+        }
+    }
+
+    private String serializeExercises(List<SessionExercise> exercises) {
+        if (exercises == null || exercises.isEmpty()) {
+            return null;
+        }
+        try {
+            return objectMapper.writeValueAsString(exercises);
+        } catch (JsonProcessingException e) {
+            throw new IllegalStateException("Failed to serialize session exercises", e);
+        }
+    }
+
+    private List<SessionExercise> deserializeExercises(String json) {
+        if (json == null || json.isBlank()) {
+            return List.of();
+        }
+        try {
+            return objectMapper.readValue(json, new TypeReference<>() {});
+        } catch (JsonProcessingException e) {
+            throw new IllegalStateException("Failed to deserialize session exercises", e);
         }
     }
 }

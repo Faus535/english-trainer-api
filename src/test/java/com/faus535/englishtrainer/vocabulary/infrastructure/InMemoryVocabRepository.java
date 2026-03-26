@@ -7,6 +7,7 @@ import com.faus535.englishtrainer.vocabulary.domain.VocabRepository;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.Set;
 
 public final class InMemoryVocabRepository implements VocabRepository {
 
@@ -49,6 +50,25 @@ public final class InMemoryVocabRepository implements VocabRepository {
         List<VocabEntry> byLevel = findByLevel(level);
         Collections.shuffle(byLevel);
         return byLevel.stream().limit(count).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<VocabEntry> findByIds(List<UUID> ids) {
+        if (ids == null || ids.isEmpty()) {
+            return List.of();
+        }
+        return store.values().stream()
+                .filter(entry -> ids.contains(entry.id().value()))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<VocabEntry> findByLevelExcludingIds(VocabLevel level, Set<UUID> excludeIds, int count) {
+        return store.values().stream()
+                .filter(entry -> entry.level().equals(level))
+                .filter(entry -> excludeIds == null || !excludeIds.contains(entry.id().value()))
+                .limit(count)
+                .collect(Collectors.toList());
     }
 
     public int count() {

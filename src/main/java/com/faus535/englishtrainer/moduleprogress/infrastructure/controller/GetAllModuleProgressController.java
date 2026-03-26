@@ -2,8 +2,10 @@ package com.faus535.englishtrainer.moduleprogress.infrastructure.controller;
 
 import com.faus535.englishtrainer.moduleprogress.application.GetAllModuleProgressUseCase;
 import com.faus535.englishtrainer.moduleprogress.domain.ModuleProgress;
+import com.faus535.englishtrainer.shared.infrastructure.security.RequireProfileOwnership;
 import com.faus535.englishtrainer.user.domain.UserProfileId;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,7 +28,9 @@ class GetAllModuleProgressController {
                                   Map<Integer, Integer> scores) {}
 
     @GetMapping("/api/profiles/{userId}/modules")
-    ResponseEntity<List<ModuleProgressResponse>> handle(@PathVariable UUID userId) {
+    @RequireProfileOwnership
+    ResponseEntity<List<ModuleProgressResponse>> handle(@PathVariable UUID userId,
+                                                         Authentication authentication) {
         List<ModuleProgress> progressList = useCase.execute(new UserProfileId(userId));
         List<ModuleProgressResponse> response = progressList.stream()
                 .map(this::toResponse)

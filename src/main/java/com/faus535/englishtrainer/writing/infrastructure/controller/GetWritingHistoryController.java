@@ -2,8 +2,10 @@ package com.faus535.englishtrainer.writing.infrastructure.controller;
 
 import com.faus535.englishtrainer.writing.application.GetWritingHistoryUseCase;
 import com.faus535.englishtrainer.writing.domain.WritingFeedback;
+import com.faus535.englishtrainer.shared.infrastructure.security.RequireProfileOwnership;
 import com.faus535.englishtrainer.writing.domain.WritingSubmission;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,7 +27,9 @@ class GetWritingHistoryController {
                            WritingFeedback feedback, Instant submittedAt) {}
 
     @GetMapping("/api/profiles/{userId}/writing/history")
-    ResponseEntity<List<HistoryResponse>> handle(@PathVariable UUID userId) {
+    @RequireProfileOwnership
+    ResponseEntity<List<HistoryResponse>> handle(@PathVariable UUID userId,
+                                                   Authentication authentication) {
         List<HistoryResponse> response = useCase.execute(userId).stream()
                 .map(s -> new HistoryResponse(s.id().toString(), s.exerciseId().value().toString(),
                         s.text(), s.wordCount(), s.feedback(), s.submittedAt()))

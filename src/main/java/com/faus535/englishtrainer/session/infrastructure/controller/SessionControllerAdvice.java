@@ -1,5 +1,8 @@
 package com.faus535.englishtrainer.session.infrastructure.controller;
 
+import com.faus535.englishtrainer.learningpath.domain.error.LearningPathException;
+import com.faus535.englishtrainer.learningpath.domain.error.LearningPathNotFoundException;
+import com.faus535.englishtrainer.learningpath.domain.error.LearningUnitNotFoundException;
 import com.faus535.englishtrainer.session.domain.error.ActiveSessionExistsException;
 import com.faus535.englishtrainer.session.domain.error.SessionNotFoundException;
 import org.slf4j.Logger;
@@ -28,5 +31,26 @@ class SessionControllerAdvice {
         log.error("Active session exists: {}", ex.getMessage());
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(new ApiError("active_session_exists", "User already has an active session"));
+    }
+
+    @ExceptionHandler(LearningPathNotFoundException.class)
+    ResponseEntity<ApiError> handleLearningPathNotFound(LearningPathNotFoundException ex) {
+        log.error("Learning path not found: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new ApiError("not_found", ex.getMessage()));
+    }
+
+    @ExceptionHandler(LearningUnitNotFoundException.class)
+    ResponseEntity<ApiError> handleLearningUnitNotFound(LearningUnitNotFoundException ex) {
+        log.error("Learning unit not found: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new ApiError("not_found", ex.getMessage()));
+    }
+
+    @ExceptionHandler(LearningPathException.class)
+    ResponseEntity<ApiError> handleLearningPathException(LearningPathException ex) {
+        log.error("Learning path error: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ApiError("learning_path_error", ex.getMessage()));
     }
 }

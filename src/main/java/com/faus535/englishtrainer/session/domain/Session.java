@@ -17,6 +17,7 @@ public final class Session extends AggregateRoot<SessionId> {
     private final String secondaryModule;
     private final String integratorTheme;
     private final List<SessionBlock> blocks;
+    private final List<SessionExercise> exercises;
     private final boolean completed;
     private final Instant startedAt;
     private final Instant completedAt;
@@ -24,7 +25,8 @@ public final class Session extends AggregateRoot<SessionId> {
 
     private Session(SessionId id, UserProfileId userId, SessionMode mode, SessionType sessionType,
                     String listeningModule, String secondaryModule, String integratorTheme,
-                    List<SessionBlock> blocks, boolean completed, Instant startedAt,
+                    List<SessionBlock> blocks, List<SessionExercise> exercises,
+                    boolean completed, Instant startedAt,
                     Instant completedAt, Integer durationMinutes) {
         this.id = id;
         this.userId = userId;
@@ -34,6 +36,7 @@ public final class Session extends AggregateRoot<SessionId> {
         this.secondaryModule = secondaryModule;
         this.integratorTheme = integratorTheme;
         this.blocks = List.copyOf(blocks);
+        this.exercises = exercises != null ? List.copyOf(exercises) : List.of();
         this.completed = completed;
         this.startedAt = startedAt;
         this.completedAt = completedAt;
@@ -43,6 +46,13 @@ public final class Session extends AggregateRoot<SessionId> {
     public static Session create(UserProfileId userId, SessionMode mode, SessionType type,
                                  String listeningModule, String secondaryModule,
                                  String integratorTheme, List<SessionBlock> blocks) {
+        return create(userId, mode, type, listeningModule, secondaryModule, integratorTheme, blocks, List.of());
+    }
+
+    public static Session create(UserProfileId userId, SessionMode mode, SessionType type,
+                                 String listeningModule, String secondaryModule,
+                                 String integratorTheme, List<SessionBlock> blocks,
+                                 List<SessionExercise> exercises) {
         return new Session(
                 SessionId.generate(),
                 userId,
@@ -52,6 +62,7 @@ public final class Session extends AggregateRoot<SessionId> {
                 secondaryModule,
                 integratorTheme,
                 blocks,
+                exercises,
                 false,
                 Instant.now(),
                 null,
@@ -65,15 +76,33 @@ public final class Session extends AggregateRoot<SessionId> {
                                        List<SessionBlock> blocks, boolean completed,
                                        Instant startedAt, Instant completedAt,
                                        Integer durationMinutes) {
+        return reconstitute(id, userId, mode, sessionType, listeningModule, secondaryModule,
+                integratorTheme, blocks, List.of(), completed, startedAt, completedAt, durationMinutes);
+    }
+
+    public static Session reconstitute(SessionId id, UserProfileId userId, SessionMode mode,
+                                       SessionType sessionType, String listeningModule,
+                                       String secondaryModule, String integratorTheme,
+                                       List<SessionBlock> blocks, List<SessionExercise> exercises,
+                                       boolean completed, Instant startedAt, Instant completedAt,
+                                       Integer durationMinutes) {
         return new Session(id, userId, mode, sessionType, listeningModule, secondaryModule,
-                integratorTheme, blocks, completed, startedAt, completedAt, durationMinutes);
+                integratorTheme, blocks, exercises, completed, startedAt, completedAt, durationMinutes);
     }
 
     public Session complete(int durationMinutes) {
         Session completed = new Session(id, userId, mode, sessionType, listeningModule, secondaryModule,
-                integratorTheme, blocks, true, startedAt, Instant.now(), durationMinutes);
+                integratorTheme, blocks, exercises, true, startedAt, Instant.now(), durationMinutes);
         completed.registerEvent(new SessionCompletedEvent(id, userId));
         return completed;
+    }
+
+    public Session recordExerciseResult(int exerciseIndex, ExerciseResult result) {
+        List<SessionExercise> updatedExercises = exercises.stream()
+                .map(ex -> ex.exerciseIndex() == exerciseIndex ? ex.withResult(result) : ex)
+                .toList();
+        return new Session(id, userId, mode, sessionType, listeningModule, secondaryModule,
+                integratorTheme, blocks, updatedExercises, completed, startedAt, completedAt, durationMinutes);
     }
 
     public SessionId id() { return id; }
@@ -84,6 +113,7 @@ public final class Session extends AggregateRoot<SessionId> {
     public String secondaryModule() { return secondaryModule; }
     public String integratorTheme() { return integratorTheme; }
     public List<SessionBlock> blocks() { return blocks; }
+    public List<SessionExercise> exercises() { return exercises; }
     public boolean completed() { return completed; }
     public Instant startedAt() { return startedAt; }
     public Instant completedAt() { return completedAt; }

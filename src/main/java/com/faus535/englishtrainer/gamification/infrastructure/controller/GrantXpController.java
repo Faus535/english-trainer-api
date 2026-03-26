@@ -9,7 +9,9 @@ import com.faus535.englishtrainer.user.domain.error.UserProfileNotFoundException
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import com.faus535.englishtrainer.shared.infrastructure.security.RequireProfileOwnership;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -36,8 +38,10 @@ class GrantXpController {
     record GrantXpResponse(int xpGranted, int totalXp, XpLevelResponse level) {}
 
     @PostMapping("/api/profiles/{userId}/xp")
+    @RequireProfileOwnership
     ResponseEntity<GrantXpResponse> handle(@PathVariable UUID userId,
-                                            @Valid @RequestBody GrantXpRequest request) throws UserProfileNotFoundException, InvalidXpAmountException {
+                                            @Valid @RequestBody GrantXpRequest request,
+                                            Authentication authentication) throws UserProfileNotFoundException, InvalidXpAmountException {
         UserProfileId profileId = new UserProfileId(userId);
         GrantXpUseCase.XpGrantResult result = grantXpUseCase.execute(profileId, request.amount(), request.reason());
         XpLevel xpLevel = getXpLevelUseCase.execute(profileId);

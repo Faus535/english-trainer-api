@@ -7,6 +7,8 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 
 @Repository
 class JpaVocabRepositoryAdapter implements VocabRepository {
@@ -60,5 +62,29 @@ class JpaVocabRepositoryAdapter implements VocabRepository {
         List<VocabEntry> mutable = new java.util.ArrayList<>(entries);
         Collections.shuffle(mutable);
         return mutable.stream().limit(count).toList();
+    }
+
+    @Override
+    public List<VocabEntry> findByIds(List<UUID> ids) {
+        if (ids == null || ids.isEmpty()) {
+            return List.of();
+        }
+        return jpaRepository.findByIdIn(ids).stream()
+                .map(VocabEntryEntity::toAggregate)
+                .toList();
+    }
+
+    @Override
+    public List<VocabEntry> findByLevelExcludingIds(VocabLevel level, Set<UUID> excludeIds, int count) {
+        if (excludeIds == null || excludeIds.isEmpty()) {
+            List<VocabEntry> byLevel = findByLevel(level);
+            List<VocabEntry> mutable = new java.util.ArrayList<>(byLevel);
+            Collections.shuffle(mutable);
+            return mutable.stream().limit(count).toList();
+        }
+        return jpaRepository.findByLevelExcludingIds(level.value(), excludeIds).stream()
+                .limit(count)
+                .map(VocabEntryEntity::toAggregate)
+                .toList();
     }
 }

@@ -2,9 +2,11 @@ package com.faus535.englishtrainer.pronunciation.infrastructure.controller;
 
 import com.faus535.englishtrainer.pronunciation.application.RecordPronunciationErrorUseCase;
 import com.faus535.englishtrainer.pronunciation.domain.PronunciationError;
+import com.faus535.englishtrainer.shared.infrastructure.security.RequireProfileOwnership;
 import com.faus535.englishtrainer.user.domain.UserProfileId;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,8 +30,10 @@ class RecordPronunciationErrorController {
                                        Instant lastOccurred, Instant createdAt) {}
 
     @PostMapping("/api/profiles/{userId}/pronunciation/errors")
+    @RequireProfileOwnership
     ResponseEntity<PronunciationErrorResponse> handle(@PathVariable String userId,
-                                                       @RequestBody RecordPronunciationErrorRequest request) {
+                                                       @RequestBody RecordPronunciationErrorRequest request,
+                                                       Authentication authentication) {
         UserProfileId userProfileId = UserProfileId.fromString(userId);
 
         PronunciationError error = useCase.execute(
