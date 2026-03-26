@@ -3,6 +3,8 @@ package com.faus535.englishtrainer.session.domain;
 import com.faus535.englishtrainer.user.domain.UserProfileId;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 final class SessionGeneratorTest {
@@ -49,5 +51,44 @@ final class SessionGeneratorTest {
         assertTrue(SessionGenerator.shouldBeIntegrator(10));
         assertTrue(SessionGenerator.shouldBeIntegrator(15));
         assertFalse(SessionGenerator.shouldBeIntegrator(7));
+    }
+
+    @Test
+    void shouldAssignCorrectBlockIndexToExercises() {
+        List<SessionBlock> blocks = List.of(
+                new SessionBlock("warmup", "review", 3, 3, List.of()),
+                new SessionBlock("listening", "listening", 7, 4, List.of()),
+                new SessionBlock("secondary", "vocabulary", 7, 3, List.of())
+        );
+
+        List<SessionExercise> exercises = SessionGenerator.buildExercises(blocks);
+
+        assertEquals(10, exercises.size());
+        // First 3 exercises -> block 0
+        for (int i = 0; i < 3; i++) {
+            assertEquals(0, exercises.get(i).blockIndex());
+        }
+        // Next 4 exercises -> block 1
+        for (int i = 3; i < 7; i++) {
+            assertEquals(1, exercises.get(i).blockIndex());
+        }
+        // Last 3 exercises -> block 2
+        for (int i = 7; i < 10; i++) {
+            assertEquals(2, exercises.get(i).blockIndex());
+        }
+    }
+
+    @Test
+    void shouldAssignSequentialExerciseIndexes() {
+        List<SessionBlock> blocks = List.of(
+                new SessionBlock("warmup", "review", 3, 2, List.of()),
+                new SessionBlock("listening", "listening", 7, 3, List.of())
+        );
+
+        List<SessionExercise> exercises = SessionGenerator.buildExercises(blocks);
+
+        for (int i = 0; i < exercises.size(); i++) {
+            assertEquals(i, exercises.get(i).exerciseIndex());
+        }
     }
 }

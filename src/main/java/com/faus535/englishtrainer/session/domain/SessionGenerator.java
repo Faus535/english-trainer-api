@@ -119,10 +119,12 @@ public final class SessionGenerator {
     public static List<SessionExercise> buildExercises(List<SessionBlock> enrichedBlocks) {
         List<SessionExercise> exercises = new ArrayList<>();
         int index = 0;
-        for (SessionBlock block : enrichedBlocks) {
+        for (int blockIdx = 0; blockIdx < enrichedBlocks.size(); blockIdx++) {
+            SessionBlock block = enrichedBlocks.get(blockIdx);
             for (int i = 0; i < block.exerciseCount(); i++) {
                 exercises.add(new SessionExercise(
                         index++,
+                        blockIdx,
                         block.moduleName(),
                         block.contentIds(),
                         block.exerciseCount(),
