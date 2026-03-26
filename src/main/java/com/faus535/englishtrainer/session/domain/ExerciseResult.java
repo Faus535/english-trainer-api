@@ -11,6 +11,9 @@ public record ExerciseResult(int correctCount, int totalCount, long averageRespo
         if (totalCount < 0) {
             throw new IllegalArgumentException("totalCount must be >= 0");
         }
+        if (correctCount > totalCount) {
+            throw new IllegalArgumentException("correctCount cannot exceed totalCount");
+        }
         if (averageResponseTimeMs < 0) {
             throw new IllegalArgumentException("averageResponseTimeMs must be >= 0");
         }

@@ -5,6 +5,7 @@ import java.util.UUID;
 
 public record SessionExercise(
         int exerciseIndex,
+        int blockIndex,
         String exerciseType,
         List<UUID> contentIds,
         int targetCount,
@@ -18,7 +19,17 @@ public record SessionExercise(
         contentIds = contentIds != null ? List.copyOf(contentIds) : List.of();
     }
 
+    // Backward-compatible constructor (blockIndex defaults to 0)
+    public SessionExercise(int exerciseIndex, String exerciseType, List<UUID> contentIds,
+                           int targetCount, ExerciseResult result) {
+        this(exerciseIndex, 0, exerciseType, contentIds, targetCount, result);
+    }
+
+    public boolean isCompleted() {
+        return result != null;
+    }
+
     public SessionExercise withResult(ExerciseResult result) {
-        return new SessionExercise(exerciseIndex, exerciseType, contentIds, targetCount, result);
+        return new SessionExercise(exerciseIndex, blockIndex, exerciseType, contentIds, targetCount, result);
     }
 }

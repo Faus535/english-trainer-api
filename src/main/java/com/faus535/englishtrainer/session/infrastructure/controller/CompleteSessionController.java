@@ -3,6 +3,7 @@ package com.faus535.englishtrainer.session.infrastructure.controller;
 import com.faus535.englishtrainer.session.application.CompleteSessionUseCase;
 import com.faus535.englishtrainer.session.domain.Session;
 import com.faus535.englishtrainer.session.domain.SessionId;
+import com.faus535.englishtrainer.session.domain.error.IncompleteSessionException;
 import com.faus535.englishtrainer.session.domain.error.SessionNotFoundException;
 import com.faus535.englishtrainer.user.domain.error.UserProfileNotFoundException;
 import jakarta.validation.Valid;
@@ -34,7 +35,7 @@ class CompleteSessionController {
                                            @PathVariable String sessionId,
                                            @Valid @RequestBody CompleteSessionRequest request,
                                            Authentication authentication)
-            throws SessionNotFoundException, UserProfileNotFoundException {
+            throws SessionNotFoundException, UserProfileNotFoundException, IncompleteSessionException {
 
         Session session = useCase.execute(
                 SessionId.fromString(sessionId),

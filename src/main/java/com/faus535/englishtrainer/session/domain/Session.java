@@ -1,5 +1,6 @@
 package com.faus535.englishtrainer.session.domain;
 
+import com.faus535.englishtrainer.session.domain.error.IncompleteSessionException;
 import com.faus535.englishtrainer.shared.domain.AggregateRoot;
 import com.faus535.englishtrainer.session.domain.event.SessionCompletedEvent;
 import com.faus535.englishtrainer.user.domain.UserProfileId;
@@ -90,7 +91,10 @@ public final class Session extends AggregateRoot<SessionId> {
                 integratorTheme, blocks, exercises, completed, startedAt, completedAt, durationMinutes);
     }
 
-    public Session complete(int durationMinutes) {
+    public Session complete(int durationMinutes) throws IncompleteSessionException {
+        if (!areAllBlocksCompleted()) {
+            throw new IncompleteSessionException();
+        }
         Session completed = new Session(id, userId, mode, sessionType, listeningModule, secondaryModule,
                 integratorTheme, blocks, exercises, true, startedAt, Instant.now(), durationMinutes);
         completed.registerEvent(new SessionCompletedEvent(id, userId));
@@ -98,11 +102,35 @@ public final class Session extends AggregateRoot<SessionId> {
     }
 
     public Session recordExerciseResult(int exerciseIndex, ExerciseResult result) {
+        if (result.correctCount() > result.totalCount()) {
+            throw new IllegalArgumentException("correctCount cannot exceed totalCount");
+        }
         List<SessionExercise> updatedExercises = exercises.stream()
                 .map(ex -> ex.exerciseIndex() == exerciseIndex ? ex.withResult(result) : ex)
                 .toList();
         return new Session(id, userId, mode, sessionType, listeningModule, secondaryModule,
                 integratorTheme, blocks, updatedExercises, completed, startedAt, completedAt, durationMinutes);
+    }
+
+    public boolean isBlockCompleted(int blockIndex) {
+        List<SessionExercise> blockExercises = getExercisesForBlock(blockIndex);
+        return blockExercises.stream().allMatch(SessionExercise::isCompleted);
+    }
+
+    public boolean areAllBlocksCompleted() {
+        return exercises.stream().allMatch(SessionExercise::isCompleted);
+    }
+
+    public BlockProgress getBlockProgress(int blockIndex) {
+        List<SessionExercise> blockExercises = getExercisesForBlock(blockIndex);
+        int completed = (int) blockExercises.stream().filter(SessionExercise::isCompleted).count();
+        return new BlockProgress(blockIndex, blockExercises.size(), completed);
+    }
+
+    public List<SessionExercise> getExercisesForBlock(int blockIndex) {
+        return exercises.stream()
+                .filter(ex -> ex.blockIndex() == blockIndex)
+                .toList();
     }
 
     public SessionId id() { return id; }

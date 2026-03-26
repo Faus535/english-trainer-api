@@ -3,6 +3,7 @@ package com.faus535.englishtrainer.session.application;
 import com.faus535.englishtrainer.session.domain.Session;
 import com.faus535.englishtrainer.session.domain.SessionId;
 import com.faus535.englishtrainer.session.domain.SessionRepository;
+import com.faus535.englishtrainer.session.domain.error.IncompleteSessionException;
 import com.faus535.englishtrainer.session.domain.error.SessionNotFoundException;
 import com.faus535.englishtrainer.shared.application.annotation.UseCase;
 import com.faus535.englishtrainer.user.domain.UserProfile;
@@ -28,7 +29,7 @@ public class CompleteSessionUseCase {
 
     @Transactional
     public Session execute(SessionId sessionId, int durationMinutes)
-            throws SessionNotFoundException, UserProfileNotFoundException {
+            throws SessionNotFoundException, UserProfileNotFoundException, IncompleteSessionException {
 
         Session session = sessionRepository.findById(sessionId)
                 .orElseThrow(() -> new SessionNotFoundException(sessionId));

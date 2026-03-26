@@ -4,6 +4,7 @@ import com.faus535.englishtrainer.IntegrationTestBase;
 import com.faus535.englishtrainer.session.domain.Session;
 import com.faus535.englishtrainer.session.domain.SessionMother;
 import com.faus535.englishtrainer.session.domain.SessionRepository;
+import com.faus535.englishtrainer.session.domain.error.IncompleteSessionException;
 import com.faus535.englishtrainer.user.domain.UserProfile;
 import com.faus535.englishtrainer.user.domain.UserProfileMother;
 import com.faus535.englishtrainer.user.domain.UserProfileRepository;
@@ -76,7 +77,7 @@ class SessionRepositoryIT extends IntegrationTestBase {
     }
 
     @Test
-    void save_completed_session_maps_correctly() {
+    void save_completed_session_maps_correctly() throws IncompleteSessionException {
         UserProfile userProfile = UserProfileMother.create();
         userProfileRepository.save(userProfile);
 
@@ -95,7 +96,7 @@ class SessionRepositoryIT extends IntegrationTestBase {
     }
 
     @Test
-    void find_active_by_user_returns_empty_when_all_completed() {
+    void find_active_by_user_returns_empty_when_all_completed() throws IncompleteSessionException {
         UserProfile userProfile = UserProfileMother.create();
         userProfileRepository.save(userProfile);
 

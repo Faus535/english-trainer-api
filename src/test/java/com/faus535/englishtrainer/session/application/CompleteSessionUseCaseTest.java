@@ -3,6 +3,7 @@ package com.faus535.englishtrainer.session.application;
 import com.faus535.englishtrainer.session.domain.Session;
 import com.faus535.englishtrainer.session.domain.SessionId;
 import com.faus535.englishtrainer.session.domain.SessionMother;
+import com.faus535.englishtrainer.session.domain.error.IncompleteSessionException;
 import com.faus535.englishtrainer.session.domain.error.SessionNotFoundException;
 import com.faus535.englishtrainer.session.infrastructure.InMemorySessionRepository;
 import com.faus535.englishtrainer.user.domain.UserProfile;
@@ -29,7 +30,7 @@ final class CompleteSessionUseCaseTest {
     }
 
     @Test
-    void shouldCompleteSessionAndUpdateUserProfile() throws SessionNotFoundException, UserProfileNotFoundException {
+    void shouldCompleteSessionAndUpdateUserProfile() throws SessionNotFoundException, UserProfileNotFoundException, IncompleteSessionException {
         UserProfile profile = UserProfile.create();
         userProfileRepository.save(profile);
         Session session = SessionMother.create(profile.id());
