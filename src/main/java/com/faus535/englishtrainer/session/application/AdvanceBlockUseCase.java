@@ -8,6 +8,7 @@ import com.faus535.englishtrainer.session.domain.error.BlockNotCompletedExceptio
 import com.faus535.englishtrainer.session.domain.error.SessionNotFoundException;
 import com.faus535.englishtrainer.shared.application.annotation.UseCase;
 import com.faus535.englishtrainer.user.domain.UserProfileId;
+import org.springframework.transaction.annotation.Transactional;
 
 @UseCase
 public class AdvanceBlockUseCase {
@@ -27,6 +28,7 @@ public class AdvanceBlockUseCase {
             int totalExercises
     ) {}
 
+    @Transactional(readOnly = true)
     public AdvanceBlockResult execute(UserProfileId userId, SessionId sessionId, int blockIndex)
             throws SessionNotFoundException, BlockNotCompletedException {
 

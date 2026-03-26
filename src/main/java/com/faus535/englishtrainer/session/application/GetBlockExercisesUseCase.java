@@ -7,6 +7,7 @@ import com.faus535.englishtrainer.session.domain.SessionRepository;
 import com.faus535.englishtrainer.session.domain.error.SessionNotFoundException;
 import com.faus535.englishtrainer.shared.application.annotation.UseCase;
 import com.faus535.englishtrainer.user.domain.UserProfileId;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 

@@ -30,6 +30,27 @@ IMPORTANT: Before generating code, ALWAYS consult the relevant skills in `.claud
 | logging | Logging and traceability | `.claude/plugins/s2-backend/skills/logging/` |
 | init-project | Initialize project, shared module, config | `.claude/plugins/s2-backend/skills/init-project/` |
 
+## Commands
+
+| Command | Description |
+|---------|-------------|
+| `/analyze` | Analyzes backend + frontend in depth, generates/updates `.ai/project-snapshot.md` |
+| `/plan <feature>` | Reads the snapshot (read-only, stops if missing), proposes contracts and phases, generates the plan |
+| `/execute-plan <path>` | Executes the plan phase by phase, verifies compilation and tests, commits per phase, then runs `/analyze` + push + `railway up` |
+| `/revisar` | Validates architecture, naming conventions, and code quality |
+| `/modulo` | Creates a complete DDD module |
+| `/entidad` | Creates an entity in an existing module |
+| `/propiedad` | Adds a property to an existing entity |
+
+### Typical workflow
+
+```bash
+/analyze                                                # 1. Analyze the project (first time or after big changes)
+/plan create flashcard system with spaced repetition    # 2. Generate the implementation plan
+/clear                                                  # 3. Free context window
+/execute-plan .ai/plans/2026_03_26-flashcards-backend.md # 4. Execute, test, commit, push, deploy
+```
+
 ## Coding Workflow
 
 1. **Before writing code**: Read the `SKILL.md` and files in `references/` of the relevant skills
