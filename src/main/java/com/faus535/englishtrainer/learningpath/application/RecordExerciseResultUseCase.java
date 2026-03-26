@@ -8,6 +8,7 @@ import com.faus535.englishtrainer.learningpath.domain.MasteryCalculator;
 import com.faus535.englishtrainer.learningpath.domain.MasteryScore;
 import com.faus535.englishtrainer.learningpath.domain.error.LearningPathNotFoundException;
 import com.faus535.englishtrainer.learningpath.domain.error.LearningUnitNotFoundException;
+import com.faus535.englishtrainer.session.domain.BlockProgress;
 import com.faus535.englishtrainer.session.domain.ExerciseResult;
 import com.faus535.englishtrainer.session.domain.Session;
 import com.faus535.englishtrainer.session.domain.SessionExercise;
@@ -38,7 +39,15 @@ public class RecordExerciseResultUseCase {
         this.learningUnitRepository = learningUnitRepository;
     }
 
-    public record RecordResult(int unitMasteryScore, String unitStatus, int xpEarned) {}
+    public record RecordResult(
+            int unitMasteryScore,
+            String unitStatus,
+            int xpEarned,
+            int blockIndex,
+            boolean blockCompleted,
+            int completedExercisesInBlock,
+            int totalExercisesInBlock
+    ) {}
 
     @Transactional
     public RecordResult execute(UserProfileId userId, UUID sessionId, int exerciseIndex,
@@ -66,7 +75,11 @@ public class RecordExerciseResultUseCase {
 
         // 5. Load current LearningUnit
         if (learningPath.currentUnitId() == null) {
-            return new RecordResult(100, "MASTERED", result.correctCount() * 2);
+            SessionExercise ex = findExercise(updatedSession, exerciseIndex);
+            int bi = ex != null ? ex.blockIndex() : 0;
+            BlockProgress bp = updatedSession.getBlockProgress(bi);
+            return new RecordResult(100, "MASTERED", result.correctCount() * 2,
+                    bi, bp.isCompleted(), bp.completedExercises(), bp.totalExercises());
         }
 
         LearningUnit currentUnit = learningUnitRepository.findById(learningPath.currentUnitId())
@@ -101,11 +114,20 @@ public class RecordExerciseResultUseCase {
         // 10. Calculate XP
         int xpEarned = result.correctCount() * 2;
 
+        // 10.5. Compute block progress
+        SessionExercise recordedExercise = findExercise(updatedSession, exerciseIndex);
+        int exBlockIndex = recordedExercise != null ? recordedExercise.blockIndex() : 0;
+        BlockProgress blockProgress = updatedSession.getBlockProgress(exBlockIndex);
+
         // 11. Return RecordResult
         return new RecordResult(
                 masteryScore.value(),
                 updatedUnit.status().name(),
-                xpEarned
+                xpEarned,
+                exBlockIndex,
+                blockProgress.isCompleted(),
+                blockProgress.completedExercises(),
+                blockProgress.totalExercises()
         );
     }
 
