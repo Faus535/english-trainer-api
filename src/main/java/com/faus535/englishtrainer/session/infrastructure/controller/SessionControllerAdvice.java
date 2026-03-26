@@ -4,6 +4,8 @@ import com.faus535.englishtrainer.learningpath.domain.error.LearningPathExceptio
 import com.faus535.englishtrainer.learningpath.domain.error.LearningPathNotFoundException;
 import com.faus535.englishtrainer.learningpath.domain.error.LearningUnitNotFoundException;
 import com.faus535.englishtrainer.session.domain.error.ActiveSessionExistsException;
+import com.faus535.englishtrainer.session.domain.error.BlockNotCompletedException;
+import com.faus535.englishtrainer.session.domain.error.IncompleteSessionException;
 import com.faus535.englishtrainer.session.domain.error.SessionNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,5 +54,19 @@ class SessionControllerAdvice {
         log.error("Learning path error: {}", ex.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(new ApiError("learning_path_error", ex.getMessage()));
+    }
+
+    @ExceptionHandler(BlockNotCompletedException.class)
+    ResponseEntity<ApiError> handleBlockNotCompleted(BlockNotCompletedException ex) {
+        log.warn("Block not completed: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
+                .body(new ApiError("block_not_completed", ex.getMessage()));
+    }
+
+    @ExceptionHandler(IncompleteSessionException.class)
+    ResponseEntity<ApiError> handleIncompleteSession(IncompleteSessionException ex) {
+        log.warn("Incomplete session: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
+                .body(new ApiError("incomplete_session", ex.getMessage()));
     }
 }

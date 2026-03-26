@@ -35,7 +35,15 @@ class RecordExerciseResultController {
             @Min(0) Long averageResponseTimeMs,
             @NotBlank String exerciseType) {}
 
-    record RecordExerciseResultResponse(int unitMasteryScore, String unitStatus, int xpEarned) {}
+    record RecordExerciseResultResponse(
+            int unitMasteryScore,
+            String unitStatus,
+            int xpEarned,
+            int blockIndex,
+            boolean blockCompleted,
+            int completedExercisesInBlock,
+            int totalExercisesInBlock
+    ) {}
 
     @PostMapping("/api/profiles/{profileId}/sessions/{sessionId}/exercises/{exerciseIndex}/result")
     @RequireProfileOwnership(pathVariable = "profileId")
@@ -61,7 +69,11 @@ class RecordExerciseResultController {
         return ResponseEntity.ok(new RecordExerciseResultResponse(
                 recordResult.unitMasteryScore(),
                 recordResult.unitStatus(),
-                recordResult.xpEarned()
+                recordResult.xpEarned(),
+                recordResult.blockIndex(),
+                recordResult.blockCompleted(),
+                recordResult.completedExercisesInBlock(),
+                recordResult.totalExercisesInBlock()
         ));
     }
 }

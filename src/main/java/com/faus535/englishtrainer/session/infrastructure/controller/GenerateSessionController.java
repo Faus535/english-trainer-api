@@ -1,9 +1,9 @@
 package com.faus535.englishtrainer.session.infrastructure.controller;
 
 import com.faus535.englishtrainer.session.application.GenerateSessionUseCase;
+import com.faus535.englishtrainer.session.domain.BlockProgress;
 import com.faus535.englishtrainer.session.domain.ModuleWeight;
 import com.faus535.englishtrainer.session.domain.Session;
-import com.faus535.englishtrainer.session.domain.SessionBlock;
 import com.faus535.englishtrainer.session.domain.SessionMode;
 import com.faus535.englishtrainer.session.domain.error.ActiveSessionExistsException;
 import com.faus535.englishtrainer.user.domain.UserProfileId;
@@ -67,7 +67,20 @@ class GenerateSessionController {
                 session.secondaryModule(),
                 session.integratorTheme(),
                 session.blocks().stream()
-                        .map(b -> new SessionBlockResponse(b.blockType(), b.moduleName(), b.durationMinutes()))
+                        .map((b) -> {
+                            int blockIdx = session.blocks().indexOf(b);
+                            BlockProgress progress = session.getBlockProgress(blockIdx);
+                            return new SessionBlockResponse(
+                                    b.blockType(), b.moduleName(), b.durationMinutes(),
+                                    b.exerciseCount(), progress.completedExercises(), progress.isCompleted());
+                        })
+                        .toList(),
+                session.exercises().stream()
+                        .map(ex -> new SessionExerciseResponse(
+                                ex.exerciseIndex(), ex.blockIndex(), ex.exerciseType(),
+                                ex.targetCount(), ex.isCompleted(),
+                                ex.result() != null ? ex.result().correctCount() : null,
+                                ex.result() != null ? ex.result().totalCount() : null))
                         .toList(),
                 session.completed(),
                 session.startedAt().toString(),
