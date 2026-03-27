@@ -1,7 +1,6 @@
 package com.faus535.englishtrainer.session.infrastructure.controller;
 
 import com.faus535.englishtrainer.session.application.GenerateSessionUseCase;
-import com.faus535.englishtrainer.session.domain.BlockProgress;
 import com.faus535.englishtrainer.session.domain.ModuleWeight;
 import com.faus535.englishtrainer.session.domain.Session;
 import com.faus535.englishtrainer.session.domain.SessionMode;
@@ -54,38 +53,6 @@ class GenerateSessionController {
                 weights
         );
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(toResponse(session));
-    }
-
-    private SessionResponse toResponse(Session session) {
-        return new SessionResponse(
-                session.id().value().toString(),
-                session.userId().value().toString(),
-                session.mode().value(),
-                session.sessionType().value(),
-                session.listeningModule(),
-                session.secondaryModule(),
-                session.integratorTheme(),
-                session.blocks().stream()
-                        .map((b) -> {
-                            int blockIdx = session.blocks().indexOf(b);
-                            BlockProgress progress = session.getBlockProgress(blockIdx);
-                            return new SessionBlockResponse(
-                                    b.blockType(), b.moduleName(), b.durationMinutes(),
-                                    b.exerciseCount(), progress.completedExercises(), progress.isCompleted());
-                        })
-                        .toList(),
-                session.exercises().stream()
-                        .map(ex -> new SessionExerciseResponse(
-                                ex.exerciseIndex(), ex.blockIndex(), ex.exerciseType(),
-                                ex.targetCount(), ex.isCompleted(),
-                                ex.result() != null ? ex.result().correctCount() : null,
-                                ex.result() != null ? ex.result().totalCount() : null))
-                        .toList(),
-                session.completed(),
-                session.startedAt().toString(),
-                session.completedAt() != null ? session.completedAt().toString() : null,
-                session.durationMinutes()
-        );
+        return ResponseEntity.status(HttpStatus.CREATED).body(SessionResponseMapper.toResponse(session));
     }
 }
