@@ -2,29 +2,31 @@
 
 | Module | Domain (Aggregates, VOs, Events, Exceptions) | Use Cases | Controllers & Endpoints |
 |--------|----------------------------------------------|-----------|--------------------------|
-| activity | ActivityDate, ActivityDateId, StreakCalculator, StreakInfo; ActivityRecordedEvent | GetActivityDatesUseCase, GetActivityCalendarUseCase, GetStreakUseCase, RecordActivityUseCase | RecordActivityController(POST), GetActivityDatesController(GET), GetStreakController(GET) — 3 endpoints |
-| admin | (no domain) | (none) | AdminWritingController(POST), AdminVocabController(GET+POST), AdminPhraseController(GET), AdminReadingController(POST) — 4 endpoints |
-| analytics | AnalyticsSummary, LevelHistoryEntry, WeaknessReport | GetProgressHistoryUseCase, GetAnalyticsSummaryUseCase, GetActivityHeatmapUseCase | 3 controllers — 3 endpoints |
-| assessment | LevelTestResult, MiniTestResult, TestQuestion; LevelTestCompletedEvent | SubmitLevelTestUseCase, SubmitMiniTestUseCase, GetLevelTestQuestionsUseCase, GetMiniTestQuestionsUseCase, GetTestHistoryUseCase | 5 controllers — 5 endpoints |
-| auth | AuthUser, RefreshToken, PasswordResetToken; 7 exceptions | RegisterUserUseCase, LoginUserUseCase, GoogleLoginUseCase, GetCurrentUserUseCase, ChangePasswordUseCase, ForgotPasswordUseCase, ResetPasswordUseCase, LogoutUserUseCase | 9 controllers — 9 endpoints |
-| conversation | Conversation, ConversationTurn, ConversationGoal, LevelProfiles; 2 events; 5 exceptions | StartConversationUseCase, SendMessageUseCase, StreamMessageUseCase, EndConversationUseCase, GetConversationUseCase, ListConversationsUseCase, GetConversationStatsUseCase, SuggestTopicsUseCase | 9 controllers — 9 endpoints |
-| curriculum | ModuleDefinition, CurriculumBlock, CurriculumDay, IntegratorDefinition | GetCurriculumPlanUseCase, GetModuleDefinitionsUseCase, GetIntegratorSessionsUseCase | 4 controllers — 4 endpoints |
-| dailychallenge | DailyChallenge, UserChallenge; ChallengeCompletedEvent; 2 exceptions | GetTodayChallengeUseCase, GetUserChallengeProgressUseCase, UpdateChallengeProgressUseCase | 3 controllers — 3 endpoints |
-| errorpattern | ErrorPattern, ErrorCategory | RecordErrorPatternUseCase, GetErrorPatternsUseCase | 1 controller — 1 endpoint |
-| exercise | ConversationExercise, Exercise, ExerciseType | GenerateExercisesUseCase, GetConversationExercisesUseCase | 1 controller — 1 endpoint |
-| gamification | Achievement, UserAchievement, XpLevel; AchievementUnlockedEvent | GetAllAchievementsUseCase, GrantXpUseCase, GetUserAchievementsUseCase, CheckAndUnlockAchievementsUseCase, GetXpLevelUseCase | 5 controllers — 5 endpoints |
-| learningpath | LearningPath, LearningUnit, MasteryScore, ContentSelector; 2 events; 3 exceptions | GenerateLearningPathUseCase, GetNextContentUseCase, GetLearningStatusUseCase, AdvanceUnitUseCase, GetLearningPathUseCase, RecordExerciseResultUseCase | 3 controllers — 3 endpoints |
-| minigame | MiniGameScore | GetWordMatchDataUseCase, GetFillGapDataUseCase, GetUnscrambleDataUseCase, SaveMiniGameScoreUseCase, SaveGameResultsUseCase | 6 controllers — 6 endpoints |
-| minimalpair | MinimalPair, MinimalPairResult | GetMinimalPairsByLevelUseCase, RecordMinimalPairResultUseCase, GetMinimalPairStatsUseCase | 3 controllers — 3 endpoints |
-| moduleprogress | ModuleProgress, ModuleLevel, ModuleName; 2 exceptions | GetModuleProgressUseCase, GetAllModuleProgressUseCase, CheckLevelUpUseCase, InitModuleProgressUseCase, CompleteUnitUseCase | 5 controllers — 5 endpoints |
-| notification | PushSubscription, NotificationPreferences | SubscribePushUseCase, UpdateNotificationPreferencesUseCase, GetNotificationPreferencesUseCase | 3 controllers — 3 endpoints |
-| phrase | Phrase | GetPhrasesByLevelUseCase, GetRandomPhrasesUseCase | 2 controllers — 2 endpoints |
-| pronunciation | PronunciationError; PronunciationException | RecordPronunciationErrorUseCase, GetFrequentErrorsUseCase, GetProblematicSoundsUseCase | 3 controllers — 3 endpoints |
-| reading | ReadingPassage, ReadingSubmission, ReadingQuestion | GetPassagesByLevelUseCase, SubmitReadingAnswersUseCase, GetPassageByIdUseCase | 5 controllers — 5 endpoints |
-| session | Session, BlockProgress, SessionExercise, ExerciseResult, SessionBlock, SessionGenerator; SessionCompletedEvent; 5 exceptions | GenerateSessionUseCase, GetCurrentSessionUseCase, GetSessionHistoryUseCase, CompleteSessionUseCase, AdvanceBlockUseCase, GetBlockExercisesUseCase | 7 controllers — 7 endpoints |
-| spacedrepetition | SpacedRepetitionItem; ReviewCompletedEvent; 2 exceptions | GetReviewStatsUseCase, GetDueReviewsUseCase, CompleteReviewUseCase, AddVocabularyToReviewUseCase, AddToReviewQueueUseCase | 4 controllers — 4 endpoints |
-| tutorerror | TutorError; TutorErrorException | GetUserErrorsUseCase, GetErrorTrendUseCase, RecordTutorErrorUseCase, GenerateErrorExerciseUseCase | 4 controllers — 4 endpoints |
-| user | UserProfile, UserLevel; UserProfileCreatedEvent, XpGrantedEvent; 5 exceptions | GetUserProfileUseCase, UpdateModuleLevelUseCase, MarkTestCompletedUseCase, CreateUserProfileUseCase, DeleteUserProfileUseCase, ResetWeeklyCountersUseCase, RecordSessionUseCase, AddXpUseCase, ResetTestUseCase, SetAllLevelsUseCase | 9 controllers — 9 endpoints |
-| vocabulary | VocabEntry, VocabMastery; WordLearnedEvent, WordMasteredEvent | GetVocabByLevelUseCase, GetRandomVocabUseCase, SearchVocabUseCase, CreateVocabEntryUseCase, GetAllVocabUseCase, GetVocabByLevelAndBlockUseCase, GetUnlearnedVocabUseCase, GetVocabProgressUseCase | 7 controllers — 7 endpoints |
-| vocabularycontext | VocabularyContext | GenerateContextSentencesUseCase | 1 controller — 1 endpoint |
-| writing | WritingExercise, WritingSubmission, WritingFeedback | GetWritingExercisesUseCase, SubmitWritingUseCase, GetWritingHistoryUseCase | 4 controllers — 4 endpoints |
+| activity | ActivityDate, ActivityDateId, StreakInfo; ActivityRecordedEvent | GetActivityDatesUseCase, GetActivityCalendarUseCase, GetStreakUseCase, RecordActivityUseCase | 3 endpoints — GET+POST /api/profiles/{userId}/activity, streak |
+| admin | (no domain) | (none) | 4 controllers — GET+POST /api/admin/* (5 endpoints) |
+| analytics | AnalyticsSummary, LevelHistoryEntry, WeaknessReport | GetProgressHistoryUseCase, GetAnalyticsSummaryUseCase, GetActivityHeatmapUseCase | 3 endpoints — GET /api/profiles/{userId}/analytics/* |
+| assessment | LevelTestResult, MiniTestResult, TestQuestion; LevelTestCompletedEvent | GetTestHistoryUseCase, SubmitLevelTestUseCase, SubmitMiniTestUseCase, GetLevelTestQuestionsUseCase, GetMiniTestQuestionsUseCase | 5 endpoints — GET+POST /api/profiles/{userId}/assessments/* |
+| auth | AuthUser, AuthUserId; 7 exceptions | RegisterUserUseCase, GetCurrentUserUseCase, GoogleLoginUseCase, LoginUserUseCase, ChangePasswordUseCase, ForgotPasswordUseCase, ResetPasswordUseCase, LogoutUserUseCase | 9 endpoints — /api/auth/* |
+| conversation | Conversation, 11 VOs; ConversationStartedEvent, ConversationCompletedEvent; 5 exceptions | 8 use cases (Start, Send, Stream, End, Get, List, Stats, SuggestTopics) | 9 endpoints — /api/conversations/* |
+| curriculum | ModuleDefinition, CurriculumPlan (JSON-based) | GetCurriculumPlanUseCase, GetModuleDefinitionsUseCase, GetIntegratorSessionsUseCase | 4 endpoints — GET /api/curriculum/* |
+| dailychallenge | DailyChallenge, UserChallenge; ChallengeCompletedEvent | GetTodayChallengeUseCase, GetUserChallengeProgressUseCase, UpdateChallengeProgressUseCase | 3 endpoints — /api/challenges/* |
+| errorpattern | ErrorPattern, ErrorCategory | RecordErrorPatternUseCase, GetErrorPatternsUseCase | 1 endpoint — GET /api/profiles/{userId}/error-patterns |
+| exercise | ConversationExercise, ExerciseType | GenerateExercisesUseCase, GetConversationExercisesUseCase | 1 endpoint — GET /api/conversations/{id}/exercises |
+| gamification | Achievement, UserAchievement, XpLevel; AchievementUnlockedEvent | 5 use cases (GetAll, GetUser, Check, Grant, GetXpLevel) | 5 endpoints — /api/achievements + /api/profiles/{userId}/* |
+| learningpath | LearningPath, LearningUnit, MasteryScore; UnitMasteredEvent, LevelCompletedEvent | 6 use cases (Generate, GetPath, GetStatus, GetNextContent, Advance, RecordResult) | 3 endpoints — /api/profiles/{profileId}/learning-path/* |
+| minigame | MiniGameScore, MiniGameScoreId | GetFillGapDataUseCase, GetWordMatchDataUseCase, GetUnscrambleDataUseCase, SaveMiniGameScoreUseCase, SaveGameResultsUseCase | 6 endpoints — /api/minigames/* + /api/profiles/{userId}/minigames/* |
+| minimalpair | MinimalPair, MinimalPairResult | 3 use cases (GetByLevel, Record, GetStats) | 3 endpoints — /api/pronunciation/minimal-pairs/* |
+| moduleprogress | ModuleProgress, ModuleName, ModuleLevel | 5 use cases (Get, GetAll, CheckLevelUp, Init, CompleteUnit) | 5 endpoints — /api/profiles/{userId}/modules/* |
+| notification | PushSubscription, NotificationPreferences | SubscribePushUseCase, UpdateNotificationPreferencesUseCase, GetNotificationPreferencesUseCase | 3 endpoints — /api/notifications/* |
+| phrase | Phrase, PhraseId | GetPhrasesByLevelUseCase, GetRandomPhrasesUseCase | 2 endpoints — GET /api/phrases* |
+| pronunciation | PronunciationError | 3 use cases (Record, GetFrequent, GetProblematic) | 3 endpoints — /api/profiles/{userId}/pronunciation/* |
+| reading | ReadingPassage, ReadingSubmission, ReadingQuestion | GetPassagesByLevelUseCase, SubmitReadingAnswersUseCase, GetPassageByIdUseCase | 5 endpoints — /api/reading/* |
+| session | Session, SessionBlock, SessionExercise, BlockProgress, ExerciseResult; SessionCompletedEvent; 5 exceptions | 6 use cases (Generate, GetCurrent, Complete, GetHistory, AdvanceBlock, GetBlockExercises) + RecordExerciseResult | 7 endpoints — /api/profiles/{userId}/sessions/* |
+| spacedrepetition | SpacedRepetitionItem; ReviewCompletedEvent | 5 use cases (GetDue, GetStats, Complete, AddVocab, AddToQueue) | 4 endpoints — /api/profiles/{userId}/reviews/* |
+| tutorerror | TutorError | 4 use cases (GetErrors, GetTrend, Record, GenerateExercise) | 4 endpoints — /api/profiles/{userId}/tutor/errors/* |
+| user | UserProfile, UserLevel; UserProfileCreatedEvent, XpGrantedEvent; 5 exceptions | 10 use cases (Get, Create, Delete, UpdateLevel, MarkTest, ResetTest, SetAllLevels, RecordSession, AddXp, ResetWeekly) | 9 endpoints — /api/profiles/* |
+| vocabulary | VocabEntry, VocabMastery, VocabLevel; WordLearnedEvent, WordMasteredEvent | 8 use cases (GetByLevel, GetRandom, Search, Create, GetAll, GetByBlock, GetUnlearned, GetProgress) | 7 endpoints — /api/vocab/* + /api/profiles/{userId}/vocabulary/* |
+| vocabularycontext | VocabularyContext | GenerateContextSentencesUseCase | 1 endpoint — POST /api/vocabulary/{wordId}/context |
+| writing | WritingExercise, WritingSubmission, WritingFeedback | GetWritingExercisesUseCase, SubmitWritingUseCase, GetWritingHistoryUseCase | 4 endpoints — /api/writing/* + /api/profiles/{userId}/writing/* |
+
+**Totals**: 26 modules, ~117 use cases, ~131 controllers, ~114 endpoints

@@ -1,62 +1,49 @@
 # Testing Snapshot
 
 ## Patterns
-- **Object Mothers**: 15 test data builders across modules
-- **In-Memory Repositories**: Used in unit tests (InMemorySessionRepository, etc.)
-- **Integration Tests**: @SpringBootTest + Testcontainers (PostgreSQL)
-- **Unit Tests**: Plain JUnit 5 with mocks and Object Mothers
-- **Test task**: `./gradlew test` (unit), `./gradlew integrationTest` (integration, requires Docker)
+- **Object Mothers**: 15 test data builders (ActivityDateMother, AuthUserMother, ConversationMother, LearningPathMother, LearningUnitMother, LevelTestResultMother, ModuleProgressMother, PhraseMother, SessionMother, SpacedRepetitionItemMother, UserAchievementMother, AchievementMother, UserProfileMother, VocabEntryMother, VocabMasteryMother)
+- **In-Memory Repositories**: InMemoryVocabRepository, InMemoryVocabMasteryRepository, InMemoryAchievementRepository, InMemoryUserAchievementRepository, InMemoryMiniGameScoreRepository, InMemoryPhraseRepository, etc.
+- **Integration Test Base**: IntegrationTestBase (abstract, @Tag("integration"), @SpringBootTest)
+- **Constructor injection**: All tests use constructor injection, no @Autowired in tests
 
-## Object Mothers (15)
+## Test Classes (121 total)
 
-| Mother | Module |
-|--------|--------|
-| AchievementMother | gamification |
-| UserAchievementMother | gamification |
-| ActivityDateMother | activity |
-| AuthUserMother | auth |
-| ConversationMother | conversation |
-| LearningPathMother | learningpath |
-| LearningUnitMother | learningpath |
-| LevelTestResultMother | assessment |
-| ModuleProgressMother | moduleprogress |
-| PhraseMother | phrase |
-| SessionMother | session |
-| SpacedRepetitionItemMother | spacedrepetition |
-| UserProfileMother | user |
-| VocabEntryMother | vocabulary |
-| VocabMasteryMother | vocabulary |
+### Integration Tests (11)
 
-## Test Classes (117 total)
+| Test Class | Module | What it tests |
+|------------|--------|---------------|
+| VocabIntegrationTest | vocabulary | CRUD and query operations |
+| HealthCheckIntegrationTest | shared | Actuator health endpoint |
+| AuthIntegrationTest | auth | Login, register, token refresh |
+| GoogleAuthIntegrationTest | auth | Google OAuth flow |
+| SecurityStatusCodeTest | auth | 401/403 status codes |
+| SessionRepositoryIT | session | Session persistence |
+| ModuleProgressRepositoryIT | moduleprogress | Progress persistence |
+| SpacedRepetitionRepositoryIT | spacedrepetition | SRS item persistence |
+| ActivityDateRepositoryIT | activity | Activity date persistence |
+| UserProfileRepositoryIT | user | User profile persistence |
 
-### Integration Tests (12)
-| Test Class | Module |
-|------------|--------|
-| EnglishTrainerApiApplicationTests | root |
-| HealthCheckIntegrationTest | root |
-| ActivityDateRepositoryIT | activity |
-| AuthIntegrationTest | auth |
-| GoogleAuthIntegrationTest | auth |
-| SecurityStatusCodeTest | auth |
-| ModuleProgressRepositoryIT | moduleprogress |
-| SessionRepositoryIT | session |
-| SpacedRepetitionRepositoryIT | spacedrepetition |
-| UserProfileRepositoryIT | user |
-| VocabIntegrationTest | vocabulary |
+### Unit Tests (77+ classes)
 
-### Unit Tests (86+)
-- Domain tests: SessionTest, SessionGeneratorTest, ConversationTest, UserProfileTest, etc.
-- Application tests: AdvanceBlockUseCaseTest, GetBlockExercisesUseCaseTest, CompleteSessionUseCaseTest, etc.
-- All use cases have corresponding test classes
+Key test classes by module:
+- **session**: GenerateSessionUseCaseTest, CompleteSessionUseCaseTest, AdvanceBlockUseCaseTest, GetBlockExercisesUseCaseTest, RecordExerciseResultUseCaseTest, SessionResponseMapperTest
+- **minigame**: SaveGameResultsUseCaseTest, GetWordMatchDataUseCaseTest, GetUnscrambleDataUseCaseTest, GetFillGapDataUseCaseTest
+- **user**: CreateUserProfileUseCaseTest, GetUserProfileUseCaseTest, AddXpUseCaseTest, SetAllLevelsUseCaseTest
+- **vocabulary**: GetVocabByLevelUseCaseTest, GetRandomVocabUseCaseTest, CreateVocabEntryUseCaseTest, GetUnlearnedVocabUseCaseTest
+- **learningpath**: GenerateLearningPathUseCaseTest, GetNextContentUseCaseTest, AdvanceUnitUseCaseTest
+- **auth**: RegisterUserUseCaseTest, LoginUserUseCaseTest, GoogleLoginUseCaseTest, GoogleTokenVerifierTest
+- **conversation**: StartConversationUseCaseTest, SendMessageUseCaseTest, EndConversationUseCaseTest
+- **gamification**: GrantXpUseCaseTest, CheckAndUnlockAchievementsUseCaseTest
+- **spacedrepetition**: CompleteReviewUseCaseTest, AddToReviewQueueUseCaseTest, GetDueReviewsUseCaseTest
 
 ## Cross-Module Event Listeners (7)
 
-| Listener | Event | From Module | To Module |
-|----------|-------|-------------|-----------|
-| WordLearnedListener | WordLearnedEvent | vocabulary | spacedrepetition |
-| SrsGraduationListener | ReviewCompletedEvent | spacedrepetition | vocabulary |
-| LevelTestCompletedListener | LevelTestCompletedEvent | assessment | learningpath |
-| ConversationCompletedEventListener | ConversationCompletedEvent | conversation | user (XP) |
-| VocabularyFeedbackEventListener | VocabularyFeedbackEvent | conversation | spacedrepetition |
-| GrammarErrorEventListener | VocabularyFeedbackEvent | conversation | errorpattern |
-| ConversationCompletedExerciseListener | ConversationCompletedEvent | conversation | exercise |
+| Subscriber | Event | Module |
+|-----------|-------|--------|
+| WordLearnedListener | WordLearnedEvent | vocabulary -> spacedrepetition |
+| SrsGraduationListener | ReviewCompletedEvent | vocabulary |
+| LevelTestCompletedListener | LevelTestCompletedEvent | learningpath |
+| ConversationCompletedEventListener | ConversationCompletedEvent | conversation -> user |
+| VocabularyFeedbackEventListener | VocabularyFeedbackEvent | conversation -> spacedrepetition |
+| ConversationCompletedExerciseListener | ConversationCompletedEvent | exercise |
+| GrammarErrorEventListener | GrammarFeedbackEvent | errorpattern |
