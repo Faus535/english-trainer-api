@@ -50,10 +50,13 @@ class GetLearningStatusController {
 
     @GetMapping("/api/profiles/{profileId}/learning-status")
     @RequireProfileOwnership(pathVariable = "profileId")
-    ResponseEntity<LearningStatusResponse> handle(@PathVariable UUID profileId)
-            throws LearningPathNotFoundException {
-        LearningStatus status = useCase.execute(new UserProfileId(profileId));
-        return ResponseEntity.ok(toResponse(status));
+    ResponseEntity<LearningStatusResponse> handle(@PathVariable UUID profileId) {
+        try {
+            LearningStatus status = useCase.execute(new UserProfileId(profileId));
+            return ResponseEntity.ok(toResponse(status));
+        } catch (LearningPathNotFoundException e) {
+            return ResponseEntity.noContent().build();
+        }
     }
 
     private LearningStatusResponse toResponse(LearningStatus status) {
