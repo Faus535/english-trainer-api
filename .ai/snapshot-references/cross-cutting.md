@@ -1,48 +1,51 @@
-# Cross-Cutting Snapshot
+# Cross-cutting Snapshot
 
-## API Contract Mismatches (Frontend vs Backend)
+## API Contract Alignment — Frontend vs Backend
 
-| Frontend Call | Frontend Path | Backend Path | Status |
-|--------------|---------------|--------------|--------|
-| Admin vocab PUT | PUT /api/admin/vocab/{id} | (missing) | BROKEN |
-| Admin vocab DELETE | DELETE /api/admin/vocab/{id} | (missing) | BROKEN |
-| Admin phrases POST | POST /api/admin/phrases | (missing) | BROKEN |
-| Admin phrases PUT | PUT /api/admin/phrases/{id} | (missing) | BROKEN |
-| Admin phrases DELETE | DELETE /api/admin/phrases/{id} | (missing) | BROKEN |
-| Admin reading PUT | PUT /api/admin/reading/{id} | (missing) | BROKEN |
-| Admin reading DELETE | DELETE /api/admin/reading/{id} | (missing) | BROKEN |
-| Admin writing PUT | PUT /api/admin/writing/{id} | (missing) | BROKEN |
-| Admin writing DELETE | DELETE /api/admin/writing/{id} | (missing) | BROKEN |
-| Admin stats | GET /api/admin/stats | (missing) | BROKEN |
-| Admin reading GET | GET /api/admin/reading | (missing) | BROKEN |
-| Admin writing GET | GET /api/admin/writing | (missing) | BROKEN |
-| Module progress | GET /api/profiles/{id}/module-progress | GET /api/profiles/{id}/modules | PATH MISMATCH |
-| Conversations | GET /api/tutor/conversations | GET /api/conversations | PATH MISMATCH |
-| Vocab by level+block | GET /api/content/vocab/level/{l}?block={b} | GET /api/vocab/level/{l} | PATH MISMATCH |
-| Phrases | GET /api/content/phrases | GET /api/phrases | PATH MISMATCH |
-| Assessment submit | POST /api/profiles/{id}/assessments/submit | POST /api/profiles/{id}/assessments/level-test | PATH MISMATCH |
-| Assessment questions | GET /api/assessments/test-questions | GET /api/profiles/{id}/assessments/level-test/questions | PATH MISMATCH |
-| XP grant | POST /api/profiles/{id}/xp/grant | POST /api/profiles/{id}/xp | PATH MISMATCH |
-| Review complete | PUT /api/profiles/{id}/reviews/{itemId} | PUT /api/profiles/{id}/reviews/{itemId}/complete | PATH MISMATCH |
-| Activity dates | GET /api/profiles/{id}/activity/dates | GET /api/profiles/{id}/activity | PATH MISMATCH |
-| Learning path | GET /api/learning-path | GET /api/profiles/{id}/learning-path | MISSING profileId |
-| Session block advance | (not yet implemented in frontend) | PUT /api/profiles/{id}/sessions/{sid}/blocks/{bi}/advance | NEW — needs frontend |
-| Session block exercises | (not yet implemented in frontend) | GET /api/profiles/{id}/sessions/{sid}/blocks/{bi}/exercises | NEW — needs frontend |
+### Path Mismatches (frontend path != backend path)
+
+| Frontend Call | Backend Endpoint | Issue |
+|--------------|-----------------|-------|
+| POST `/profiles/{id}/test-completed` | PUT `/profiles/{id}/test-completed` | Method mismatch |
+| POST `/profiles/{id}/reset-test` | PUT `/profiles/{id}/reset-test` | Method mismatch |
+| PUT `/profiles/{id}/levels/{module}` | PUT `/profiles/{id}/modules/{module}/level` | Path mismatch |
+| POST `/profiles/{id}/levels` | PUT `/profiles/{id}/levels` | Method mismatch |
+| POST `/sessions/generate` | POST `/profiles/{userId}/sessions/generate` | Missing profileId prefix |
+| GET `/sessions/current` | GET `/profiles/{userId}/sessions/current` | Missing profileId prefix |
+| POST `/sessions/{id}/complete` | PUT `/profiles/{userId}/sessions/{id}/complete` | Method + path mismatch |
+| GET `/sessions/history` | GET `/profiles/{userId}/sessions` | Path mismatch |
+| PUT `/sessions/{sessionId}/blocks/{blockIndex}` | PUT `/profiles/{profileId}/sessions/{sessionId}/blocks/{blockIndex}/advance` | Missing prefix + /advance |
+| GET `/progress/{module}/{level}` | GET `/profiles/{userId}/modules/{module}/levels/{level}` | Path mismatch |
+| POST `/review/units` | POST `/profiles/{userId}/reviews` | Path mismatch |
+| GET `/review/due` | GET `/profiles/{userId}/reviews/due` | Missing profileId prefix |
+| GET `/learning-path/{profileId}/status` | GET `/profiles/{profileId}/learning-status` | Path mismatch |
+| GET `/learning-path/{profileId}` | GET `/profiles/{profileId}/learning-path` | Path mismatch |
+| POST `/learning-path/{profileId}/generate` | POST `/profiles/{profileId}/learning-path/generate` | Path mismatch |
+| GET `/assessment/questions` | GET `/profiles/{userId}/assessments/level-test/questions` | Path mismatch |
+| POST `/assessment/submit` | POST `/profiles/{userId}/assessments/level-test` | Path mismatch |
+| GET `/activity/{profileId}/dates` | GET `/profiles/{userId}/activity` | Path mismatch |
+| POST `/activity/record` | POST `/profiles/{userId}/activity` | Path mismatch |
+| POST `/tutor/conversations/start` | POST `/conversations` | Path mismatch |
+| POST `/tutor/conversations/{id}/end` | PUT `/conversations/{id}/end` | Method + path mismatch |
+| GET `/achievements/{profileId}` | GET `/profiles/{userId}/achievements` | Path mismatch |
+| POST `/xp/{profileId}` | POST `/profiles/{userId}/xp` | Path mismatch |
+| GET `/phrases/{level}` | GET `/api/phrases?level={level}` | Path vs query param |
+| PUT `/profiles/{id}` | (no endpoint) | Missing backend endpoint |
+| POST `/profiles/{id}/password` | PUT `/auth/change-password` | Path + method mismatch |
 
 ## Security Observations
 
-| Area | Observation |
-|------|-------------|
-| Admin endpoints | No @PreAuthorize/@Secured — any authenticated user can access admin CRUD |
-| Conversation ownership | Missing ownership validation — any user can read/send messages to any conversation |
-| Reading submissions | Missing ownership check on submit |
+| Endpoint | Observation |
+|----------|-------------|
 | PUT /api/profiles/{id}/levels | Missing @RequireProfileOwnership |
 | DELETE /api/profiles/{id} | Missing @RequireProfileOwnership |
-| Account deletion | Frontend UI exists but backend endpoint lacks ownership guard |
+| Admin endpoints (/api/admin/*) | No @PreAuthorize or role check |
+| GET /api/conversations/{id} | No ownership validation |
+| POST /api/reading/passages/{textId}/answers | No ownership validation |
 
 ## Risks
-- 12 admin CRUD endpoints missing (PUT/DELETE for vocab, phrases, reading, writing + stats + GET reading/writing)
-- Frontend uses different base paths for several APIs (content/vocab vs vocab, tutor/conversations vs conversations)
-- New block advance/exercises endpoints need frontend integration
-- Session completion now requires all exercises completed — frontend must adapt workflow
-- Admin endpoints lack role-based authorization
+- ~26 frontend-backend path mismatches — frontend API services use different URL patterns than backend controllers
+- Admin endpoints lack role-based security (no ADMIN role enforcement)
+- Several profile endpoints missing @RequireProfileOwnership
+- Conversation endpoints lack user-scoped access control
+- Frontend uses both profileId-prefixed and non-prefixed paths inconsistently

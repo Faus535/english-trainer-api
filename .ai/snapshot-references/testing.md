@@ -1,18 +1,15 @@
 # Testing Snapshot
 
-## Patterns
-- **Object Mothers**: 15 test data builders across modules
-- **In-Memory Repositories**: Used in unit tests (InMemorySessionRepository, etc.)
-- **Integration Tests**: @SpringBootTest + Testcontainers (PostgreSQL)
-- **Unit Tests**: Plain JUnit 5 with mocks and Object Mothers
-- **Test task**: `./gradlew test` (unit), `./gradlew integrationTest` (integration, requires Docker)
+## Summary
+- **Total test classes**: 87 unit + 12 integration = 99 total
+- **Object Mothers**: 15
+- **In-Memory Repositories**: 19
+- **Test stubs**: 1 (StubAiTutorPort)
 
-## Object Mothers (15)
+## Object Mothers
 
 | Mother | Module |
 |--------|--------|
-| AchievementMother | gamification |
-| UserAchievementMother | gamification |
 | ActivityDateMother | activity |
 | AuthUserMother | auth |
 | ConversationMother | conversation |
@@ -23,40 +20,41 @@
 | PhraseMother | phrase |
 | SessionMother | session |
 | SpacedRepetitionItemMother | spacedrepetition |
+| AchievementMother | gamification |
+| UserAchievementMother | gamification |
 | UserProfileMother | user |
 | VocabEntryMother | vocabulary |
 | VocabMasteryMother | vocabulary |
 
-## Test Classes (117 total)
+## In-Memory Repositories (19)
 
-### Integration Tests (12)
-| Test Class | Module |
-|------------|--------|
-| EnglishTrainerApiApplicationTests | root |
-| HealthCheckIntegrationTest | root |
-| ActivityDateRepositoryIT | activity |
-| AuthIntegrationTest | auth |
-| GoogleAuthIntegrationTest | auth |
-| SecurityStatusCodeTest | auth |
-| ModuleProgressRepositoryIT | moduleprogress |
-| SessionRepositoryIT | session |
-| SpacedRepetitionRepositoryIT | spacedrepetition |
-| UserProfileRepositoryIT | user |
-| VocabIntegrationTest | vocabulary |
+InMemoryActivityDateRepository, InMemoryAuthUserRepository, InMemoryAchievementRepository, InMemoryConversationRepository, InMemoryLearningPathRepository, InMemoryLearningUnitRepository, InMemoryLevelTestResultRepository, InMemoryMiniGameScoreRepository, InMemoryMiniTestResultRepository, InMemoryModuleProgressRepository, InMemoryPhraseRepository, InMemoryRefreshTokenRepository, InMemorySessionRepository, InMemorySpacedRepetitionRepository, InMemoryTestQuestionRepository, InMemoryTestQuestionHistoryRepository, InMemoryUserProfileRepository, InMemoryVocabMasteryRepository, InMemoryVocabRepository
 
-### Unit Tests (86+)
-- Domain tests: SessionTest, SessionGeneratorTest, ConversationTest, UserProfileTest, etc.
-- Application tests: AdvanceBlockUseCaseTest, GetBlockExercisesUseCaseTest, CompleteSessionUseCaseTest, etc.
-- All use cases have corresponding test classes
+## Integration Tests (12)
+
+| Test Class | Module | Type |
+|------------|--------|------|
+| AuthIntegrationTest | auth | @SpringBootTest |
+| GoogleAuthIntegrationTest | auth | @SpringBootTest |
+| VocabIntegrationTest | vocabulary | @SpringBootTest |
+| HealthCheckIntegrationTest | shared | @SpringBootTest |
+| SecurityStatusCodeTest | shared | @SpringBootTest |
+| UserProfileRepositoryIT | user | @DataJdbcTest |
+| ActivityDateRepositoryIT | activity | @DataJdbcTest |
+| SpacedRepetitionRepositoryIT | spacedrepetition | @DataJdbcTest |
+| ModuleProgressRepositoryIT | moduleprogress | @DataJdbcTest |
+| SessionRepositoryIT | session | @DataJdbcTest |
+| EnglishTrainerApiApplicationTests | root | @SpringBootTest |
+| IntegrationTestBase | shared | base class |
 
 ## Cross-Module Event Listeners (7)
 
-| Listener | Event | From Module | To Module |
-|----------|-------|-------------|-----------|
-| WordLearnedListener | WordLearnedEvent | vocabulary | spacedrepetition |
-| SrsGraduationListener | ReviewCompletedEvent | spacedrepetition | vocabulary |
-| LevelTestCompletedListener | LevelTestCompletedEvent | assessment | learningpath |
-| ConversationCompletedEventListener | ConversationCompletedEvent | conversation | user (XP) |
-| VocabularyFeedbackEventListener | VocabularyFeedbackEvent | conversation | spacedrepetition |
-| GrammarErrorEventListener | VocabularyFeedbackEvent | conversation | errorpattern |
-| ConversationCompletedExerciseListener | ConversationCompletedEvent | conversation | exercise |
+| Listener | Listens To | Module Flow |
+|----------|-----------|-------------|
+| WordLearnedListener | WordLearnedEvent | spacedrepetition <- vocabulary |
+| SrsGraduationListener | ReviewCompletedEvent | vocabulary <- spacedrepetition |
+| ConversationCompletedEventListener | ConversationCompletedEvent | user <- conversation |
+| LevelTestCompletedListener | LevelTestCompletedEvent | learningpath <- assessment |
+| ConversationCompletedExerciseListener | ConversationCompletedEvent | exercise <- conversation |
+| VocabularyFeedbackEventListener | VocabularyFeedbackEvent | spacedrepetition <- conversation |
+| GrammarErrorEventListener | GrammarFeedbackEvent | errorpattern <- conversation |

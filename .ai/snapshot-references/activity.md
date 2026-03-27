@@ -1,8 +1,9 @@
 # Activity Snapshot
 
 ## Recent Commits
-
 ```
+ddee057 Return 204 instead of 404 when user has no learning path
+54451c5 Update project snapshots after daily exercises restructure
 e62319b Add @Transactional to block use cases, update CLAUDE.md with commands documentation
 9468d11 Add block controllers, enrich session responses with exercises and block progress, add 422 error handlers
 74bed30 Add AdvanceBlock and GetBlockExercises use cases, extend RecordResult with block progress, enforce completion validation
@@ -19,9 +20,11 @@ e41f6af Add logout endpoint, reduce JWT to 30min, persist Google refresh tokens
 a802a46 Disable anonymous auth so expired tokens return 401 not 403
 6e1cb16 Add batch levels endpoint to fix optimistic locking on concurrent PUTs
 98cb9a0 Complete vocabulary seeds: A1 blocks 6-10 and A2 blocks 1-10
+9a5edfe Remove duplicate V9.x migrations (already covered by V8.x)
+68c98d1 Implement PLAN_MEJORAS_BACKEND phases 3, 4, and 5
 ```
 
 ## Active Areas
-- **Daily exercises restructure**: Block-level exercise tracking, advance validation, enriched session responses (current branch)
-- **Learning path & mastery**: LearningPath, LearningUnit, VocabMastery aggregates, V9.x migrations
-- **Auth hardening**: Ownership checks, JWT tuning, rate limiting, optimistic locking
+- Learning path & status: returning 204 for users without learning paths
+- Session block system: block-level exercise tracking, advance validation, enriched responses
+- Auth hardening: ownership checks, JWT tuning, optimistic locking

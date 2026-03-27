@@ -1,6 +1,8 @@
 # Endpoints Snapshot
 
-## Public Endpoints (9)
+Total: 9 public + 129 authenticated = 138 endpoints
+
+## Public Endpoints (no auth required)
 
 | Method | Path | Controller | Module |
 |--------|------|------------|--------|
@@ -12,114 +14,84 @@
 | POST | /api/auth/reset-password | ResetPasswordController | auth |
 | POST | /api/auth/logout | LogoutController | auth |
 | GET | /api/assessments/mini-test | GetMiniTestQuestionsController | assessment |
-| GET | /api/pronunciation/minimal-pairs | GetMinimalPairsController | minimalpair |
-
-## Authenticated Endpoints (105)
-
-| Method | Path | Controller | Module |
-|--------|------|------------|--------|
-| GET | /api/auth/me | GetCurrentUserController | auth |
-| PUT | /api/auth/change-password | ChangePasswordController | auth |
-| POST | /api/profiles/{userId}/activity | RecordActivityController | activity |
-| GET | /api/profiles/{userId}/activity | GetActivityDatesController | activity |
-| GET | /api/profiles/{userId}/streak | GetStreakController | activity |
-| POST | /api/admin/writing/exercises | AdminWritingController | admin |
-| GET | /api/admin/vocab | AdminVocabController | admin |
-| POST | /api/admin/vocab | AdminVocabController | admin |
-| GET | /api/admin/phrases | AdminPhraseController | admin |
-| POST | /api/admin/reading/passages | AdminReadingController | admin |
-| GET | /api/profiles/{userId}/analytics/activity-heatmap | GetActivityHeatmapController | analytics |
-| GET | /api/profiles/{userId}/analytics/summary | GetAnalyticsSummaryController | analytics |
-| GET | /api/profiles/{userId}/analytics/progress | GetProgressHistoryController | analytics |
-| GET | /api/profiles/{userId}/assessments/history | GetTestHistoryController | assessment |
-| POST | /api/profiles/{userId}/assessments/mini-test | SubmitMiniTestController | assessment |
-| POST | /api/profiles/{userId}/assessments/level-test | SubmitLevelTestController | assessment |
-| GET | /api/profiles/{userId}/assessments/level-test/questions | GetLevelTestQuestionsController | assessment |
-| POST | /api/conversations | StartConversationController | conversation |
-| GET | /api/conversations/{id} | GetConversationController | conversation |
-| POST | /api/conversations/{id}/messages | SendMessageController | conversation |
-| GET | /api/conversations/suggested-goals | SuggestGoalsController | conversation |
-| PUT | /api/conversations/{id}/end | EndConversationController | conversation |
-| POST | /api/conversations/{id}/messages/stream | StreamMessageController | conversation |
-| GET | /api/conversations | ListConversationsController | conversation |
-| GET | /api/conversations/suggested-topics | SuggestTopicsController | conversation |
-| GET | /api/conversations/stats | GetConversationStatsController | conversation |
-| GET | /api/curriculum/plan | GetCurriculumPlanController | curriculum |
-| GET | /api/curriculum/modules | GetModuleDefinitionsController | curriculum |
-| GET | /api/curriculum/modules/{name} | GetModuleByNameController | curriculum |
-| GET | /api/curriculum/integrators | GetIntegratorsController | curriculum |
-| GET | /api/challenges/today | GetTodayChallengeController | dailychallenge |
-| PUT | /api/profiles/{userId}/challenges/today/progress | UpdateChallengeProgressController | dailychallenge |
-| GET | /api/profiles/{userId}/challenges/today | GetUserChallengeProgressController | dailychallenge |
-| GET | /api/profiles/{userId}/error-patterns | GetErrorPatternsController | errorpattern |
-| GET | /api/conversations/{id}/exercises | GetConversationExercisesController | exercise |
-| POST | /api/profiles/{userId}/achievements/check | CheckAchievementsController | gamification |
-| GET | /api/profiles/{userId}/xp-level | GetXpLevelController | gamification |
-| POST | /api/profiles/{userId}/xp | GrantXpController | gamification |
 | GET | /api/achievements | GetAllAchievementsController | gamification |
-| GET | /api/profiles/{userId}/achievements | GetUserAchievementsController | gamification |
-| GET | /api/profiles/{profileId}/learning-path | GetLearningPathController | learningpath |
-| POST | /api/profiles/{profileId}/learning-path/generate | GenerateLearningPathController | learningpath |
-| GET | /api/profiles/{profileId}/learning-status | GetLearningStatusController | learningpath |
-| GET | /api/profiles/{userId}/minigames/scores | GetMiniGameScoresController | minigame |
-| POST | /api/profiles/{userId}/minigames/results | SaveGameResultsController | minigame |
-| POST | /api/profiles/{userId}/minigames/scores | SaveMiniGameScoreController | minigame |
-| GET | /api/minigames/unscramble | GetUnscrambleDataController | minigame |
-| GET | /api/minigames/fill-gap | GetFillGapDataController | minigame |
-| GET | /api/minigames/word-match | GetWordMatchDataController | minigame |
-| GET | /api/profiles/{userId}/pronunciation/minimal-pairs/stats | GetMinimalPairStatsController | minimalpair |
-| POST | /api/profiles/{userId}/pronunciation/minimal-pairs/results | RecordMinimalPairResultController | minimalpair |
-| GET | /api/profiles/{userId}/modules/{module}/levels/{level}/level-up | CheckLevelUpController | moduleprogress |
-| PUT | /api/profiles/{userId}/modules/{module}/levels/{level}/units/{unit} | CompleteUnitController | moduleprogress |
-| GET | /api/profiles/{userId}/modules | GetAllModuleProgressController | moduleprogress |
-| POST | /api/profiles/{userId}/modules/{module}/levels/{level} | InitModuleProgressController | moduleprogress |
-| GET | /api/profiles/{userId}/modules/{module}/levels/{level} | GetModuleProgressController | moduleprogress |
-| GET | /api/notifications/preferences | GetNotificationPreferencesController | notification |
-| POST | /api/notifications/subscribe | SubscribePushController | notification |
-| PUT | /api/notifications/preferences | UpdateNotificationPreferencesController | notification |
-| GET | /api/phrases | GetPhrasesByLevelController | phrase |
-| GET | /api/phrases/random | GetRandomPhrasesController | phrase |
-| GET | /api/profiles/{userId}/pronunciation/errors | GetFrequentErrorsController | pronunciation |
-| POST | /api/profiles/{userId}/pronunciation/errors | RecordPronunciationErrorController | pronunciation |
-| GET | /api/profiles/{userId}/pronunciation/problematic-sounds | GetProblematicSoundsController | pronunciation |
-| POST | /api/profiles/{userId}/reading/submit | SubmitReadingAnswersController | reading |
-| GET | /api/reading/passages | GetPassagesByLevelController | reading |
-| POST | /api/reading/passages/{textId}/answers | SubmitPassageAnswersController | reading |
-| GET | /api/reading/passages/{id} | GetPassageByIdController | reading |
-| GET | /api/reading/passages/{id}/questions | GetPassageQuestionsController | reading |
-| GET | /api/profiles/{userId}/sessions | GetSessionHistoryController | session |
-| POST | /api/profiles/{profileId}/sessions/{sessionId}/exercises/{exerciseIndex}/result | RecordExerciseResultController | session |
-| GET | /api/profiles/{userId}/sessions/current | GetCurrentSessionController | session |
-| PUT | /api/profiles/{userId}/sessions/{sessionId}/complete | CompleteSessionController | session |
-| GET | /api/profiles/{profileId}/sessions/{sessionId}/blocks/{blockIndex}/exercises | GetBlockExercisesController | session |
-| POST | /api/profiles/{userId}/sessions/generate | GenerateSessionController | session |
-| PUT | /api/profiles/{profileId}/sessions/{sessionId}/blocks/{blockIndex}/advance | AdvanceBlockController | session |
-| PUT | /api/profiles/{userId}/reviews/{itemId}/complete | CompleteReviewController | spacedrepetition |
-| GET | /api/profiles/{userId}/reviews/due | GetDueReviewsController | spacedrepetition |
-| POST | /api/profiles/{userId}/reviews | AddToReviewQueueController | spacedrepetition |
-| GET | /api/profiles/{userId}/reviews/stats | GetReviewStatsController | spacedrepetition |
-| POST | /api/profiles/{userId}/tutor/errors | RecordTutorErrorController | tutorerror |
-| GET | /api/profiles/{userId}/tutor/errors/trend | GetErrorTrendController | tutorerror |
-| POST | /api/profiles/{userId}/tutor/errors/{errorId}/exercise | GenerateErrorExerciseController | tutorerror |
-| GET | /api/profiles/{userId}/tutor/errors | GetUserErrorsController | tutorerror |
-| PUT | /api/profiles/{id}/reset-test | ResetTestController | user |
-| GET | /api/profiles/{id} | GetUserProfileController | user |
-| POST | /api/profiles/{id}/sessions | RecordSessionController | user |
-| PUT | /api/profiles/{id}/test-completed | MarkTestCompletedController | user |
-| POST | /api/profiles | CreateUserProfileController | user |
-| PUT | /api/profiles/{id}/modules/{module}/level | UpdateModuleLevelController | user |
-| PUT | /api/profiles/{id}/levels | SetAllLevelsController | user |
-| DELETE | /api/profiles/{id} | DeleteUserProfileController | user |
-| POST | /api/profiles/{id}/xp | AddXpController | user |
-| GET | /api/vocab | GetAllVocabController | vocabulary |
-| GET | /api/profiles/{userId}/vocabulary/unlearned | GetUnlearnedVocabController | vocabulary |
-| GET | /api/profiles/{userId}/vocabulary/progress | GetVocabProgressController | vocabulary |
-| GET | /api/vocab/search | SearchVocabController | vocabulary |
-| GET | /api/vocab/random | GetRandomVocabController | vocabulary |
-| GET | /api/vocab/level/{level} | GetVocabByLevelController | vocabulary |
-| POST | /api/vocab | CreateVocabEntryController | vocabulary |
-| POST | /api/vocabulary/{wordId}/context | GenerateContextController | vocabularycontext |
-| GET | /api/writing/exercises | GetWritingExercisesController | writing |
-| POST | /api/writing/submissions | SubmitWritingSubmissionController | writing |
-| POST | /api/profiles/{userId}/writing/submit | SubmitWritingController | writing |
-| GET | /api/profiles/{userId}/writing/history | GetWritingHistoryController | writing |
+
+## Authenticated Endpoints by Module
+
+### activity (3)
+| GET | /api/profiles/{userId}/activity | GET | /api/profiles/{userId}/streak | POST | /api/profiles/{userId}/activity |
+
+### admin (4)
+| GET,POST | /api/admin/vocab | GET | /api/admin/phrases | POST | /api/admin/reading/passages | POST | /api/admin/writing/exercises |
+
+### analytics (3)
+| GET | /api/profiles/{userId}/analytics/activity-heatmap | GET | /api/profiles/{userId}/analytics/summary | GET | /api/profiles/{userId}/analytics/progress |
+
+### assessment (4)
+| GET | /api/profiles/{userId}/assessments/history | POST | /api/profiles/{userId}/assessments/mini-test | POST | /api/profiles/{userId}/assessments/level-test | GET | /api/profiles/{userId}/assessments/level-test/questions |
+
+### auth (2 authenticated)
+| GET | /api/auth/me | PUT | /api/auth/change-password |
+
+### conversation (9)
+| GET | /api/conversations/{id} | GET | /api/conversations | POST | /api/conversations/{id}/messages | GET | /api/conversations/suggested-topics | GET | /api/conversations/suggested-goals | GET | /api/conversations/stats | POST | /api/conversations/{id}/messages/stream | POST | /api/conversations | PUT | /api/conversations/{id}/end |
+
+### curriculum (4)
+| GET | /api/curriculum/plan | GET | /api/curriculum/modules | GET | /api/curriculum/modules/{name} | GET | /api/curriculum/integrators |
+
+### dailychallenge (3)
+| GET | /api/challenges/today | PUT | /api/profiles/{userId}/challenges/today/progress | GET | /api/profiles/{userId}/challenges/today |
+
+### errorpattern (1)
+| GET | /api/profiles/{userId}/error-patterns |
+
+### exercise (1)
+| GET | /api/conversations/{id}/exercises |
+
+### gamification (4 authenticated)
+| POST | /api/profiles/{userId}/xp | POST | /api/profiles/{userId}/achievements/check | GET | /api/profiles/{userId}/achievements | GET | /api/profiles/{userId}/xp-level |
+
+### learningpath (3)
+| POST | /api/profiles/{profileId}/learning-path/generate | GET | /api/profiles/{profileId}/learning-path | GET | /api/profiles/{profileId}/learning-status |
+
+### minigame (6)
+| GET | /api/minigames/word-match | GET | /api/minigames/fill-gap | GET | /api/minigames/unscramble | POST | /api/profiles/{userId}/minigames/scores | POST | /api/profiles/{userId}/minigames/results | GET | /api/profiles/{userId}/minigames/scores |
+
+### minimalpair (3)
+| GET | /api/pronunciation/minimal-pairs | GET | /api/profiles/{userId}/pronunciation/minimal-pairs/stats | POST | /api/profiles/{userId}/pronunciation/minimal-pairs/results |
+
+### moduleprogress (5)
+| GET | /api/profiles/{userId}/modules/{module}/levels/{level}/level-up | PUT | /api/profiles/{userId}/modules/{module}/levels/{level}/units/{unit} | GET | /api/profiles/{userId}/modules | GET | /api/profiles/{userId}/modules/{module}/levels/{level} | POST | /api/profiles/{userId}/modules/{module}/levels/{level} |
+
+### notification (3)
+| POST | /api/notifications/subscribe | GET | /api/notifications/preferences | PUT | /api/notifications/preferences |
+
+### phrase (2)
+| GET | /api/phrases | GET | /api/phrases/random |
+
+### pronunciation (3)
+| GET | /api/profiles/{userId}/pronunciation/errors | POST | /api/profiles/{userId}/pronunciation/errors | GET | /api/profiles/{userId}/pronunciation/problematic-sounds |
+
+### reading (5)
+| GET | /api/reading/passages | GET | /api/reading/passages/{id} | GET | /api/reading/passages/{id}/questions | POST | /api/reading/passages/{textId}/answers | POST | /api/profiles/{userId}/reading/submit |
+
+### session (7)
+| GET | /api/profiles/{userId}/sessions | PUT | /api/profiles/{profileId}/sessions/{sessionId}/blocks/{blockIndex}/advance | POST | /api/profiles/{userId}/sessions/generate | GET | /api/profiles/{profileId}/sessions/{sessionId}/blocks/{blockIndex}/exercises | PUT | /api/profiles/{userId}/sessions/{sessionId}/complete | GET | /api/profiles/{userId}/sessions/current | POST | /api/profiles/{profileId}/sessions/{sessionId}/exercises/{exerciseIndex}/result |
+
+### spacedrepetition (4)
+| POST | /api/profiles/{userId}/reviews | GET | /api/profiles/{userId}/reviews/stats | PUT | /api/profiles/{userId}/reviews/{itemId}/complete | GET | /api/profiles/{userId}/reviews/due |
+
+### tutorerror (4)
+| POST | /api/profiles/{userId}/tutor/errors/{errorId}/exercise | POST | /api/profiles/{userId}/tutor/errors | GET | /api/profiles/{userId}/tutor/errors/trend | GET | /api/profiles/{userId}/tutor/errors |
+
+### user (9)
+| POST | /api/profiles | PUT | /api/profiles/{id}/test-completed | DELETE | /api/profiles/{id} | PUT | /api/profiles/{id}/reset-test | PUT | /api/profiles/{id}/levels | PUT | /api/profiles/{id}/modules/{module}/level | GET | /api/profiles/{id} | POST | /api/profiles/{id}/sessions | POST | /api/profiles/{id}/xp |
+
+### vocabulary (7)
+| GET | /api/vocab | GET | /api/vocab/search | POST | /api/vocab | GET | /api/vocab/random | GET | /api/vocab/level/{level} | GET | /api/profiles/{userId}/vocabulary/unlearned | GET | /api/profiles/{userId}/vocabulary/progress |
+
+### vocabularycontext (1)
+| POST | /api/vocabulary/{wordId}/context |
+
+### writing (4)
+| GET | /api/writing/exercises | POST | /api/writing/submissions | GET | /api/profiles/{userId}/writing/history | POST | /api/profiles/{userId}/writing/submit |
