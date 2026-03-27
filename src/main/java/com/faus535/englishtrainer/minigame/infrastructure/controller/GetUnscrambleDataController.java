@@ -18,15 +18,16 @@ class GetUnscrambleDataController {
         this.useCase = useCase;
     }
 
-    record UnscrambleItemResponse(String en, String es) {}
+    record UnscrambleWordResponse(String word, String vocabEntryId) {}
+    record UnscrambleDataResponse(List<UnscrambleWordResponse> words, String level) {}
 
     @GetMapping("/api/minigames/unscramble")
-    ResponseEntity<List<UnscrambleItemResponse>> handle(@RequestParam String level) {
+    ResponseEntity<UnscrambleDataResponse> handle(@RequestParam String level) {
         VocabLevel vocabLevel = new VocabLevel(level);
         List<GetUnscrambleDataUseCase.UnscrambleItem> items = useCase.execute(vocabLevel);
-        List<UnscrambleItemResponse> response = items.stream()
-                .map(item -> new UnscrambleItemResponse(item.en(), item.es()))
+        List<UnscrambleWordResponse> wordResponses = items.stream()
+                .map(item -> new UnscrambleWordResponse(item.en(), item.vocabEntryId()))
                 .toList();
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(new UnscrambleDataResponse(wordResponses, level));
     }
 }

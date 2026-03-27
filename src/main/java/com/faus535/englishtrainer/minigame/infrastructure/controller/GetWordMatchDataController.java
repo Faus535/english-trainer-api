@@ -18,15 +18,16 @@ class GetWordMatchDataController {
         this.useCase = useCase;
     }
 
-    record WordMatchPairResponse(String en, String es) {}
+    record WordMatchPairResponse(String en, String es, String vocabEntryId) {}
+    record WordMatchDataResponse(List<WordMatchPairResponse> pairs, String level) {}
 
     @GetMapping("/api/minigames/word-match")
-    ResponseEntity<List<WordMatchPairResponse>> handle(@RequestParam String level) {
+    ResponseEntity<WordMatchDataResponse> handle(@RequestParam String level) {
         VocabLevel vocabLevel = new VocabLevel(level);
         List<GetWordMatchDataUseCase.WordMatchPair> pairs = useCase.execute(vocabLevel);
-        List<WordMatchPairResponse> response = pairs.stream()
-                .map(pair -> new WordMatchPairResponse(pair.en(), pair.es()))
+        List<WordMatchPairResponse> pairResponses = pairs.stream()
+                .map(pair -> new WordMatchPairResponse(pair.en(), pair.es(), pair.vocabEntryId()))
                 .toList();
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(new WordMatchDataResponse(pairResponses, level));
     }
 }

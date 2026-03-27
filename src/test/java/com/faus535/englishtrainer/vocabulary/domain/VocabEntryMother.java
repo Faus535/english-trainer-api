@@ -25,4 +25,16 @@ public final class VocabEntryMother {
                 new VocabLevel(level)
         );
     }
+
+    public static VocabEntry withEnAndLevel(String en, String es, String level) {
+        return VocabEntry.create(
+                VocabEntryId.generate(),
+                en,
+                "/test/",
+                es,
+                "noun",
+                "Example: " + en,
+                new VocabLevel(level)
+        );
+    }
 }

@@ -17,13 +17,15 @@ public class GetUnscrambleDataUseCase {
         this.vocabRepository = vocabRepository;
     }
 
-    public record UnscrambleItem(String en, String es) {}
+    public record UnscrambleItem(String en, String es, String vocabEntryId) {}
 
     @Transactional(readOnly = true)
     public List<UnscrambleItem> execute(VocabLevel level) {
         List<VocabEntry> entries = vocabRepository.findRandom(8, level);
         return entries.stream()
-                .map(entry -> new UnscrambleItem(entry.en(), entry.es()))
+                .map(entry -> new UnscrambleItem(
+                        entry.en(), entry.es(),
+                        entry.id().value().toString()))
                 .toList();
     }
 }

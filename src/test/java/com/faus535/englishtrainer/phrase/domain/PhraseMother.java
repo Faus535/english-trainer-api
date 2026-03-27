@@ -11,4 +11,8 @@ public final class PhraseMother {
     public static Phrase withLevel(String level) {
         return Phrase.create("How are you?", "Como estas?", new VocabLevel(level));
     }
+
+    public static Phrase withEnAndLevel(String en, String es, String level) {
+        return Phrase.create(en, es, new VocabLevel(level));
+    }
 }

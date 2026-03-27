@@ -17,13 +17,15 @@ public class GetWordMatchDataUseCase {
         this.vocabRepository = vocabRepository;
     }
 
-    public record WordMatchPair(String en, String es) {}
+    public record WordMatchPair(String en, String es, String vocabEntryId) {}
 
     @Transactional(readOnly = true)
     public List<WordMatchPair> execute(VocabLevel level) {
         List<VocabEntry> entries = vocabRepository.findRandom(10, level);
         return entries.stream()
-                .map(entry -> new WordMatchPair(entry.en(), entry.es()))
+                .map(entry -> new WordMatchPair(
+                        entry.en(), entry.es(),
+                        entry.id().value().toString()))
                 .toList();
     }
 }
