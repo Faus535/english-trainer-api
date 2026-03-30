@@ -1,7 +1,7 @@
 # Database Snapshot
 
-Latest migration: V9.3.0
-Total migrations: 48
+Latest migration: **V9.7.0**
+Total migrations: **53**
 
 | Migration | Description |
 |-----------|-------------|
@@ -54,3 +54,7 @@ Total migrations: 48
 | V9.0.0 | create_learning_paths |
 | V9.2.0 | create_vocab_mastery |
 | V9.3.0 | add_session_exercises |
+| V9.4.0 | phonetics_create_tables |
+| V9.5.0 | phonetics_seed_phonemes |
+| V9.6.0 | phonetics_seed_phrases |
+| V9.7.0 | phonetics_spanish_content_and_phrases |

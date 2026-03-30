@@ -1,48 +1,36 @@
 # Cross-Cutting Snapshot
 
-## API Contract Mismatches (Frontend vs Backend)
+## API Contract Alignment (Frontend ↔ Backend)
 
-| Frontend Call | Frontend Path | Backend Path | Status |
-|--------------|---------------|--------------|--------|
-| Admin vocab PUT | PUT /api/admin/vocab/{id} | (missing) | BROKEN |
-| Admin vocab DELETE | DELETE /api/admin/vocab/{id} | (missing) | BROKEN |
-| Admin phrases POST | POST /api/admin/phrases | (missing) | BROKEN |
-| Admin phrases PUT | PUT /api/admin/phrases/{id} | (missing) | BROKEN |
-| Admin phrases DELETE | DELETE /api/admin/phrases/{id} | (missing) | BROKEN |
-| Admin reading PUT | PUT /api/admin/reading/{id} | (missing) | BROKEN |
-| Admin reading DELETE | DELETE /api/admin/reading/{id} | (missing) | BROKEN |
-| Admin writing PUT | PUT /api/admin/writing/{id} | (missing) | BROKEN |
-| Admin writing DELETE | DELETE /api/admin/writing/{id} | (missing) | BROKEN |
-| Admin stats | GET /api/admin/stats | (missing) | BROKEN |
-| Admin reading GET | GET /api/admin/reading | (missing) | BROKEN |
-| Admin writing GET | GET /api/admin/writing | (missing) | BROKEN |
-| Module progress | GET /api/profiles/{id}/module-progress | GET /api/profiles/{id}/modules | PATH MISMATCH |
-| Conversations | GET /api/tutor/conversations | GET /api/conversations | PATH MISMATCH |
-| Vocab by level+block | GET /api/content/vocab/level/{l}?block={b} | GET /api/vocab/level/{l} | PATH MISMATCH |
-| Phrases | GET /api/content/phrases | GET /api/phrases | PATH MISMATCH |
-| Assessment submit | POST /api/profiles/{id}/assessments/submit | POST /api/profiles/{id}/assessments/level-test | PATH MISMATCH |
-| Assessment questions | GET /api/assessments/test-questions | GET /api/profiles/{id}/assessments/level-test/questions | PATH MISMATCH |
-| XP grant | POST /api/profiles/{id}/xp/grant | POST /api/profiles/{id}/xp | PATH MISMATCH |
-| Review complete | PUT /api/profiles/{id}/reviews/{itemId} | PUT /api/profiles/{id}/reviews/{itemId}/complete | PATH MISMATCH |
-| Activity dates | GET /api/profiles/{id}/activity/dates | GET /api/profiles/{id}/activity | PATH MISMATCH |
-| Learning path | GET /api/learning-path | GET /api/profiles/{id}/learning-path | MISSING profileId |
-| Session block advance | (not yet implemented in frontend) | PUT /api/profiles/{id}/sessions/{sid}/blocks/{bi}/advance | NEW — needs frontend |
-| Session block exercises | (not yet implemented in frontend) | GET /api/profiles/{id}/sessions/{sid}/blocks/{bi}/exercises | NEW — needs frontend |
+### Phonetics (NEW — aligned)
+| Frontend Call | Backend Endpoint | Status |
+|--------------|-----------------|--------|
+| getPhonemes() | GET /api/phonetics/phonemes | Aligned |
+| getPhonemeDetail(id) | GET /api/phonetics/phonemes/{id} | Aligned |
+| getPhrases(id) | GET /api/phonetics/phonemes/{id}/phrases | Aligned |
+| getTodayPhoneme(profileId) | GET /api/profiles/{id}/phonetics/today | Aligned (enriched with completedCount/totalCount) |
+| getProgress(profileId) | GET /api/profiles/{id}/phonetics/progress | Aligned (NEW endpoint) |
+| submitAttempt(...) | POST /api/profiles/{id}/phonetics/phonemes/{pId}/phrases/{phraseId}/attempt | Aligned |
+| completePhoneme(profileId, id) | PUT /api/profiles/{id}/phonetics/phonemes/{pId}/complete | Aligned |
+
+### Known Mismatches (pre-existing)
+| Frontend Call | Issue |
+|--------------|-------|
+| Admin CRUD (PUT/DELETE vocab, phrases, reading, writing) | Backend controllers may not implement all CRUD methods |
+| tutor/conversations paths | Frontend uses /conversations, backend uses /api/conversations |
+| module-progress paths | Frontend uses /module-progress, backend uses /api/profiles/{id}/module-progress |
+| content/vocab paths | Possible path format differences |
 
 ## Security Observations
 
-| Area | Observation |
-|------|-------------|
-| Admin endpoints | No @PreAuthorize/@Secured — any authenticated user can access admin CRUD |
-| Conversation ownership | Missing ownership validation — any user can read/send messages to any conversation |
-| Reading submissions | Missing ownership check on submit |
-| PUT /api/profiles/{id}/levels | Missing @RequireProfileOwnership |
-| DELETE /api/profiles/{id} | Missing @RequireProfileOwnership |
-| Account deletion | Frontend UI exists but backend endpoint lacks ownership guard |
+| Observation | Severity |
+|-------------|----------|
+| Admin endpoints lack @PreAuthorize/@Secured | Medium |
+| Some PUT/DELETE endpoints missing @RequireProfileOwnership | Medium |
+| Phonetics progress endpoint properly secured | OK |
 
 ## Risks
-- 12 admin CRUD endpoints missing (PUT/DELETE for vocab, phrases, reading, writing + stats + GET reading/writing)
-- Frontend uses different base paths for several APIs (content/vocab vs vocab, tutor/conversations vs conversations)
-- New block advance/exercises endpoints need frontend integration
-- Session completion now requires all exercises completed — frontend must adapt workflow
-- Admin endpoints lack role-based authorization
+- Pre-existing 3 GoogleTokenVerifierTest failures need investigation
+- Admin CRUD endpoints may have missing backend implementations
+- Frontend path mismatches on tutor/conversation, module-progress need verification
+- V9.6.0 migration symbol format mismatch (symbols without slashes in V9.5.0 but with slashes in V9.6.0 SELECT)

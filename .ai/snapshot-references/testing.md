@@ -1,62 +1,35 @@
 # Testing Snapshot
 
 ## Patterns
-- **Object Mothers**: 15 test data builders across modules
-- **In-Memory Repositories**: Used in unit tests (InMemorySessionRepository, etc.)
-- **Integration Tests**: @SpringBootTest + Testcontainers (PostgreSQL)
-- **Unit Tests**: Plain JUnit 5 with mocks and Object Mothers
-- **Test task**: `./gradlew test` (unit), `./gradlew integrationTest` (integration, requires Docker)
+- Unit tests with in-memory repositories (HashMap-based)
+- Integration tests with Testcontainers PostgreSQL 16
+- Object Mother pattern for test data creation
+- `@Tag("integration")` excluded from `./gradlew test`, run via `./gradlew integrationTest`
 
-## Object Mothers (15)
+## Counts
+- **Unit test classes**: 63
+- **Integration test classes**: 12
+- **Object Mothers**: 18
+- **In-Memory Repositories**: 15
 
-| Mother | Module |
-|--------|--------|
-| AchievementMother | gamification |
-| UserAchievementMother | gamification |
-| ActivityDateMother | activity |
-| AuthUserMother | auth |
-| ConversationMother | conversation |
-| LearningPathMother | learningpath |
-| LearningUnitMother | learningpath |
-| LevelTestResultMother | assessment |
-| ModuleProgressMother | moduleprogress |
-| PhraseMother | phrase |
-| SessionMother | session |
-| SpacedRepetitionItemMother | spacedrepetition |
-| UserProfileMother | user |
-| VocabEntryMother | vocabulary |
-| VocabMasteryMother | vocabulary |
+## Integration Tests
 
-## Test Classes (117 total)
-
-### Integration Tests (12)
 | Test Class | Module |
 |------------|--------|
-| EnglishTrainerApiApplicationTests | root |
-| HealthCheckIntegrationTest | root |
-| ActivityDateRepositoryIT | activity |
+| EnglishTrainerApiApplicationTests | shared |
+| HealthCheckIntegrationTest | shared |
 | AuthIntegrationTest | auth |
 | GoogleAuthIntegrationTest | auth |
 | SecurityStatusCodeTest | auth |
+| VocabIntegrationTest | vocabulary |
+| ActivityDateRepositoryIT | activity |
 | ModuleProgressRepositoryIT | moduleprogress |
 | SessionRepositoryIT | session |
 | SpacedRepetitionRepositoryIT | spacedrepetition |
 | UserProfileRepositoryIT | user |
-| VocabIntegrationTest | vocabulary |
 
-### Unit Tests (86+)
-- Domain tests: SessionTest, SessionGeneratorTest, ConversationTest, UserProfileTest, etc.
-- Application tests: AdvanceBlockUseCaseTest, GetBlockExercisesUseCaseTest, CompleteSessionUseCaseTest, etc.
-- All use cases have corresponding test classes
+## Object Mothers (18)
+UserProfileMother, ActivityDateMother, LevelTestResultMother, AchievementMother, UserAchievementMother, SpacedRepetitionItemMother, ModuleProgressMother, AuthUserMother, ConversationMother, LearningPathMother, LearningUnitMother, VocabMasteryMother, SessionMother, VocabEntryMother, PhonemeMother, PhonemeDailyAssignmentMother, PhraseMother
 
-## Cross-Module Event Listeners (7)
-
-| Listener | Event | From Module | To Module |
-|----------|-------|-------------|-----------|
-| WordLearnedListener | WordLearnedEvent | vocabulary | spacedrepetition |
-| SrsGraduationListener | ReviewCompletedEvent | spacedrepetition | vocabulary |
-| LevelTestCompletedListener | LevelTestCompletedEvent | assessment | learningpath |
-| ConversationCompletedEventListener | ConversationCompletedEvent | conversation | user (XP) |
-| VocabularyFeedbackEventListener | VocabularyFeedbackEvent | conversation | spacedrepetition |
-| GrammarErrorEventListener | VocabularyFeedbackEvent | conversation | errorpattern |
-| ConversationCompletedExerciseListener | ConversationCompletedEvent | conversation | exercise |
+## Pre-existing Failures
+- 3 tests in GoogleTokenVerifierTest (auth) — Google OAuth token verification
