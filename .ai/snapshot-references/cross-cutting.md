@@ -1,32 +1,26 @@
 # Cross-Cutting Snapshot
 
-## API Contract Alignment (Frontend vs Backend)
-
-| Area | Frontend Pattern | Backend Pattern | Status |
-|------|-----------------|-----------------|--------|
-| Session advance | PUT /profiles/{id}/sessions/{sid}/blocks/{idx}/advance | AdvanceBlockController same path | Aligned |
-| Block exercises | GET /profiles/{id}/sessions/{sid}/blocks/{idx}/exercises | GetBlockExercisesController same path | Aligned |
-| Minigame results | POST /profiles/{id}/minigames/results | SaveGameResultsController same path | Aligned |
-| Gamification XP | POST /profiles/{id}/xp | GrantXpController matches | Aligned |
-| Learning path | GET/POST /profiles/{id}/learning-path | GetLearningPath/Generate controllers | Aligned |
-| Activity paths | POST /activity/{id} (FE) vs POST /profiles/{id}/activity (BE) | Different path patterns | Needs check |
-| Assessment paths | POST /assessments/test-results (FE) vs POST /profiles/{id}/assessments/level-test (BE) | Different path patterns | Needs check |
-| Review update | POST /profiles/{id}/reviews (FE) vs PUT /profiles/{id}/reviews/{itemId}/complete (BE) | Method mismatch | Needs check |
+## API Contract Alignment
+| Frontend Call | Backend Endpoint | Status |
+|--------------|-----------------|--------|
+| SessionApiService: advanceBlock | PUT /profiles/{id}/sessions/{sid}/blocks/{idx}/advance | Aligned |
+| SessionApiService: getBlockExercises | GET /profiles/{id}/sessions/{sid}/blocks/{idx}/exercises | Aligned |
+| MinigameApiService: word-match/fill-gap/unscramble | GET /minigames/* | Aligned |
+| ReviewApiService | GET/POST/PUT /profiles/{userId}/reviews/* | Aligned |
+| LearningPathApiService | GET /profiles/{id}/learning-path+learning-status | Aligned |
+| No frontend phonetics service | GET /phonetics/phonemes, GET+POST+PUT /profiles/{userId}/phonetics/* | Backend ready, frontend pending |
 
 ## Security Observations
-
 | Area | Observation |
 |------|-------------|
-| Admin endpoints | Frontend-only guard (adminGuard); backend lacks role-based authorization on /api/admin/* |
-| Profile ownership | AOP-based @RequireProfileOwnership on profile endpoints; good server-side enforcement |
-| Rate limiting | Applied to auth endpoints (login, register, forgot-password); 10 req/60s |
-| Invalid UUIDs | Now returns 400 via GlobalControllerAdvice (previously caused 502) |
+| /api/admin/* | Only adminGuard in frontend; backend has no admin role check |
+| /api/phonetics/phonemes/** | Public (permitAll) — catalog data, appropriate |
+| /api/profiles/{userId}/* | Protected by @RequireProfileOwnership AOP aspect |
 
 ## Risks
-- Admin endpoints may lack backend authorization (only frontend guard protects them)
-- Some frontend API paths may diverge from backend — activity and assessment paths need verification
-- Frontend review API uses POST where backend expects PUT for completion
+- Admin endpoints lack backend authorization (only frontend guard protects them)
+- Phonetics module has no frontend integration yet
+- GoogleTokenVerifierTest has 3 pre-existing failures (environment-specific)
+- Testcontainers Docker API version mismatch blocks integration tests locally
+- No E2E test coverage for phonetics or session flows
 - 7 cross-module event listeners — ensure all events published after domain changes
-- No E2E test coverage for session generate -> advance -> complete flow
-- GoogleTokenVerifierTest has 3 pre-existing failures (environment-specific, not blocking)
-- Testcontainers Docker API version mismatch (1.32 vs 1.44 minimum) blocks integration tests locally
