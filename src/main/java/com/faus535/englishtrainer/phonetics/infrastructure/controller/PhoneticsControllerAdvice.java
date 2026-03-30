@@ -1,7 +1,6 @@
 package com.faus535.englishtrainer.phonetics.infrastructure.controller;
 
-import com.faus535.englishtrainer.phonetics.domain.error.PhonemeNotFoundException;
-import com.faus535.englishtrainer.phonetics.domain.error.PhoneticsException;
+import com.faus535.englishtrainer.phonetics.domain.error.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -20,6 +19,34 @@ class PhoneticsControllerAdvice {
         log.error("Phoneme not found: {}", ex.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(new ApiError("phoneme_not_found", ex.getMessage()));
+    }
+
+    @ExceptionHandler(PhraseNotFoundException.class)
+    ResponseEntity<ApiError> handlePhraseNotFound(PhraseNotFoundException ex) {
+        log.error("Phrase not found: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new ApiError("phrase_not_found", ex.getMessage()));
+    }
+
+    @ExceptionHandler(PhonemeAlreadyCompletedException.class)
+    ResponseEntity<ApiError> handleAlreadyCompleted(PhonemeAlreadyCompletedException ex) {
+        log.error("Phoneme already completed: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(new ApiError("phoneme_already_completed", ex.getMessage()));
+    }
+
+    @ExceptionHandler(InsufficientPhrasesCompletedException.class)
+    ResponseEntity<ApiError> handleInsufficientPhrases(InsufficientPhrasesCompletedException ex) {
+        log.error("Insufficient phrases: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(new ApiError("insufficient_phrases", ex.getMessage()));
+    }
+
+    @ExceptionHandler(NoPhonemesAvailableException.class)
+    ResponseEntity<ApiError> handleNoPhonemesAvailable(NoPhonemesAvailableException ex) {
+        log.error("No phonemes available: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new ApiError("no_phonemes_available", ex.getMessage()));
     }
 
     @ExceptionHandler(PhoneticsException.class)
