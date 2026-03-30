@@ -34,7 +34,8 @@ public class GetTodayPhonemeUseCase {
                                    boolean completed, int phrasesCompleted, int phrasesTotal) {}
 
     public record TodayPhonemeResult(Phoneme phoneme, LocalDate assignedDate,
-                                      ProgressSummary progress) {}
+                                      ProgressSummary progress,
+                                      int completedCount, int totalCount) {}
 
     @Transactional
     public TodayPhonemeResult execute(UserProfileId userId) throws NoPhonemesAvailableException {
@@ -48,7 +49,10 @@ public class GetTodayPhonemeUseCase {
 
         ProgressSummary progress = buildProgress(userId, phoneme, assignment);
 
-        return new TodayPhonemeResult(phoneme, assignment.assignedDate(), progress);
+        int completedCount = assignmentRepository.findCompletedByUser(userId).size();
+        int totalCount = phonemeRepository.findAll().size();
+
+        return new TodayPhonemeResult(phoneme, assignment.assignedDate(), progress, completedCount, totalCount);
     }
 
     private PhonemeDailyAssignment createAssignment(UserProfileId userId, LocalDate today) {

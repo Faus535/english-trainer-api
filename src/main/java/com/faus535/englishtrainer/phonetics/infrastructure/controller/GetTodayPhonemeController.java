@@ -31,7 +31,8 @@ class GetTodayPhonemeController {
     record ProgressDto(int attemptsCount, int correctAttemptsCount, boolean completed,
                        int phrasesCompleted, int phrasesTotal) {}
 
-    record TodayPhonemeResponse(PhonemeDto phoneme, String assignedDate, ProgressDto progress) {}
+    record TodayPhonemeResponse(PhonemeDto phoneme, String assignedDate, ProgressDto progress,
+                                int completedCount, int totalCount) {}
 
     @GetMapping("/api/profiles/{userId}/phonetics/today")
     @RequireProfileOwnership
@@ -51,7 +52,8 @@ class GetTodayPhonemeController {
                         p.description(), p.mouthPosition(), p.tips()),
                 result.assignedDate().toString(),
                 new ProgressDto(progress.attemptsCount(), progress.correctAttemptsCount(),
-                        progress.completed(), progress.phrasesCompleted(), progress.phrasesTotal())
+                        progress.completed(), progress.phrasesCompleted(), progress.phrasesTotal()),
+                result.completedCount(), result.totalCount()
         );
     }
 }

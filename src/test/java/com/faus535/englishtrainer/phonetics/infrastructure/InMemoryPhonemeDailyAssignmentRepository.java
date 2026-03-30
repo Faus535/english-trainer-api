@@ -7,6 +7,7 @@ import com.faus535.englishtrainer.user.domain.UserProfileId;
 
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public final class InMemoryPhonemeDailyAssignmentRepository implements PhonemeDailyAssignmentRepository {
 
@@ -24,6 +25,13 @@ public final class InMemoryPhonemeDailyAssignmentRepository implements PhonemeDa
         return store.values().stream()
                 .filter(a -> a.userId().equals(userId) && a.phonemeId().equals(phonemeId))
                 .findFirst();
+    }
+
+    @Override
+    public List<PhonemeDailyAssignment> findCompletedByUser(UserProfileId userId) {
+        return store.values().stream()
+                .filter(a -> a.userId().equals(userId) && a.completed())
+                .toList();
     }
 
     @Override

@@ -7,6 +7,7 @@ import com.faus535.englishtrainer.user.domain.UserProfileId;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -28,6 +29,13 @@ class JpaPhonemeDailyAssignmentRepositoryAdapter implements PhonemeDailyAssignme
     public Optional<PhonemeDailyAssignment> findByUserAndPhoneme(UserProfileId userId, PhonemeId phonemeId) {
         return jpaRepository.findByUserIdAndPhonemeId(userId.value(), phonemeId.value())
                 .map(PhonemeDailyAssignmentEntity::toAggregate);
+    }
+
+    @Override
+    public List<PhonemeDailyAssignment> findCompletedByUser(UserProfileId userId) {
+        return jpaRepository.findByUserIdAndCompletedTrue(userId.value()).stream()
+                .map(PhonemeDailyAssignmentEntity::toAggregate)
+                .toList();
     }
 
     @Override
