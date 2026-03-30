@@ -49,6 +49,7 @@ public class SecurityConfig {
                                 "/api/auth/google", "/api/auth/refresh",
                                 "/api/auth/forgot-password", "/api/auth/reset-password",
                                 "/api/auth/logout").permitAll()
+                        .requestMatchers("/api/phonetics/phonemes", "/api/phonetics/phonemes/**").permitAll()
                         .requestMatchers("/h2-console/**").permitAll()
                         .requestMatchers("/actuator/health").permitAll()
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
