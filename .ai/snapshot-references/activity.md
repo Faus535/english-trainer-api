@@ -3,6 +3,8 @@
 ## Recent Commits
 
 ```
+660c189 Add global handler for MethodArgumentTypeMismatchException (400 instead of 502)
+c923514 Update project snapshots after session/minigame fixes
 b7f92e7 Enrich SessionBlockResponse with exercises, extract SessionResponseMapper
 05f1065 Fix minigame response format to match frontend interfaces
 54451c5 Update project snapshots after daily exercises restructure
@@ -21,11 +23,10 @@ e41f6af Add logout endpoint, reduce JWT to 30min, persist Google refresh tokens
 6a83cb8 Fix 403 on expired JWT and add profile ownership checks
 a802a46 Disable anonymous auth so expired tokens return 401 not 403
 6e1cb16 Add batch levels endpoint to fix optimistic locking on concurrent PUTs
-98cb9a0 Complete vocabulary seeds: A1 blocks 6-10 and A2 blocks 1-10
-9a5edfe Remove duplicate V9.x migrations (already covered by V8.x)
 ```
 
-## Active Areas
-- Session block/exercise restructure: block-level exercise tracking, advance validation, enriched responses with exercises per block
-- Minigame response format fix: wrapped responses matching frontend interfaces (pairs/words/sentences objects with level)
-- Learning path & mastery: structured learning paths, smart content selection, per-word mastery tracking
+## Active Development
+- Session block advancement: exercise tracking, block-level progress, completion validation
+- Fix 502 Bad Gateway: global handler for invalid UUID path variables (MethodArgumentTypeMismatchException)
+- Learning path system: structured paths, mastery scoring, content selection
+- Minigame response format alignment with frontend interfaces

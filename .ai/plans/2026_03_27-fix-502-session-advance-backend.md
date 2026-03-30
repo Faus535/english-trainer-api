@@ -95,8 +95,8 @@ Spring's type conversion layer throws `MethodArgumentTypeMismatchException` (wra
 5. Run `/revisar` to validate architecture, naming conventions, and code quality
 
 **Acceptance criteria**:
-- [ ] Production returns 400 for invalid UUID path variables
-- [ ] `/revisar` passes with no errors
+- [x] Production returns 400 for invalid UUID path variables
+- [x] `/revisar` passes with no errors
 
 ## API Contract
 

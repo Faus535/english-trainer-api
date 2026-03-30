@@ -1,7 +1,7 @@
 # Database Snapshot
 
-Latest migration: V9.3.0
-Total migrations: 48
+Latest migration: **V9.3.0** (add_session_exercises)
+Total migrations: 49
 
 | Migration | Description |
 |-----------|-------------|
