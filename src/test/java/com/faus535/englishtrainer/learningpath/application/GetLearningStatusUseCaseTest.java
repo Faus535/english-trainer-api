@@ -9,7 +9,6 @@ import com.faus535.englishtrainer.learningpath.domain.LearningUnitId;
 import com.faus535.englishtrainer.learningpath.domain.MasteryScore;
 import com.faus535.englishtrainer.learningpath.domain.UnitContent;
 import com.faus535.englishtrainer.learningpath.domain.UnitStatus;
-import com.faus535.englishtrainer.learningpath.domain.error.LearningPathNotFoundException;
 import com.faus535.englishtrainer.learningpath.infrastructure.InMemoryLearningPathRepository;
 import com.faus535.englishtrainer.learningpath.infrastructure.InMemoryLearningUnitRepository;
 import com.faus535.englishtrainer.spacedrepetition.infrastructure.InMemorySpacedRepetitionRepository;
@@ -47,7 +46,7 @@ final class GetLearningStatusUseCaseTest {
     }
 
     @Test
-    void shouldReturnFullLearningStatus() throws Exception {
+    void shouldReturnFullLearningStatus() {
         UserProfileId userId = UserProfileId.generate();
 
         LearningUnitId unit0Id = LearningUnitId.generate();
@@ -134,14 +133,23 @@ final class GetLearningStatusUseCaseTest {
     }
 
     @Test
-    void shouldThrowWhenNoLearningPathExists() {
+    void shouldReturnEmptyStatusWhenNoLearningPathExists() {
         UserProfileId userId = UserProfileId.generate();
 
-        assertThrows(LearningPathNotFoundException.class, () -> useCase.execute(userId));
+        GetLearningStatusUseCase.LearningStatus status = useCase.execute(userId);
+
+        assertNotNull(status);
+        assertNull(status.currentUnit());
+        assertNull(status.nextUnit());
+        assertEquals(0, status.overallProgress().totalUnits());
+        assertEquals(0, status.overallProgress().percentComplete());
+        assertEquals("not_started", status.todaysPlan().suggestedSessionMode());
+        assertTrue(status.weakAreas().isEmpty());
+        assertEquals(0, status.currentStreak());
     }
 
     @Test
-    void shouldReturnWeakAreasForNeedsReviewUnits() throws Exception {
+    void shouldReturnWeakAreasForNeedsReviewUnits() {
         UserProfileId userId = UserProfileId.generate();
 
         LearningUnitId unit0Id = LearningUnitId.generate();
@@ -175,7 +183,7 @@ final class GetLearningStatusUseCaseTest {
     }
 
     @Test
-    void shouldReturnNullNextUnitWhenOnLastUnit() throws Exception {
+    void shouldReturnNullNextUnitWhenOnLastUnit() {
         UserProfileId userId = UserProfileId.generate();
 
         LearningUnitId unit0Id = LearningUnitId.generate();

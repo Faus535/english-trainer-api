@@ -2,7 +2,6 @@ package com.faus535.englishtrainer.learningpath.infrastructure.controller;
 
 import com.faus535.englishtrainer.learningpath.application.GetLearningStatusUseCase;
 import com.faus535.englishtrainer.learningpath.application.GetLearningStatusUseCase.LearningStatus;
-import com.faus535.englishtrainer.learningpath.domain.error.LearningPathNotFoundException;
 import com.faus535.englishtrainer.shared.infrastructure.security.RequireProfileOwnership;
 import com.faus535.englishtrainer.user.domain.UserProfileId;
 import org.springframework.http.ResponseEntity;
@@ -50,8 +49,7 @@ class GetLearningStatusController {
 
     @GetMapping("/api/profiles/{profileId}/learning-status")
     @RequireProfileOwnership(pathVariable = "profileId")
-    ResponseEntity<LearningStatusResponse> handle(@PathVariable UUID profileId)
-            throws LearningPathNotFoundException {
+    ResponseEntity<LearningStatusResponse> handle(@PathVariable UUID profileId) {
         LearningStatus status = useCase.execute(new UserProfileId(profileId));
         return ResponseEntity.ok(toResponse(status));
     }

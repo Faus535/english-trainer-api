@@ -10,7 +10,6 @@ import com.faus535.englishtrainer.learningpath.domain.LearningUnit;
 import com.faus535.englishtrainer.learningpath.domain.LearningUnitRepository;
 import com.faus535.englishtrainer.learningpath.domain.UnitContent;
 import com.faus535.englishtrainer.learningpath.domain.UnitStatus;
-import com.faus535.englishtrainer.learningpath.domain.error.LearningPathNotFoundException;
 import com.faus535.englishtrainer.shared.application.annotation.UseCase;
 import com.faus535.englishtrainer.spacedrepetition.domain.SpacedRepetitionRepository;
 import com.faus535.englishtrainer.user.domain.UserProfileId;
@@ -67,10 +66,23 @@ public class GetLearningStatusUseCase {
     ) {}
 
     @Transactional(readOnly = true)
-    public LearningStatus execute(UserProfileId userId) throws LearningPathNotFoundException {
-        LearningPath path = learningPathRepository.findByUserId(userId)
-                .orElseThrow(() -> new LearningPathNotFoundException(userId));
+    public LearningStatus execute(UserProfileId userId) {
+        var optionalPath = learningPathRepository.findByUserId(userId);
 
+        if (optionalPath.isEmpty()) {
+            int currentStreak = calculateStreak(userId);
+            return new LearningStatus(
+                    null,
+                    null,
+                    new OverallProgress(0, 0, 0),
+                    new TodaysPlan(0, 0, 0, "not_started"),
+                    List.of(),
+                    currentStreak,
+                    List.of()
+            );
+        }
+
+        LearningPath path = optionalPath.get();
         List<LearningUnit> allUnits = learningUnitRepository.findByLearningPathId(path.id());
 
         UnitSummary currentUnit = buildCurrentUnitSummary(path, allUnits);
