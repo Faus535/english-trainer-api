@@ -220,9 +220,9 @@ rm .claude/commands/plan-references/templates.md
 ```
 
 **Acceptance criteria**:
-- [ ] 4 files deleted
-- [ ] Only `layer0-scope.md`, `layer1-specialists.md`, `layer4-writers.md` remain in `plan-references/`
-- [ ] No remaining references to deleted files in plan.md
+- [x] 4 files deleted
+- [x] Only `layer0-scope.md`, `layer1-specialists.md`, `layer4-writers.md` remain in `plan-references/`
+- [x] No remaining references to deleted files in plan.md
 
 ### Phase 5: Compact /analyze prompts (analyze.md)
 
