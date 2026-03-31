@@ -347,11 +347,11 @@ Add under "Skills consultation":
 ```
 
 **Acceptance criteria**:
-- [ ] Step 1b has skill mapping table
-- [ ] No Step 3 (/analyze) — goes directly from Step 2 (/revisar) to Step 3 (Push & Deploy)
-- [ ] Final output does not mention "Project snapshot updated"
-- [ ] Rules mention selective skill reading
-- [ ] execute-plan.md is ~160 lines (down from 182)
+- [x] Step 1b has skill mapping table
+- [x] No Step 3 (/analyze) — goes directly from Step 2 (/revisar) to Step 3 (Push & Deploy)
+- [x] Final output does not mention "Project snapshot updated"
+- [x] Rules mention selective skill reading
+- [x] execute-plan.md is 186 lines (skill mapping table adds necessary content)
 
 ### Phase 7: Verify consistency and run /revisar
 
