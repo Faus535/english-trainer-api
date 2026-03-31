@@ -126,12 +126,12 @@ Update header to reflect new scope-based launching:
 Compact each prompt: remove verbose "Steps:" numbered lists, use 3-4 bullet points. Remove repeated boilerplate ("IMPORTANT: Check this context...") — state once at top of file.
 
 **Acceptance criteria**:
-- [ ] File has exactly 6 agent prompts
-- [ ] Merged agents cover all output sections from their source agents
-- [ ] Scope-based launching is correct (4/4/6)
-- [ ] Boilerplate is stated once at top, not repeated per agent
-- [ ] Each agent prompt is ~25-30 lines (down from ~35-40)
-- [ ] Word limit remains 3000 per agent
+- [x] File has exactly 6 agent prompts
+- [x] Merged agents cover all output sections from their source agents
+- [x] Scope-based launching is correct (4/4/6)
+- [x] Boilerplate is stated once at top, not repeated per agent
+- [x] Each agent prompt is ~25-30 lines (down from ~35-40)
+- [x] Word limit remains 3000 per agent
 
 ### Phase 3: Rewrite writers with integrated synthesis+validation (layer4-writers.md)
 
