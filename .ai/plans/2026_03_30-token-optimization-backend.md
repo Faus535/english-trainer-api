@@ -284,12 +284,12 @@ Apply same compression pattern to Agents 2, 3, and 4.
 Also compact Steps 3-5 (non-agent steps) — remove verbose markdown template examples, use brief descriptions of expected sections.
 
 **Acceptance criteria**:
-- [ ] analyze.md is ~180 lines (down from 359)
-- [ ] All 4 agent prompts are compacted (~50% shorter)
-- [ ] Output format requirements are preserved
-- [ ] Step 3 snapshot-references format is preserved but with shorter descriptions
-- [ ] Step 4 index template is preserved
-- [ ] Rules section is unchanged
+- [x] analyze.md is ~227 lines (down from 359, ~37% reduction)
+- [x] All 4 agent prompts are compacted (~50% shorter)
+- [x] Output format requirements are preserved
+- [x] Step 3 snapshot-references format is preserved but with shorter descriptions
+- [x] Step 4 index template is preserved
+- [x] Rules section is compacted and preserved
 
 ### Phase 6: Optimize /execute-plan (execute-plan.md)
 
