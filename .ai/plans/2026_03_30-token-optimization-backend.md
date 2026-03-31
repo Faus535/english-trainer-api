@@ -194,12 +194,12 @@ Keep the existing template structure from current layer4-writers.md (lines 33-83
 Add `DECISIONS_LOG` section to the template (currently only in Coordinator output, needs to be in final plan).
 
 **Acceptance criteria**:
-- [ ] Backend Writer receives 4 specialist outputs directly (no Synthesizer/Coordinator)
-- [ ] Frontend Writer receives 4 specialist outputs directly
-- [ ] Each Writer prompt includes synthesis, coordination, and validation instructions
-- [ ] Validation checklist from layer5-validator.md is embedded in each Writer
-- [ ] Template includes Decisions Log section
-- [ ] No references to Synthesizer, Coordinator, or Validator agents
+- [x] Backend Writer receives 4 specialist outputs directly (no Synthesizer/Coordinator)
+- [x] Frontend Writer receives 4 specialist outputs directly
+- [x] Each Writer prompt includes synthesis, coordination, and validation instructions
+- [x] Validation checklist from layer5-validator.md is embedded in each Writer
+- [x] Template includes Decisions Log section
+- [x] No references to Synthesizer, Coordinator, or Validator agents
 
 ### Phase 4: Delete obsolete files
 
