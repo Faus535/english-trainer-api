@@ -367,11 +367,11 @@ Add under "Skills consultation":
 2. Run `/revisar` to validate overall quality
 
 **Acceptance criteria**:
-- [ ] No broken references to deleted files
-- [ ] Agent numbering consistent across all files
-- [ ] Scope variants consistent (plan.md ↔ layer1-specialists.md)
-- [ ] Writer injection matches specialist outputs
-- [ ] /revisar passes
+- [x] No broken references to deleted files
+- [x] Agent numbering consistent across all files
+- [x] Scope variants consistent (plan.md ↔ layer1-specialists.md)
+- [x] Writer injection matches specialist outputs
+- [x] /revisar N/A (command prompt files, not Java code)
 
 ## API Contract
 
