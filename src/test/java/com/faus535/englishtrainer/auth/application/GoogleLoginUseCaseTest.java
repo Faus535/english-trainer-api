@@ -6,6 +6,7 @@ import com.faus535.englishtrainer.auth.domain.error.GoogleAuthException;
 import com.faus535.englishtrainer.auth.infrastructure.InMemoryAuthUserRepository;
 import com.faus535.englishtrainer.auth.infrastructure.google.GoogleTokenVerifier;
 import com.faus535.englishtrainer.auth.infrastructure.google.GoogleUserInfo;
+import com.faus535.englishtrainer.user.domain.UserProfileId;
 import com.faus535.englishtrainer.user.infrastructure.InMemoryUserProfileRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,6 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -59,7 +61,7 @@ class GoogleLoginUseCaseTest {
         AuthUser result = useCase.execute(idToken);
 
         assertEquals(existingUser.id(), result.id());
-        assertEquals(0, userProfileRepository.count());
+        assertEquals(1, userProfileRepository.count());
     }
 
     @Test
@@ -80,5 +82,40 @@ class GoogleLoginUseCaseTest {
         GoogleAuthException exception = assertThrows(
                 GoogleAuthException.class, () -> useCase.execute(idToken));
         assertEquals("Google email not verified", exception.getMessage());
+    }
+
+    @Test
+    void shouldCreateMissingProfileForReturningGoogleUser() throws GoogleAuthException {
+        UserProfileId orphanedProfileId = UserProfileId.generate();
+        AuthUser orphanedUser = AuthUser.createFromGoogle("orphan@google.com", orphanedProfileId);
+        authUserRepository.save(orphanedUser);
+
+        String idToken = "valid-google-token";
+        when(googleTokenVerifier.verify(idToken))
+                .thenReturn(new GoogleUserInfo("orphan@google.com", "Orphan User", true));
+
+        AuthUser result = useCase.execute(idToken);
+
+        assertEquals(orphanedUser.id(), result.id());
+        assertTrue(userProfileRepository.findById(orphanedProfileId).isPresent());
+    }
+
+    @Test
+    void shouldNotDuplicateProfileForReturningGoogleUserWithExistingProfile() throws GoogleAuthException {
+        AuthUser existingUser = AuthUserMother.googleUserWithEmail("existing@google.com");
+        authUserRepository.save(existingUser);
+        var profile = com.faus535.englishtrainer.user.domain.UserProfile.reconstitute(
+                existingUser.userProfileId(), null, 100, java.time.Instant.now(), java.time.Instant.now());
+        userProfileRepository.save(profile);
+
+        String idToken = "valid-google-token";
+        when(googleTokenVerifier.verify(idToken))
+                .thenReturn(new GoogleUserInfo("existing@google.com", "Existing User", true));
+
+        AuthUser result = useCase.execute(idToken);
+
+        assertEquals(existingUser.id(), result.id());
+        assertEquals(1, userProfileRepository.count());
+        assertEquals(100, userProfileRepository.findById(existingUser.userProfileId()).get().xp());
     }
 }

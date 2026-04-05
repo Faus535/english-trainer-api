@@ -10,6 +10,7 @@ import com.faus535.englishtrainer.user.domain.UserProfile;
 import com.faus535.englishtrainer.user.domain.UserProfileRepository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.util.Optional;
 
 @UseCase
@@ -38,7 +39,16 @@ public class GoogleLoginUseCase {
         Optional<AuthUser> existingUser = authUserRepository.findByEmail(googleUser.email());
 
         if (existingUser.isPresent()) {
-            return existingUser.get();
+            AuthUser user = existingUser.get();
+            if (user.userProfileId() != null) {
+                userProfileRepository.findById(user.userProfileId())
+                        .orElseGet(() -> {
+                            UserProfile repair = UserProfile.reconstitute(
+                                    user.userProfileId(), null, 0, Instant.now(), Instant.now());
+                            return userProfileRepository.save(repair);
+                        });
+            }
+            return user;
         }
 
         UserProfile profile = UserProfile.create();
