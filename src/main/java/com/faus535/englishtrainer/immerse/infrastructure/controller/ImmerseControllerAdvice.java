@@ -4,6 +4,7 @@ import com.faus535.englishtrainer.immerse.domain.error.ImmerseAiException;
 import com.faus535.englishtrainer.immerse.domain.error.ImmerseContentNotFoundException;
 import com.faus535.englishtrainer.immerse.domain.error.ImmerseContentNotProcessedException;
 import com.faus535.englishtrainer.immerse.domain.error.ImmerseExerciseNotFoundException;
+import com.faus535.englishtrainer.user.domain.error.UserProfileNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -31,6 +32,12 @@ class ImmerseControllerAdvice {
     @ExceptionHandler(ImmerseContentNotProcessedException.class)
     ResponseEntity<ApiError> handleNotProcessed(ImmerseContentNotProcessedException ex) {
         return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(new ApiError("not_processed", ex.getMessage()));
+    }
+
+    @ExceptionHandler(UserProfileNotFoundException.class)
+    ResponseEntity<ApiError> handleProfileNotFound(UserProfileNotFoundException ex) {
+        log.warn("Immerse operation for user with missing profile: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiError("profile_not_found", ex.getMessage()));
     }
 
     @ExceptionHandler(ImmerseAiException.class)

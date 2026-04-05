@@ -35,4 +35,9 @@ public final class InMemoryAuthUserRepository implements AuthUserRepository {
         store.put(user.id(), user);
         return user;
     }
+
+    @Override
+    public void deleteById(AuthUserId id) {
+        store.remove(id);
+    }
 }

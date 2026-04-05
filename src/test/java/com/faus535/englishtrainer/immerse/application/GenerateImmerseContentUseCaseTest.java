@@ -6,9 +6,14 @@ import com.faus535.englishtrainer.immerse.domain.ImmerseContentStatus;
 import com.faus535.englishtrainer.immerse.infrastructure.InMemoryImmerseContentRepository;
 import com.faus535.englishtrainer.immerse.infrastructure.InMemoryImmerseExerciseRepository;
 import com.faus535.englishtrainer.immerse.infrastructure.StubImmerseAiPort;
+import com.faus535.englishtrainer.user.domain.UserProfile;
+import com.faus535.englishtrainer.user.domain.UserProfileId;
+import com.faus535.englishtrainer.user.domain.error.UserProfileNotFoundException;
+import com.faus535.englishtrainer.user.infrastructure.InMemoryUserProfileRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.time.Instant;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -17,18 +22,27 @@ class GenerateImmerseContentUseCaseTest {
 
     private InMemoryImmerseContentRepository contentRepository;
     private InMemoryImmerseExerciseRepository exerciseRepository;
+    private InMemoryUserProfileRepository userProfileRepository;
     private GenerateImmerseContentUseCase useCase;
 
     @BeforeEach
     void setUp() {
         contentRepository = new InMemoryImmerseContentRepository();
         exerciseRepository = new InMemoryImmerseExerciseRepository();
-        useCase = new GenerateImmerseContentUseCase(contentRepository, exerciseRepository, new StubImmerseAiPort());
+        userProfileRepository = new InMemoryUserProfileRepository();
+        useCase = new GenerateImmerseContentUseCase(contentRepository, exerciseRepository, new StubImmerseAiPort(), userProfileRepository);
+    }
+
+    private UUID createProfileAndReturnId() {
+        UserProfileId profileId = UserProfileId.generate();
+        Instant now = Instant.now();
+        userProfileRepository.save(UserProfile.reconstitute(profileId, null, 0, now, now));
+        return profileId.value();
     }
 
     @Test
     void generatesTextContentSuccessfully() throws Exception {
-        UUID userId = UUID.randomUUID();
+        UUID userId = createProfileAndReturnId();
 
         ImmerseContent result = useCase.execute(userId, ContentType.TEXT, "b1", "city life");
 
@@ -42,7 +56,7 @@ class GenerateImmerseContentUseCaseTest {
 
     @Test
     void generatesAudioContentSuccessfully() throws Exception {
-        UUID userId = UUID.randomUUID();
+        UUID userId = createProfileAndReturnId();
 
         ImmerseContent result = useCase.execute(userId, ContentType.AUDIO, "b2", null);
 
@@ -52,7 +66,7 @@ class GenerateImmerseContentUseCaseTest {
 
     @Test
     void worksWithoutTopicOrLevel() throws Exception {
-        UUID userId = UUID.randomUUID();
+        UUID userId = createProfileAndReturnId();
 
         ImmerseContent result = useCase.execute(userId, ContentType.VIDEO, null, null);
 
@@ -63,11 +77,19 @@ class GenerateImmerseContentUseCaseTest {
 
     @Test
     void savesExercisesFromAiResult() throws Exception {
-        UUID userId = UUID.randomUUID();
+        UUID userId = createProfileAndReturnId();
 
         ImmerseContent result = useCase.execute(userId, ContentType.TEXT, "b1", null);
 
         var exercises = exerciseRepository.findByContentId(result.id());
         assertEquals(3, exercises.size());
+    }
+
+    @Test
+    void throwsUserProfileNotFoundWhenProfileMissing() {
+        UUID missingId = UUID.randomUUID();
+        assertThrows(UserProfileNotFoundException.class,
+                () -> useCase.execute(missingId, ContentType.TEXT, "b1", "topic"));
+        assertTrue(contentRepository.findByUserId(missingId, 0, 100).isEmpty());
     }
 }

@@ -3,6 +3,9 @@ package com.faus535.englishtrainer.immerse.application;
 import com.faus535.englishtrainer.immerse.domain.*;
 import com.faus535.englishtrainer.immerse.domain.error.ImmerseAiException;
 import com.faus535.englishtrainer.shared.application.annotation.UseCase;
+import com.faus535.englishtrainer.user.domain.UserProfileId;
+import com.faus535.englishtrainer.user.domain.UserProfileRepository;
+import com.faus535.englishtrainer.user.domain.error.UserProfileNotFoundException;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -15,18 +18,24 @@ public class GenerateImmerseContentUseCase {
     private final ImmerseContentRepository contentRepository;
     private final ImmerseExerciseRepository exerciseRepository;
     private final ImmerseAiPort aiPort;
+    private final UserProfileRepository userProfileRepository;
 
     public GenerateImmerseContentUseCase(ImmerseContentRepository contentRepository,
                                           ImmerseExerciseRepository exerciseRepository,
-                                          ImmerseAiPort aiPort) {
+                                          ImmerseAiPort aiPort,
+                                          UserProfileRepository userProfileRepository) {
         this.contentRepository = contentRepository;
         this.exerciseRepository = exerciseRepository;
         this.aiPort = aiPort;
+        this.userProfileRepository = userProfileRepository;
     }
 
     @Transactional
     public ImmerseContent execute(UUID userId, ContentType contentType, String level, String topic)
-            throws ImmerseAiException {
+            throws ImmerseAiException, UserProfileNotFoundException {
+
+        userProfileRepository.findById(new UserProfileId(userId))
+                .orElseThrow(() -> new UserProfileNotFoundException(new UserProfileId(userId)));
 
         ImmerseAiPort.ImmerseGenerateResult result = aiPort.generateContent(contentType, level, topic);
 

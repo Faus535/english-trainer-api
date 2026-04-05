@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -32,7 +33,9 @@ class SubmitImmerseContentController {
     @PostMapping("/api/immerse/content")
     ResponseEntity<ImmerseContentResponse> handle(@Valid @RequestBody SubmitContentRequest request,
                                                     Authentication authentication) throws ImmerseAiException {
-        UUID userId = UUID.fromString(authentication.getName());
+        @SuppressWarnings("unchecked")
+        Map<String, String> details = (Map<String, String>) authentication.getDetails();
+        UUID userId = UUID.fromString(details.get("profileId"));
         String title = request.title() != null ? request.title() : "Untitled";
         ImmerseContent content = useCase.execute(userId, request.sourceUrl(), title, request.rawText(), request.level());
         return ResponseEntity.status(HttpStatus.CREATED).body(ImmerseContentResponse.from(content));

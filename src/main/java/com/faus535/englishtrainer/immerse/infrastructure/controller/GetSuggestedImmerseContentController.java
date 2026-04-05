@@ -6,6 +6,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -19,7 +20,9 @@ class GetSuggestedImmerseContentController {
 
     @GetMapping("/api/immerse/content/suggested")
     ResponseEntity<ImmerseContentResponse> handle(Authentication authentication) {
-        UUID userId = UUID.fromString(authentication.getName());
+        @SuppressWarnings("unchecked")
+        Map<String, String> details = (Map<String, String>) authentication.getDetails();
+        UUID userId = UUID.fromString(details.get("profileId"));
         return useCase.execute(userId)
                 .map(content -> ResponseEntity.ok(ImmerseContentResponse.from(content)))
                 .orElseGet(() -> ResponseEntity.noContent().build());

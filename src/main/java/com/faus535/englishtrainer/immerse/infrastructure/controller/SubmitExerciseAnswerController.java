@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -27,7 +28,9 @@ class SubmitExerciseAnswerController {
     ResponseEntity<AnswerResponse> handle(@PathVariable UUID contentId, @PathVariable UUID exerciseId,
                                             @Valid @RequestBody SubmitAnswerRequest request,
                                             Authentication authentication) throws ImmerseExerciseNotFoundException {
-        UUID userId = UUID.fromString(authentication.getName());
+        @SuppressWarnings("unchecked")
+        Map<String, String> details = (Map<String, String>) authentication.getDetails();
+        UUID userId = UUID.fromString(details.get("profileId"));
         var result = useCase.execute(userId, exerciseId, request.answer());
         return ResponseEntity.ok(new AnswerResponse(result.correct(), result.correctAnswer(), result.feedback()));
     }

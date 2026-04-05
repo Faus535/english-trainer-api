@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -36,7 +37,9 @@ class StartTalkConversationController {
                                                      Authentication authentication)
             throws TalkMaxConversationsExceededException, TalkAiException {
 
-        UUID userId = UUID.fromString(authentication.getName());
+        @SuppressWarnings("unchecked")
+        Map<String, String> details = (Map<String, String>) authentication.getDetails();
+        UUID userId = UUID.fromString(details.get("profileId"));
         TalkConversation conversation = useCase.execute(userId, request.scenarioId(), request.level());
 
         return ResponseEntity.status(HttpStatus.CREATED)
