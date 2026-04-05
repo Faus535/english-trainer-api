@@ -1,7 +1,7 @@
 package com.faus535.englishtrainer.talk.infrastructure.ai;
 
-import com.faus535.englishtrainer.conversation.domain.LevelProfile;
-import com.faus535.englishtrainer.conversation.domain.LevelProfiles;
+import com.faus535.englishtrainer.talk.domain.LevelProfile;
+import com.faus535.englishtrainer.talk.domain.LevelProfiles;
 import com.faus535.englishtrainer.talk.domain.TalkLevel;
 import com.faus535.englishtrainer.talk.domain.TalkScenario;
 
