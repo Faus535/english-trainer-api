@@ -41,7 +41,7 @@ class ReviewItemEntity implements Persistable<UUID> {
     @Column(name = "interval_days", nullable = false)
     private int intervalDays;
 
-    @Column(name = "ease_factor", nullable = false)
+    @Column(name = "ease_factor", nullable = false, columnDefinition = "NUMERIC(4,2)")
     private double easeFactor;
 
     @Column(name = "consecutive_correct", nullable = false)
