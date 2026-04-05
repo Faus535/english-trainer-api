@@ -21,7 +21,7 @@ class LogoutController {
 
     @PostMapping("/api/auth/logout")
     ResponseEntity<Void> handle(@Valid @RequestBody LogoutRequest request) {
-        String tokenHash = RefreshTokenController.hashToken(request.refreshToken());
+        String tokenHash = com.faus535.englishtrainer.auth.application.RefreshTokenUseCase.hashToken(request.refreshToken());
         useCase.execute(tokenHash);
         return ResponseEntity.noContent().build();
     }

@@ -3,7 +3,7 @@ package com.faus535.englishtrainer.auth;
 import com.faus535.englishtrainer.IntegrationTestBase;
 import com.faus535.englishtrainer.auth.domain.error.GoogleAuthException;
 import com.faus535.englishtrainer.auth.infrastructure.google.GoogleTokenVerifier;
-import com.faus535.englishtrainer.auth.infrastructure.google.GoogleUserInfo;
+import com.faus535.englishtrainer.auth.domain.GoogleVerifiedUser;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -26,7 +26,7 @@ class GoogleAuthIntegrationTest extends IntegrationTestBase {
     @Test
     void google_login_creates_new_user_and_returns_auth_response() throws GoogleAuthException {
         when(googleTokenVerifier.verify("valid-google-token"))
-                .thenReturn(new GoogleUserInfo("googleuser@gmail.com", "Google User", true));
+                .thenReturn(new GoogleVerifiedUser("googleuser@gmail.com", "Google User", true));
 
         var body = Map.of("idToken", "valid-google-token");
         var response = rest.postForEntity("/api/auth/google", body, Map.class);
@@ -39,7 +39,7 @@ class GoogleAuthIntegrationTest extends IntegrationTestBase {
     @Test
     void google_login_returns_existing_user_when_email_already_registered() throws GoogleAuthException {
         when(googleTokenVerifier.verify("token-existing"))
-                .thenReturn(new GoogleUserInfo("existing-google@gmail.com", "Existing", true));
+                .thenReturn(new GoogleVerifiedUser("existing-google@gmail.com", "Existing", true));
 
         var body = Map.of("idToken", "token-existing");
 
@@ -72,7 +72,7 @@ class GoogleAuthIntegrationTest extends IntegrationTestBase {
     @Test
     void google_login_returns_401_when_email_not_verified() throws GoogleAuthException {
         when(googleTokenVerifier.verify("unverified-token"))
-                .thenReturn(new GoogleUserInfo("unverified@gmail.com", "User", false));
+                .thenReturn(new GoogleVerifiedUser("unverified@gmail.com", "User", false));
 
         var body = Map.of("idToken", "unverified-token");
         var response = rest.postForEntity("/api/auth/google", body, Map.class);
@@ -89,7 +89,7 @@ class GoogleAuthIntegrationTest extends IntegrationTestBase {
         rest.postForEntity("/api/auth/register", registerBody, Map.class);
 
         when(googleTokenVerifier.verify("token-local-user"))
-                .thenReturn(new GoogleUserInfo("both@example.com", "Both User", true));
+                .thenReturn(new GoogleVerifiedUser("both@example.com", "Both User", true));
 
         var googleBody = Map.of("idToken", "token-local-user");
         var response = rest.postForEntity("/api/auth/google", googleBody, Map.class);

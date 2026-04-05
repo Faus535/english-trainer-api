@@ -43,7 +43,7 @@ class RegisterController {
         String token = jwtService.generateToken(user);
         String refreshToken = jwtService.generateRefreshToken(user);
 
-        String tokenHash = RefreshTokenController.hashToken(refreshToken);
+        String tokenHash = com.faus535.englishtrainer.auth.application.RefreshTokenUseCase.hashToken(refreshToken);
         Instant expiresAt = Instant.now().plusMillis(jwtService.getRefreshExpiration());
         refreshTokenRepository.save(RefreshToken.create(user.id(), tokenHash, expiresAt));
 

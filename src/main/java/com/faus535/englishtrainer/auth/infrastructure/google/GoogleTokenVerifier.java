@@ -1,5 +1,7 @@
 package com.faus535.englishtrainer.auth.infrastructure.google;
 
+import com.faus535.englishtrainer.auth.domain.GoogleAuthPort;
+import com.faus535.englishtrainer.auth.domain.GoogleVerifiedUser;
 import com.faus535.englishtrainer.auth.domain.error.GoogleAuthException;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
@@ -11,7 +13,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class GoogleTokenVerifier {
+public class GoogleTokenVerifier implements GoogleAuthPort {
 
     private final GoogleIdTokenVerifier verifier;
 
@@ -28,14 +30,15 @@ public class GoogleTokenVerifier {
 //        this.verifier = verifier;
 //    }
 
-    public GoogleUserInfo verify(String idToken) throws GoogleAuthException {
+    @Override
+    public GoogleVerifiedUser verify(String idToken) throws GoogleAuthException {
         try {
             GoogleIdToken token = verifier.verify(idToken);
             if (token == null) {
                 throw new GoogleAuthException("Invalid Google ID token");
             }
             GoogleIdToken.Payload payload = token.getPayload();
-            return new GoogleUserInfo(
+            return new GoogleVerifiedUser(
                     payload.getEmail(),
                     (String) payload.get("name"),
                     payload.getEmailVerified()

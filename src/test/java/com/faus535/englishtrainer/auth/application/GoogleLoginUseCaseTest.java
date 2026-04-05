@@ -2,45 +2,37 @@ package com.faus535.englishtrainer.auth.application;
 
 import com.faus535.englishtrainer.auth.domain.AuthUser;
 import com.faus535.englishtrainer.auth.domain.AuthUserMother;
+import com.faus535.englishtrainer.auth.domain.GoogleVerifiedUser;
 import com.faus535.englishtrainer.auth.domain.error.GoogleAuthException;
 import com.faus535.englishtrainer.auth.infrastructure.InMemoryAuthUserRepository;
-import com.faus535.englishtrainer.auth.infrastructure.google.GoogleTokenVerifier;
-import com.faus535.englishtrainer.auth.infrastructure.google.GoogleUserInfo;
+import com.faus535.englishtrainer.auth.infrastructure.StubGoogleAuthPort;
 import com.faus535.englishtrainer.user.domain.UserProfileId;
 import com.faus535.englishtrainer.user.infrastructure.InMemoryUserProfileRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.*;
 
 class GoogleLoginUseCaseTest {
 
-    private GoogleTokenVerifier googleTokenVerifier;
+    private StubGoogleAuthPort googleAuthPort;
     private InMemoryAuthUserRepository authUserRepository;
     private InMemoryUserProfileRepository userProfileRepository;
     private GoogleLoginUseCase useCase;
 
     @BeforeEach
     void setUp() {
-        googleTokenVerifier = mock(GoogleTokenVerifier.class);
+        googleAuthPort = new StubGoogleAuthPort();
         authUserRepository = new InMemoryAuthUserRepository();
         userProfileRepository = new InMemoryUserProfileRepository();
-        useCase = new GoogleLoginUseCase(googleTokenVerifier, authUserRepository, userProfileRepository);
+        useCase = new GoogleLoginUseCase(googleAuthPort, authUserRepository, userProfileRepository);
     }
 
     @Test
     void shouldCreateNewUserWhenGoogleTokenIsValid() throws GoogleAuthException {
-        String idToken = "valid-google-token";
-        when(googleTokenVerifier.verify(idToken))
-                .thenReturn(new GoogleUserInfo("new@google.com", "New User", true));
+        googleAuthPort.willReturn(new GoogleVerifiedUser("new@google.com", "New User", true));
 
-        AuthUser result = useCase.execute(idToken);
+        AuthUser result = useCase.execute("valid-google-token");
 
         assertNotNull(result);
         assertEquals("new@google.com", result.email());
@@ -54,33 +46,27 @@ class GoogleLoginUseCaseTest {
         AuthUser existingUser = AuthUserMother.withEmail("existing@google.com");
         authUserRepository.save(existingUser);
 
-        String idToken = "valid-google-token";
-        when(googleTokenVerifier.verify(idToken))
-                .thenReturn(new GoogleUserInfo("existing@google.com", "Existing User", true));
+        googleAuthPort.willReturn(new GoogleVerifiedUser("existing@google.com", "Existing User", true));
 
-        AuthUser result = useCase.execute(idToken);
+        AuthUser result = useCase.execute("valid-google-token");
 
         assertEquals(existingUser.id(), result.id());
         assertEquals(1, userProfileRepository.count());
     }
 
     @Test
-    void shouldThrowWhenGoogleTokenIsInvalid() throws GoogleAuthException {
-        String idToken = "invalid-token";
-        when(googleTokenVerifier.verify(idToken))
-                .thenThrow(new GoogleAuthException("Invalid Google ID token"));
+    void shouldThrowWhenGoogleTokenIsInvalid() {
+        googleAuthPort.willThrow(new GoogleAuthException("Invalid Google ID token"));
 
-        assertThrows(GoogleAuthException.class, () -> useCase.execute(idToken));
+        assertThrows(GoogleAuthException.class, () -> useCase.execute("invalid-token"));
     }
 
     @Test
-    void shouldThrowWhenEmailIsNotVerified() throws GoogleAuthException {
-        String idToken = "unverified-email-token";
-        when(googleTokenVerifier.verify(idToken))
-                .thenReturn(new GoogleUserInfo("unverified@google.com", "User", false));
+    void shouldThrowWhenEmailIsNotVerified() {
+        googleAuthPort.willReturn(new GoogleVerifiedUser("unverified@google.com", "User", false));
 
         GoogleAuthException exception = assertThrows(
-                GoogleAuthException.class, () -> useCase.execute(idToken));
+                GoogleAuthException.class, () -> useCase.execute("unverified-email-token"));
         assertEquals("Google email not verified", exception.getMessage());
     }
 
@@ -90,11 +76,9 @@ class GoogleLoginUseCaseTest {
         AuthUser orphanedUser = AuthUser.createFromGoogle("orphan@google.com", orphanedProfileId);
         authUserRepository.save(orphanedUser);
 
-        String idToken = "valid-google-token";
-        when(googleTokenVerifier.verify(idToken))
-                .thenReturn(new GoogleUserInfo("orphan@google.com", "Orphan User", true));
+        googleAuthPort.willReturn(new GoogleVerifiedUser("orphan@google.com", "Orphan User", true));
 
-        AuthUser result = useCase.execute(idToken);
+        AuthUser result = useCase.execute("valid-google-token");
 
         assertEquals(orphanedUser.id(), result.id());
         assertTrue(userProfileRepository.findById(orphanedProfileId).isPresent());
@@ -108,11 +92,9 @@ class GoogleLoginUseCaseTest {
                 existingUser.userProfileId(), null, 100, java.time.Instant.now(), java.time.Instant.now());
         userProfileRepository.save(profile);
 
-        String idToken = "valid-google-token";
-        when(googleTokenVerifier.verify(idToken))
-                .thenReturn(new GoogleUserInfo("existing@google.com", "Existing User", true));
+        googleAuthPort.willReturn(new GoogleVerifiedUser("existing@google.com", "Existing User", true));
 
-        AuthUser result = useCase.execute(idToken);
+        AuthUser result = useCase.execute("valid-google-token");
 
         assertEquals(existingUser.id(), result.id());
         assertEquals(1, userProfileRepository.count());

@@ -2,9 +2,9 @@ package com.faus535.englishtrainer.auth.application;
 
 import com.faus535.englishtrainer.auth.domain.AuthUser;
 import com.faus535.englishtrainer.auth.domain.AuthUserRepository;
+import com.faus535.englishtrainer.auth.domain.GoogleAuthPort;
+import com.faus535.englishtrainer.auth.domain.GoogleVerifiedUser;
 import com.faus535.englishtrainer.auth.domain.error.GoogleAuthException;
-import com.faus535.englishtrainer.auth.infrastructure.google.GoogleTokenVerifier;
-import com.faus535.englishtrainer.auth.infrastructure.google.GoogleUserInfo;
 import com.faus535.englishtrainer.shared.application.annotation.UseCase;
 import com.faus535.englishtrainer.user.domain.UserProfile;
 import com.faus535.englishtrainer.user.domain.UserProfileRepository;
@@ -16,21 +16,21 @@ import java.util.Optional;
 @UseCase
 public class GoogleLoginUseCase {
 
-    private final GoogleTokenVerifier googleTokenVerifier;
+    private final GoogleAuthPort googleAuthPort;
     private final AuthUserRepository authUserRepository;
     private final UserProfileRepository userProfileRepository;
 
-    public GoogleLoginUseCase(GoogleTokenVerifier googleTokenVerifier,
-                              AuthUserRepository authUserRepository,
-                              UserProfileRepository userProfileRepository) {
-        this.googleTokenVerifier = googleTokenVerifier;
+    GoogleLoginUseCase(GoogleAuthPort googleAuthPort,
+                       AuthUserRepository authUserRepository,
+                       UserProfileRepository userProfileRepository) {
+        this.googleAuthPort = googleAuthPort;
         this.authUserRepository = authUserRepository;
         this.userProfileRepository = userProfileRepository;
     }
 
     @Transactional
     public AuthUser execute(String idToken) throws GoogleAuthException {
-        GoogleUserInfo googleUser = googleTokenVerifier.verify(idToken);
+        GoogleVerifiedUser googleUser = googleAuthPort.verify(idToken);
 
         if (!googleUser.emailVerified()) {
             throw new GoogleAuthException("Google email not verified");

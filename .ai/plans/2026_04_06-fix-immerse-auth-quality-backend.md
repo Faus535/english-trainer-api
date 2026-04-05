@@ -165,17 +165,17 @@
    - **RefreshTokenUseCaseTest**: Tests: `refreshesTokenSuccessfully`, `throwsForInvalidJwt`, `throwsForRevokedToken`, `throwsForMissingUser`.
 
 **Acceptance criteria**:
-- [ ] `LogoutUserUseCase` uses `@UseCase`, is package-private, non-final
-- [ ] `GoogleLoginUseCase` imports only domain types (no infrastructure imports)
-- [ ] `GoogleAuthPort` interface exists in `auth.domain`
-- [ ] `GoogleVerifiedUser` record exists in `auth.domain`
-- [ ] `GoogleTokenVerifier` implements `GoogleAuthPort`
-- [ ] `RefreshTokenUseCase` exists with `@UseCase` and `@Transactional`
-- [ ] `RefreshTokenController` is a thin delegator (no direct repo access, no `@Transactional`)
-- [ ] 6 new auth test classes pass
-- [ ] Existing auth tests (`RegisterUserUseCaseTest`, `LoginUserUseCaseTest`, `LogoutUserUseCaseTest`, `GoogleLoginUseCaseTest`) still pass
-- [ ] `GoogleLoginUseCaseTest` updated to use `StubGoogleAuthPort` instead of `GoogleTokenVerifier`
-- [ ] Project compiles (`./gradlew compileJava`)
+- [x] `LogoutUserUseCase` uses `@UseCase`, is public (cross-package), non-final, constructor package-private
+- [x] `GoogleLoginUseCase` imports only domain types (no infrastructure imports)
+- [x] `GoogleAuthPort` interface exists in `auth.domain`
+- [x] `GoogleVerifiedUser` record exists in `auth.domain`
+- [x] `GoogleTokenVerifier` implements `GoogleAuthPort`
+- [x] `RefreshTokenUseCase` exists with `@UseCase` and `@Transactional`
+- [x] `RefreshTokenController` is a thin delegator (no direct repo access, no `@Transactional`)
+- [x] 6 new auth test classes pass
+- [x] Existing auth tests (`RegisterUserUseCaseTest`, `LoginUserUseCaseTest`, `LogoutUserUseCaseTest`, `GoogleLoginUseCaseTest`) still pass
+- [x] `GoogleLoginUseCaseTest` updated to use `StubGoogleAuthPort` instead of `GoogleTokenVerifier`
+- [x] Project compiles (`./gradlew compileJava`)
 
 ---
 

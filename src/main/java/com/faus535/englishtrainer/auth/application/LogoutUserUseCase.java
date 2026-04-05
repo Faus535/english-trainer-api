@@ -2,16 +2,16 @@ package com.faus535.englishtrainer.auth.application;
 
 import com.faus535.englishtrainer.auth.domain.RefreshToken;
 import com.faus535.englishtrainer.auth.domain.RefreshTokenRepository;
-import org.springframework.stereotype.Service;
+import com.faus535.englishtrainer.shared.application.annotation.UseCase;
 
 import java.util.Optional;
 
-@Service
-public final class LogoutUserUseCase {
+@UseCase
+public class LogoutUserUseCase {
 
     private final RefreshTokenRepository refreshTokenRepository;
 
-    public LogoutUserUseCase(RefreshTokenRepository refreshTokenRepository) {
+    LogoutUserUseCase(RefreshTokenRepository refreshTokenRepository) {
         this.refreshTokenRepository = refreshTokenRepository;
     }
 

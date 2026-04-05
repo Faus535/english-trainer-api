@@ -1,5 +1,6 @@
 package com.faus535.englishtrainer.auth.infrastructure.google;
 
+import com.faus535.englishtrainer.auth.domain.GoogleVerifiedUser;
 import com.faus535.englishtrainer.auth.domain.error.GoogleAuthException;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
@@ -24,7 +25,7 @@ class GoogleTokenVerifierTest {
     }
 
     @Test
-    void shouldReturnGoogleUserInfoWhenTokenIsValid() throws Exception {
+    void shouldReturnGoogleVerifiedUserWhenTokenIsValid() throws Exception {
         GoogleIdToken idToken = mock(GoogleIdToken.class);
         GoogleIdToken.Payload payload = new GoogleIdToken.Payload();
         payload.setEmail("user@gmail.com");
@@ -34,7 +35,7 @@ class GoogleTokenVerifierTest {
         when(googleIdTokenVerifier.verify("valid-token")).thenReturn(idToken);
         when(idToken.getPayload()).thenReturn(payload);
 
-        GoogleUserInfo result = tokenVerifier.verify("valid-token");
+        GoogleVerifiedUser result = tokenVerifier.verify("valid-token");
 
         assertEquals("user@gmail.com", result.email());
         assertEquals("Test User", result.name());
@@ -81,7 +82,7 @@ class GoogleTokenVerifierTest {
         when(googleIdTokenVerifier.verify("unverified-token")).thenReturn(idToken);
         when(idToken.getPayload()).thenReturn(payload);
 
-        GoogleUserInfo result = tokenVerifier.verify("unverified-token");
+        GoogleVerifiedUser result = tokenVerifier.verify("unverified-token");
 
         assertFalse(result.emailVerified());
     }
