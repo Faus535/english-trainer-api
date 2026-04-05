@@ -41,4 +41,9 @@ class JpaAuthUserRepositoryAdapter implements AuthUserRepository {
         }
         return jpaRepository.save(entity).toAggregate();
     }
+
+    @Override
+    public void deleteById(AuthUserId id) {
+        jpaRepository.deleteById(id.value());
+    }
 }

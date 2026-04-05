@@ -11,4 +11,6 @@ public interface AuthUserRepository {
     boolean existsByEmail(String email);
 
     AuthUser save(AuthUser user);
+
+    void deleteById(AuthUserId id);
 }
