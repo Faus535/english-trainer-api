@@ -4,6 +4,7 @@ import com.faus535.englishtrainer.review.domain.*;
 import jakarta.persistence.*;
 import org.springframework.data.domain.Persistable;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.UUID;
 
@@ -41,8 +42,8 @@ class ReviewItemEntity implements Persistable<UUID> {
     @Column(name = "interval_days", nullable = false)
     private int intervalDays;
 
-    @Column(name = "ease_factor", nullable = false, columnDefinition = "NUMERIC(4,2)")
-    private double easeFactor;
+    @Column(name = "ease_factor", nullable = false, precision = 4, scale = 2)
+    private BigDecimal easeFactor;
 
     @Column(name = "consecutive_correct", nullable = false)
     private int consecutiveCorrect;
@@ -63,7 +64,7 @@ class ReviewItemEntity implements Persistable<UUID> {
         entity.backContent = item.backContent();
         entity.nextReviewAt = item.nextReviewAt();
         entity.intervalDays = item.intervalDays();
-        entity.easeFactor = item.easeFactor();
+        entity.easeFactor = BigDecimal.valueOf(item.easeFactor());
         entity.consecutiveCorrect = item.consecutiveCorrect();
         entity.createdAt = item.createdAt();
         return entity;
@@ -73,13 +74,13 @@ class ReviewItemEntity implements Persistable<UUID> {
         return ReviewItem.reconstitute(
                 new ReviewItemId(id), userId, ReviewSourceType.fromString(sourceType),
                 sourceId, frontContent, backContent, nextReviewAt,
-                intervalDays, easeFactor, consecutiveCorrect, createdAt);
+                intervalDays, easeFactor.doubleValue(), consecutiveCorrect, createdAt);
     }
 
     void updateFrom(ReviewItem item) {
         this.nextReviewAt = item.nextReviewAt();
         this.intervalDays = item.intervalDays();
-        this.easeFactor = item.easeFactor();
+        this.easeFactor = BigDecimal.valueOf(item.easeFactor());
         this.consecutiveCorrect = item.consecutiveCorrect();
     }
 
