@@ -18,7 +18,8 @@ class GetCurrentUserController {
         this.useCase = useCase;
     }
 
-    record CurrentUserResponse(String userId, String email, String profileId, String role) {}
+    record CurrentUserResponse(String userId, String email, String profileId, String role,
+                               String provider, String createdAt) {}
 
     @GetMapping("/api/auth/me")
     ResponseEntity<CurrentUserResponse> handle(Authentication authentication) throws NotFoundException {
@@ -31,6 +32,8 @@ class GetCurrentUserController {
                 user.id().value().toString(),
                 user.email(),
                 user.userProfileId().value().toString(),
-                user.role()));
+                user.role(),
+                user.authProvider().toLowerCase(),
+                user.createdAt().toString()));
     }
 }
