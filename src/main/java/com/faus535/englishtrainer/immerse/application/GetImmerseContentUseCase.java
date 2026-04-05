@@ -11,7 +11,7 @@ public class GetImmerseContentUseCase {
 
     private final ImmerseContentRepository repository;
 
-    public GetImmerseContentUseCase(ImmerseContentRepository repository) {
+    GetImmerseContentUseCase(ImmerseContentRepository repository) {
         this.repository = repository;
     }
 

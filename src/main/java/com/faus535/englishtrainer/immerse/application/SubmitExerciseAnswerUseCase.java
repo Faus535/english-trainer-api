@@ -15,9 +15,9 @@ public class SubmitExerciseAnswerUseCase {
     private final ImmerseSubmissionRepository submissionRepository;
     private final ApplicationEventPublisher eventPublisher;
 
-    public SubmitExerciseAnswerUseCase(ImmerseExerciseRepository exerciseRepository,
-                                        ImmerseSubmissionRepository submissionRepository,
-                                        ApplicationEventPublisher eventPublisher) {
+    SubmitExerciseAnswerUseCase(ImmerseExerciseRepository exerciseRepository,
+                                 ImmerseSubmissionRepository submissionRepository,
+                                 ApplicationEventPublisher eventPublisher) {
         this.exerciseRepository = exerciseRepository;
         this.submissionRepository = submissionRepository;
         this.eventPublisher = eventPublisher;

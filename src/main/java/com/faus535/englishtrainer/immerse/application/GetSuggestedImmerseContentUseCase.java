@@ -12,7 +12,7 @@ public class GetSuggestedImmerseContentUseCase {
 
     private final ImmerseContentRepository repository;
 
-    public GetSuggestedImmerseContentUseCase(ImmerseContentRepository repository) {
+    GetSuggestedImmerseContentUseCase(ImmerseContentRepository repository) {
         this.repository = repository;
     }
 

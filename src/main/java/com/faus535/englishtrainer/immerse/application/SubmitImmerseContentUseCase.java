@@ -16,9 +16,9 @@ public class SubmitImmerseContentUseCase {
     private final ImmerseExerciseRepository exerciseRepository;
     private final ImmerseAiPort aiPort;
 
-    public SubmitImmerseContentUseCase(ImmerseContentRepository contentRepository,
-                                        ImmerseExerciseRepository exerciseRepository,
-                                        ImmerseAiPort aiPort) {
+    SubmitImmerseContentUseCase(ImmerseContentRepository contentRepository,
+                                 ImmerseExerciseRepository exerciseRepository,
+                                 ImmerseAiPort aiPort) {
         this.contentRepository = contentRepository;
         this.exerciseRepository = exerciseRepository;
         this.aiPort = aiPort;

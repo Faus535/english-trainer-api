@@ -20,10 +20,10 @@ public class GenerateImmerseContentUseCase {
     private final ImmerseAiPort aiPort;
     private final UserProfileRepository userProfileRepository;
 
-    public GenerateImmerseContentUseCase(ImmerseContentRepository contentRepository,
-                                          ImmerseExerciseRepository exerciseRepository,
-                                          ImmerseAiPort aiPort,
-                                          UserProfileRepository userProfileRepository) {
+    GenerateImmerseContentUseCase(ImmerseContentRepository contentRepository,
+                                   ImmerseExerciseRepository exerciseRepository,
+                                   ImmerseAiPort aiPort,
+                                   UserProfileRepository userProfileRepository) {
         this.contentRepository = contentRepository;
         this.exerciseRepository = exerciseRepository;
         this.aiPort = aiPort;

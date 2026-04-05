@@ -12,7 +12,7 @@ public class GetImmerseVocabularyUseCase {
 
     private final ImmerseContentRepository repository;
 
-    public GetImmerseVocabularyUseCase(ImmerseContentRepository repository) {
+    GetImmerseVocabularyUseCase(ImmerseContentRepository repository) {
         this.repository = repository;
     }
 

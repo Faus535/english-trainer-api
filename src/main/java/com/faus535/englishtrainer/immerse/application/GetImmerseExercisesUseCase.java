@@ -14,8 +14,8 @@ public class GetImmerseExercisesUseCase {
     private final ImmerseContentRepository contentRepository;
     private final ImmerseExerciseRepository exerciseRepository;
 
-    public GetImmerseExercisesUseCase(ImmerseContentRepository contentRepository,
-                                       ImmerseExerciseRepository exerciseRepository) {
+    GetImmerseExercisesUseCase(ImmerseContentRepository contentRepository,
+                                ImmerseExerciseRepository exerciseRepository) {
         this.contentRepository = contentRepository;
         this.exerciseRepository = exerciseRepository;
     }

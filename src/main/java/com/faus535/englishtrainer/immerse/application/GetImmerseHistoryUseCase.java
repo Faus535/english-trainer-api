@@ -12,7 +12,7 @@ public class GetImmerseHistoryUseCase {
 
     private final ImmerseContentRepository repository;
 
-    public GetImmerseHistoryUseCase(ImmerseContentRepository repository) {
+    GetImmerseHistoryUseCase(ImmerseContentRepository repository) {
         this.repository = repository;
     }
 
