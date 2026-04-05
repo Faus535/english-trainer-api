@@ -41,14 +41,6 @@ public class CheckAndUnlockAchievementsUseCase {
 
         List<Achievement> newlyUnlocked = new ArrayList<>();
 
-        checkAndUnlock(userId, new AchievementId("first_session"), profile.sessionCount() >= 1, newlyUnlocked);
-        checkAndUnlock(userId, new AchievementId("sessions_10"), profile.sessionCount() >= 10, newlyUnlocked);
-        checkAndUnlock(userId, new AchievementId("sessions_25"), profile.sessionCount() >= 25, newlyUnlocked);
-        checkAndUnlock(userId, new AchievementId("sessions_50"), profile.sessionCount() >= 50, newlyUnlocked);
-        checkAndUnlock(userId, new AchievementId("sessions_100"), profile.sessionCount() >= 100, newlyUnlocked);
-
-        checkAndUnlock(userId, new AchievementId("first_test"), profile.testCompleted(), newlyUnlocked);
-
         checkAndUnlock(userId, new AchievementId("xp_1000"), profile.xp() >= 1000, newlyUnlocked);
         checkAndUnlock(userId, new AchievementId("xp_5000"), profile.xp() >= 5000, newlyUnlocked);
 

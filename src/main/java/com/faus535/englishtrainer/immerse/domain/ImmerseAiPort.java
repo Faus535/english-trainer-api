@@ -8,7 +8,18 @@ public interface ImmerseAiPort {
 
     ImmerseProcessResult processContent(String rawText, String level) throws ImmerseAiException;
 
+    ImmerseGenerateResult generateContent(ContentType contentType, String level, String topic) throws ImmerseAiException;
+
     record ImmerseProcessResult(
+            String processedText,
+            String detectedLevel,
+            List<VocabularyItem> vocabulary,
+            List<GeneratedExercise> exercises
+    ) {}
+
+    record ImmerseGenerateResult(
+            String title,
+            String rawText,
             String processedText,
             String detectedLevel,
             List<VocabularyItem> vocabulary,

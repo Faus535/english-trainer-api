@@ -11,4 +11,6 @@ public interface ImmerseContentRepository {
     Optional<ImmerseContent> findById(ImmerseContentId id);
 
     List<ImmerseContent> findByUserId(UUID userId, int page, int size);
+
+    Optional<ImmerseContent> findLatestByUserId(UUID userId);
 }

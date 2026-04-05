@@ -1,0 +1,10 @@
+ALTER TABLE user_profiles DROP COLUMN IF EXISTS test_completed;
+ALTER TABLE user_profiles DROP COLUMN IF EXISTS level_listening;
+ALTER TABLE user_profiles DROP COLUMN IF EXISTS level_vocabulary;
+ALTER TABLE user_profiles DROP COLUMN IF EXISTS level_grammar;
+ALTER TABLE user_profiles DROP COLUMN IF EXISTS level_phrases;
+ALTER TABLE user_profiles DROP COLUMN IF EXISTS level_pronunciation;
+ALTER TABLE user_profiles DROP COLUMN IF EXISTS session_count;
+ALTER TABLE user_profiles DROP COLUMN IF EXISTS sessions_this_week;
+ALTER TABLE user_profiles DROP COLUMN IF EXISTS week_start;
+ALTER TABLE user_profiles DROP COLUMN IF EXISTS last_test_at;

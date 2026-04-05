@@ -46,6 +46,9 @@ class ImmerseContentEntity implements Persistable<UUID> {
     @Column(name = "extracted_vocabulary", columnDefinition = "TEXT")
     private String extractedVocabularyJson;
 
+    @Column(name = "content_type", length = 10)
+    private String contentType;
+
     @Column(nullable = false, length = 20)
     private String status;
 
@@ -65,6 +68,7 @@ class ImmerseContentEntity implements Persistable<UUID> {
         entity.processedText = aggregate.processedText();
         entity.cefrLevel = aggregate.cefrLevel();
         entity.extractedVocabularyJson = serializeVocabulary(aggregate.extractedVocabulary());
+        entity.contentType = aggregate.contentType() != null ? aggregate.contentType().value() : null;
         entity.status = aggregate.status().value();
         entity.createdAt = aggregate.createdAt();
         return entity;
@@ -74,6 +78,7 @@ class ImmerseContentEntity implements Persistable<UUID> {
         return ImmerseContent.reconstitute(
                 new ImmerseContentId(id), userId, sourceUrl, title, rawText,
                 processedText, cefrLevel, deserializeVocabulary(extractedVocabularyJson),
+                contentType != null ? ContentType.fromString(contentType) : null,
                 ImmerseContentStatus.fromString(status), createdAt);
     }
 
@@ -81,6 +86,7 @@ class ImmerseContentEntity implements Persistable<UUID> {
         this.processedText = aggregate.processedText();
         this.cefrLevel = aggregate.cefrLevel();
         this.extractedVocabularyJson = serializeVocabulary(aggregate.extractedVocabulary());
+        this.contentType = aggregate.contentType() != null ? aggregate.contentType().value() : null;
         this.status = aggregate.status().value();
     }
 

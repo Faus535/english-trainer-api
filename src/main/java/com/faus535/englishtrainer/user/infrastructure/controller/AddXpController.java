@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.Instant;
 import java.util.UUID;
 
 @RestController
@@ -29,31 +30,18 @@ class AddXpController {
 
     record AddXpRequest(@NotNull @Min(1) Integer amount) {}
 
+    record UserProfileResponse(String id, int xp, Instant createdAt) {}
+
     @PostMapping("/api/profiles/{id}/xp")
     @RequireProfileOwnership(pathVariable = "id")
     ResponseEntity<UserProfileResponse> handle(@PathVariable UUID id,
                                                @Valid @RequestBody AddXpRequest request,
                                                Authentication authentication) throws UserProfileNotFoundException, InvalidXpAmountException {
         UserProfile profile = useCase.execute(new UserProfileId(id), request.amount());
-        return ResponseEntity.ok(toResponse(profile));
-    }
-
-    record UserProfileResponse(String id, boolean testCompleted, String levelListening, String levelVocabulary,
-                               String levelGrammar, String levelPhrases, String levelPronunciation,
-                               int sessionCount, int sessionsThisWeek, int xp) {}
-
-    private UserProfileResponse toResponse(UserProfile profile) {
-        return new UserProfileResponse(
+        return ResponseEntity.ok(new UserProfileResponse(
                 profile.id().value().toString(),
-                profile.testCompleted(),
-                profile.levelListening().value(),
-                profile.levelVocabulary().value(),
-                profile.levelGrammar().value(),
-                profile.levelPhrases().value(),
-                profile.levelPronunciation().value(),
-                profile.sessionCount(),
-                profile.sessionsThisWeek(),
-                profile.xp()
-        );
+                profile.xp(),
+                profile.createdAt()
+        ));
     }
 }

@@ -41,4 +41,10 @@ class JpaImmerseContentRepositoryAdapter implements ImmerseContentRepository {
                 .map(ImmerseContentEntity::toAggregate)
                 .toList();
     }
+
+    @Override
+    public Optional<ImmerseContent> findLatestByUserId(UUID userId) {
+        return jpaRepository.findFirstByUserIdOrderByCreatedAtDesc(userId)
+                .map(ImmerseContentEntity::toAggregate);
+    }
 }

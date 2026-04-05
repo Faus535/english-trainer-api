@@ -26,7 +26,6 @@ final class CreateUserProfileUseCaseTest {
 
         assertNotNull(profile);
         assertNotNull(profile.id());
-        assertFalse(profile.testCompleted());
         assertEquals(0, profile.xp());
     }
 

@@ -48,7 +48,7 @@ class AuthIntegrationTest extends IntegrationTestBase {
                 Map.class
         );
         assertThat(profileResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(profileResponse.getBody()).containsEntry("testCompleted", false);
+        assertThat(profileResponse.getBody()).containsEntry("xp", 0);
     }
 
     @Test

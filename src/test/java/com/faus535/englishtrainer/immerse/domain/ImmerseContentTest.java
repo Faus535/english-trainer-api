@@ -40,4 +40,25 @@ class ImmerseContentTest {
 
         assertEquals(ImmerseContentStatus.FAILED, failed.status());
     }
+
+    @Test
+    void generateCreatesProcessedContentWithContentType() {
+        ImmerseContent content = ImmerseContent.generate(
+                UUID.randomUUID(), ContentType.AUDIO, "Podcast Episode",
+                "Host: Welcome!", "Host: Welcome!", "b1",
+                List.of(new VocabularyItem("welcome", "A greeting", "Welcome to the show.", "a1")));
+
+        assertEquals(ImmerseContentStatus.PROCESSED, content.status());
+        assertEquals(ContentType.AUDIO, content.contentType());
+        assertEquals("Podcast Episode", content.title());
+        assertEquals(1, content.extractedVocabulary().size());
+        assertNull(content.sourceUrl());
+    }
+
+    @Test
+    void submitDefaultsToTextContentType() {
+        ImmerseContent content = ImmerseContent.submit(UUID.randomUUID(), null, "Test", "Some text");
+
+        assertEquals(ContentType.TEXT, content.contentType());
+    }
 }

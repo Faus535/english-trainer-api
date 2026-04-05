@@ -9,12 +9,13 @@ import java.util.List;
 record ImmerseContentResponse(
         String id, String title, String sourceUrl, String processedText,
         String cefrLevel, List<VocabularyItem> extractedVocabulary,
-        String status, Instant createdAt
+        String contentType, String status, Instant createdAt
 ) {
     static ImmerseContentResponse from(ImmerseContent content) {
         return new ImmerseContentResponse(
                 content.id().value().toString(), content.title(), content.sourceUrl(),
                 content.processedText(), content.cefrLevel(), content.extractedVocabulary(),
+                content.contentType() != null ? content.contentType().value() : null,
                 content.status().value(), content.createdAt());
     }
 }

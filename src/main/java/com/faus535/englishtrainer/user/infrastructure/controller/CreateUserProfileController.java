@@ -7,6 +7,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.Instant;
+
 @RestController
 class CreateUserProfileController {
 
@@ -16,28 +18,15 @@ class CreateUserProfileController {
         this.useCase = useCase;
     }
 
-    record UserProfileResponse(String id, boolean testCompleted, String levelListening, String levelVocabulary,
-                               String levelGrammar, String levelPhrases, String levelPronunciation,
-                               int sessionCount, int sessionsThisWeek, int xp) {}
+    record UserProfileResponse(String id, int xp, Instant createdAt) {}
 
     @PostMapping("/api/profiles")
     ResponseEntity<UserProfileResponse> handle() {
         UserProfile profile = useCase.execute();
-        return ResponseEntity.status(HttpStatus.CREATED).body(toResponse(profile));
-    }
-
-    private UserProfileResponse toResponse(UserProfile profile) {
-        return new UserProfileResponse(
+        return ResponseEntity.status(HttpStatus.CREATED).body(new UserProfileResponse(
                 profile.id().value().toString(),
-                profile.testCompleted(),
-                profile.levelListening().value(),
-                profile.levelVocabulary().value(),
-                profile.levelGrammar().value(),
-                profile.levelPhrases().value(),
-                profile.levelPronunciation().value(),
-                profile.sessionCount(),
-                profile.sessionsThisWeek(),
-                profile.xp()
-        );
+                profile.xp(),
+                profile.createdAt()
+        ));
     }
 }

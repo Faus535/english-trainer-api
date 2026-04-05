@@ -11,8 +11,4 @@ public final class UserProfileMother {
     public static UserProfile withXp(int xp) throws InvalidXpAmountException {
         return UserProfile.create().addXp(xp);
     }
-
-    public static UserProfile withTestCompleted() {
-        return UserProfile.create().markTestCompleted();
-    }
 }

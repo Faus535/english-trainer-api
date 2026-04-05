@@ -1,6 +1,5 @@
 package com.faus535.englishtrainer.user.infrastructure.controller;
 
-import com.faus535.englishtrainer.user.domain.error.InvalidModuleException;
 import com.faus535.englishtrainer.user.domain.error.InvalidXpAmountException;
 import com.faus535.englishtrainer.user.domain.error.ProfileOwnershipException;
 import com.faus535.englishtrainer.user.domain.error.UserProfileNotFoundException;
@@ -23,13 +22,6 @@ class UserProfileControllerAdvice {
         log.error("User profile not found: {}", ex.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(new ApiError("not_found", "User profile not found"));
-    }
-
-    @ExceptionHandler(InvalidModuleException.class)
-    ResponseEntity<ApiError> handleInvalidModule(InvalidModuleException ex) {
-        log.error("Invalid module: {}", ex.getMessage());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(new ApiError("invalid_module", ex.getMessage()));
     }
 
     @ExceptionHandler(ProfileOwnershipException.class)

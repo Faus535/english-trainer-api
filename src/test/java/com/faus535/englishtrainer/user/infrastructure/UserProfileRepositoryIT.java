@@ -26,28 +26,7 @@ class UserProfileRepositoryIT extends IntegrationTestBase {
 
         assertThat(found).isPresent();
         assertThat(found.get().id()).isEqualTo(profile.id());
-        assertThat(found.get().testCompleted()).isEqualTo(profile.testCompleted());
-        assertThat(found.get().levelListening()).isEqualTo(profile.levelListening());
-        assertThat(found.get().levelVocabulary()).isEqualTo(profile.levelVocabulary());
-        assertThat(found.get().levelGrammar()).isEqualTo(profile.levelGrammar());
-        assertThat(found.get().levelPhrases()).isEqualTo(profile.levelPhrases());
-        assertThat(found.get().levelPronunciation()).isEqualTo(profile.levelPronunciation());
-        assertThat(found.get().sessionCount()).isEqualTo(profile.sessionCount());
-        assertThat(found.get().sessionsThisWeek()).isEqualTo(profile.sessionsThisWeek());
-        assertThat(found.get().weekStart()).isEqualTo(profile.weekStart());
         assertThat(found.get().xp()).isEqualTo(profile.xp());
-    }
-
-    @Test
-    void save_with_test_completed_maps_correctly() {
-        UserProfile profile = UserProfileMother.withTestCompleted();
-
-        repository.save(profile);
-
-        Optional<UserProfile> found = repository.findById(profile.id());
-
-        assertThat(found).isPresent();
-        assertThat(found.get().testCompleted()).isTrue();
     }
 
     @Test

@@ -2,10 +2,10 @@ package com.faus535.englishtrainer.gamification.application;
 
 import com.faus535.englishtrainer.gamification.domain.Achievement;
 import com.faus535.englishtrainer.gamification.domain.AchievementId;
-import com.faus535.englishtrainer.gamification.domain.AchievementMother;
 import com.faus535.englishtrainer.gamification.infrastructure.InMemoryAchievementRepository;
 import com.faus535.englishtrainer.gamification.infrastructure.InMemoryUserAchievementRepository;
 import com.faus535.englishtrainer.user.domain.UserProfile;
+import com.faus535.englishtrainer.user.domain.error.InvalidXpAmountException;
 import com.faus535.englishtrainer.user.domain.error.UserProfileNotFoundException;
 import com.faus535.englishtrainer.user.infrastructure.InMemoryUserProfileRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -34,28 +34,28 @@ final class CheckAndUnlockAchievementsUseCaseTest {
     }
 
     @Test
-    void shouldUnlockAchievementWhenConditionMet() throws UserProfileNotFoundException {
-        UserProfile profile = UserProfile.create().recordSession();
+    void shouldUnlockXpAchievementWhenConditionMet() throws UserProfileNotFoundException, InvalidXpAmountException {
+        UserProfile profile = UserProfile.create().addXp(1000);
         userProfileRepository.save(profile);
 
-        Achievement firstSession = Achievement.reconstitute(
-                new AchievementId("first_session"), "First Session", "Complete your first session", "star", 50);
-        achievementRepository.save(firstSession);
+        Achievement xp1000 = Achievement.reconstitute(
+                new AchievementId("xp_1000"), "XP Hunter", "Earn 1000 XP", "gem", 100);
+        achievementRepository.save(xp1000);
 
         List<Achievement> unlocked = useCase.execute(profile.id());
 
         assertEquals(1, unlocked.size());
-        assertEquals("first_session", unlocked.get(0).id().value());
+        assertEquals("xp_1000", unlocked.get(0).id().value());
     }
 
     @Test
-    void shouldNotUnlockAlreadyUnlockedAchievement() throws UserProfileNotFoundException {
-        UserProfile profile = UserProfile.create().recordSession();
+    void shouldNotUnlockAlreadyUnlockedAchievement() throws UserProfileNotFoundException, InvalidXpAmountException {
+        UserProfile profile = UserProfile.create().addXp(1000);
         userProfileRepository.save(profile);
 
-        Achievement firstSession = Achievement.reconstitute(
-                new AchievementId("first_session"), "First Session", "Complete your first session", "star", 50);
-        achievementRepository.save(firstSession);
+        Achievement xp1000 = Achievement.reconstitute(
+                new AchievementId("xp_1000"), "XP Hunter", "Earn 1000 XP", "gem", 100);
+        achievementRepository.save(xp1000);
 
         useCase.execute(profile.id());
         List<Achievement> secondRun = useCase.execute(profile.id());

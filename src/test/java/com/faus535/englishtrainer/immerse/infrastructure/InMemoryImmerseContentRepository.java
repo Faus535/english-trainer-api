@@ -28,4 +28,11 @@ public class InMemoryImmerseContentRepository implements ImmerseContentRepositor
                 .limit(size)
                 .toList();
     }
+
+    @Override
+    public Optional<ImmerseContent> findLatestByUserId(UUID userId) {
+        return store.values().stream()
+                .filter(c -> c.userId().equals(userId))
+                .max(Comparator.comparing(ImmerseContent::createdAt));
+    }
 }

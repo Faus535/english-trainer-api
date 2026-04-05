@@ -1,6 +1,7 @@
 package com.faus535.englishtrainer.immerse.infrastructure.ai;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.faus535.englishtrainer.immerse.domain.ContentType;
 import com.faus535.englishtrainer.immerse.domain.ImmerseAiPort;
 import com.faus535.englishtrainer.immerse.domain.VocabularyItem;
 import com.faus535.englishtrainer.immerse.domain.error.ImmerseAiException;
@@ -8,9 +9,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
+import org.springframework.http.client.JdkClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 
+import java.net.http.HttpClient;
+import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 
@@ -27,7 +31,13 @@ class AnthropicImmerseAiAdapter implements ImmerseAiPort {
             @Value("${anthropic.api-key}") String apiKey,
             @Value("${anthropic.model:claude-haiku-4-5-20251001}") String model) {
         this.model = model;
+        HttpClient httpClient = HttpClient.newBuilder()
+                .connectTimeout(Duration.ofSeconds(10))
+                .build();
+        JdkClientHttpRequestFactory requestFactory = new JdkClientHttpRequestFactory(httpClient);
+        requestFactory.setReadTimeout(Duration.ofSeconds(60));
         this.restClient = RestClient.builder()
+                .requestFactory(requestFactory)
                 .baseUrl("https://api.anthropic.com/v1")
                 .defaultHeader("x-api-key", apiKey)
                 .defaultHeader("anthropic-version", "2023-06-01")
@@ -146,6 +156,175 @@ class AnthropicImmerseAiAdapter implements ImmerseAiPort {
                                         )))
                         ),
                         "required", List.of("processedText", "detectedLevel", "vocabulary", "exercises")
+                )
+        );
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public ImmerseGenerateResult generateContent(ContentType contentType, String level, String topic)
+            throws ImmerseAiException {
+        try {
+            Map<String, Object> tool = buildGenerateContentTool();
+            String effectiveLevel = level != null ? level.toUpperCase() : "B1";
+            String systemPrompt = buildGenerateSystemPrompt(contentType);
+            String userMessage = buildGenerateUserMessage(contentType, effectiveLevel, topic);
+
+            Map<String, Object> requestBody = Map.of(
+                    "model", model,
+                    "max_tokens", 4000,
+                    "system", systemPrompt,
+                    "tools", List.of(tool),
+                    "tool_choice", Map.of("type", "tool", "name", "generate_content"),
+                    "messages", List.of(Map.of("role", "user", "content", userMessage))
+            );
+
+            Map<String, Object> response = restClient.post()
+                    .uri("/messages")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(requestBody)
+                    .retrieve()
+                    .body(Map.class);
+
+            if (response == null) throw new ImmerseAiException("Empty response from Claude API");
+
+            List<Map<String, Object>> content = (List<Map<String, Object>>) response.get("content");
+            for (Map<String, Object> block : content) {
+                if ("tool_use".equals(block.get("type"))) {
+                    Map<String, Object> input = (Map<String, Object>) block.get("input");
+                    return parseGenerateResult(input);
+                }
+            }
+            throw new ImmerseAiException("No tool_use block in Claude response");
+        } catch (ImmerseAiException e) {
+            throw e;
+        } catch (Exception e) {
+            log.error("Immerse AI content generation failed: {}", e.getMessage(), e);
+            throw new ImmerseAiException("Content generation failed", e);
+        }
+    }
+
+    private String buildGenerateSystemPrompt(ContentType contentType) {
+        return switch (contentType) {
+            case TEXT -> """
+                    You are an English language content creator for learners. Generate an engaging, \
+                    educational article, blog post, or short story in English. The content should be \
+                    interesting, culturally rich, and appropriate for the requested CEFR level. \
+                    Include varied vocabulary and natural sentence structures. \
+                    Also extract key vocabulary, annotate difficulty, and generate exercises based on the content.""";
+            case AUDIO -> """
+                    You are an English language content creator for learners. Generate a realistic \
+                    podcast transcript, radio interview, or dialogue between two or more speakers in English. \
+                    Use natural conversational language with speaker labels (e.g., "Host:", "Guest:"). \
+                    The content should feel authentic, with fillers, turn-taking, and colloquial expressions \
+                    appropriate for the requested CEFR level. \
+                    Also extract key vocabulary, annotate difficulty, and generate exercises based on the content.""";
+            case VIDEO -> """
+                    You are an English language content creator for learners. Generate a documentary narration, \
+                    video essay script, or scene description with visual context in English. \
+                    Include descriptions of what the viewer would see (in brackets like [Scene: ...]) \
+                    mixed with narration text. The content should be vivid, informative, and appropriate \
+                    for the requested CEFR level. \
+                    Also extract key vocabulary, annotate difficulty, and generate exercises based on the content.""";
+        };
+    }
+
+    private String buildGenerateUserMessage(ContentType contentType, String level, String topic) {
+        String contentDescription = switch (contentType) {
+            case TEXT -> "an article or short story";
+            case AUDIO -> "a podcast transcript or dialogue";
+            case VIDEO -> "a documentary narration or video script";
+        };
+
+        StringBuilder message = new StringBuilder();
+        message.append("Generate ").append(contentDescription);
+        message.append(" for a ").append(level).append(" level English learner.");
+
+        if (topic != null && !topic.isBlank()) {
+            message.append(" Topic: ").append(topic).append(".");
+        } else {
+            message.append(" Choose an interesting and engaging topic.");
+        }
+
+        message.append("\n\nThe content should be 300-600 words.");
+        message.append(" Generate 5-6 varied exercises (MULTIPLE_CHOICE, FILL_THE_GAP, TRUE_FALSE, WORD_DEFINITION).");
+        message.append(" Extract 6-10 key vocabulary items with definitions and example sentences.");
+
+        return message.toString();
+    }
+
+    @SuppressWarnings("unchecked")
+    private ImmerseGenerateResult parseGenerateResult(Map<String, Object> input) {
+        String title = (String) input.getOrDefault("title", "Generated Content");
+        String rawText = (String) input.getOrDefault("rawText", "");
+        String processedText = (String) input.getOrDefault("processedText", rawText);
+        String detectedLevel = (String) input.getOrDefault("detectedLevel", "b1");
+
+        List<VocabularyItem> vocabulary = List.of();
+        Object vocabRaw = input.get("vocabulary");
+        if (vocabRaw instanceof List<?> vocabList) {
+            vocabulary = vocabList.stream()
+                    .filter(v -> v instanceof Map)
+                    .map(v -> {
+                        Map<String, Object> vm = (Map<String, Object>) v;
+                        return new VocabularyItem(
+                                (String) vm.get("word"),
+                                (String) vm.get("definition"),
+                                (String) vm.get("exampleSentence"),
+                                (String) vm.getOrDefault("cefrLevel", detectedLevel));
+                    }).toList();
+        }
+
+        List<GeneratedExercise> exercises = List.of();
+        Object exRaw = input.get("exercises");
+        if (exRaw instanceof List<?> exList) {
+            exercises = exList.stream()
+                    .filter(e -> e instanceof Map)
+                    .map(e -> {
+                        Map<String, Object> em = (Map<String, Object>) e;
+                        List<String> options = em.get("options") instanceof List<?> opts
+                                ? opts.stream().map(Object::toString).toList()
+                                : List.of();
+                        return new GeneratedExercise(
+                                (String) em.get("type"),
+                                (String) em.get("question"),
+                                (String) em.get("correctAnswer"),
+                                options);
+                    }).toList();
+        }
+
+        return new ImmerseGenerateResult(title, rawText, processedText, detectedLevel, vocabulary, exercises);
+    }
+
+    private Map<String, Object> buildGenerateContentTool() {
+        return Map.of(
+                "name", "generate_content",
+                "description", "Generate English learning content with vocabulary and exercises",
+                "input_schema", Map.of(
+                        "type", "object",
+                        "properties", Map.ofEntries(
+                                Map.entry("title", Map.of("type", "string", "description", "An engaging title for the content")),
+                                Map.entry("rawText", Map.of("type", "string", "description", "The generated content text")),
+                                Map.entry("processedText", Map.of("type", "string", "description", "The content with annotations and highlights")),
+                                Map.entry("detectedLevel", Map.of("type", "string", "description", "CEFR level: a1,a2,b1,b2,c1,c2")),
+                                Map.entry("vocabulary", Map.of("type", "array", "items", Map.of(
+                                        "type", "object",
+                                        "properties", Map.of(
+                                                "word", Map.of("type", "string"),
+                                                "definition", Map.of("type", "string"),
+                                                "exampleSentence", Map.of("type", "string"),
+                                                "cefrLevel", Map.of("type", "string")
+                                        )))),
+                                Map.entry("exercises", Map.of("type", "array", "items", Map.of(
+                                        "type", "object",
+                                        "properties", Map.of(
+                                                "type", Map.of("type", "string", "description", "MULTIPLE_CHOICE, FILL_THE_GAP, TRUE_FALSE, WORD_DEFINITION"),
+                                                "question", Map.of("type", "string"),
+                                                "correctAnswer", Map.of("type", "string"),
+                                                "options", Map.of("type", "array", "items", Map.of("type", "string"))
+                                        ))))
+                        ),
+                        "required", List.of("title", "rawText", "processedText", "detectedLevel", "vocabulary", "exercises")
                 )
         );
     }
