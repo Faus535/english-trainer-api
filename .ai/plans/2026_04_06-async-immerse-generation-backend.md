@@ -221,11 +221,11 @@
    - Add handler for `ImmerseContentAccessDeniedException` returning 403 FORBIDDEN
 
 **Acceptance criteria**:
-- [ ] GET /content/{id} with wrong user returns 403
-- [ ] GET /content/{id}/exercises with wrong user returns 403
-- [ ] GET /content/{id} with correct user returns content as before
-- [ ] GET /content/{id}/exercises with correct user returns exercises as before
-- [ ] Both controllers inject Authentication from SecurityContext
+- [x] GET /content/{id} with wrong user returns 403
+- [x] GET /content/{id}/exercises with wrong user returns 403
+- [x] GET /content/{id} with correct user returns content as before
+- [x] GET /content/{id}/exercises with correct user returns exercises as before
+- [x] Both controllers inject Authentication from SecurityContext
 
 ---
 

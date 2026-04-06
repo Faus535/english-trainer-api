@@ -1,6 +1,7 @@
 package com.faus535.englishtrainer.immerse.application;
 
 import com.faus535.englishtrainer.immerse.domain.*;
+import com.faus535.englishtrainer.immerse.domain.error.ImmerseContentAccessDeniedException;
 import com.faus535.englishtrainer.immerse.domain.error.ImmerseContentNotFoundException;
 import com.faus535.englishtrainer.immerse.domain.error.ImmerseContentNotProcessedException;
 import com.faus535.englishtrainer.immerse.infrastructure.InMemoryImmerseContentRepository;
@@ -14,6 +15,8 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 class GetImmerseExercisesUseCaseTest {
+
+    private static final UUID DEFAULT_USER_ID = UUID.fromString("00000000-0000-0000-0000-000000000001");
 
     private InMemoryImmerseContentRepository contentRepository;
     private InMemoryImmerseExerciseRepository exerciseRepository;
@@ -37,9 +40,19 @@ class GetImmerseExercisesUseCaseTest {
         );
         exerciseRepository.saveAll(exercises);
 
-        List<ImmerseExercise> result = useCase.execute(content.id().value());
+        List<ImmerseExercise> result = useCase.execute(content.id().value(), DEFAULT_USER_ID);
 
         assertEquals(2, result.size());
+    }
+
+    @Test
+    void shouldThrowAccessDeniedForWrongUser() {
+        ImmerseContent content = ImmerseContentMother.processed();
+        contentRepository.save(content);
+
+        UUID wrongUserId = UUID.randomUUID();
+        assertThrows(ImmerseContentAccessDeniedException.class,
+                () -> useCase.execute(content.id().value(), wrongUserId));
     }
 
     @Test
@@ -48,13 +61,13 @@ class GetImmerseExercisesUseCaseTest {
         contentRepository.save(content);
 
         assertThrows(ImmerseContentNotProcessedException.class,
-                () -> useCase.execute(content.id().value()));
+                () -> useCase.execute(content.id().value(), DEFAULT_USER_ID));
     }
 
     @Test
     void shouldThrowImmerseContentNotFoundExceptionWhenMissing() {
         UUID randomId = UUID.randomUUID();
         assertThrows(ImmerseContentNotFoundException.class,
-                () -> useCase.execute(randomId));
+                () -> useCase.execute(randomId, DEFAULT_USER_ID));
     }
 }

@@ -1,6 +1,7 @@
 package com.faus535.englishtrainer.immerse.infrastructure.controller;
 
 import com.faus535.englishtrainer.immerse.domain.error.ImmerseAiException;
+import com.faus535.englishtrainer.immerse.domain.error.ImmerseContentAccessDeniedException;
 import com.faus535.englishtrainer.immerse.domain.error.ImmerseContentNotFoundException;
 import com.faus535.englishtrainer.immerse.domain.error.ImmerseContentNotProcessedException;
 import com.faus535.englishtrainer.immerse.domain.error.ImmerseExerciseNotFoundException;
@@ -18,6 +19,11 @@ class ImmerseControllerAdvice {
     private static final Logger log = LoggerFactory.getLogger(ImmerseControllerAdvice.class);
 
     record ApiError(String code, String message) {}
+
+    @ExceptionHandler(ImmerseContentAccessDeniedException.class)
+    ResponseEntity<ApiError> handleAccessDenied(ImmerseContentAccessDeniedException ex) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ApiError("access_denied", ex.getMessage()));
+    }
 
     @ExceptionHandler(ImmerseContentNotFoundException.class)
     ResponseEntity<ApiError> handleContentNotFound(ImmerseContentNotFoundException ex) {
