@@ -41,48 +41,38 @@ class GenerateImmerseContentUseCaseTest {
     }
 
     @Test
-    void generatesTextContentSuccessfully() throws Exception {
+    void returnsPendingContentImmediately() throws Exception {
         UUID userId = createProfileAndReturnId();
 
         ImmerseContent result = useCase.execute(userId, ContentType.TEXT, "b1", "city life");
 
-        assertEquals(ImmerseContentStatus.PROCESSED, result.status());
+        assertEquals(ImmerseContentStatus.PENDING, result.status());
         assertEquals(ContentType.TEXT, result.contentType());
-        assertEquals("A Day in the City", result.title());
-        assertEquals("b1", result.cefrLevel());
-        assertEquals(2, result.extractedVocabulary().size());
+        assertEquals("TEXT content", result.title());
+        assertNull(result.processedText());
+        assertTrue(result.extractedVocabulary().isEmpty());
         assertNull(result.sourceUrl());
     }
 
     @Test
-    void generatesAudioContentSuccessfully() throws Exception {
+    void savesContentInRepository() throws Exception {
         UUID userId = createProfileAndReturnId();
 
         ImmerseContent result = useCase.execute(userId, ContentType.AUDIO, "b2", null);
 
-        assertEquals(ImmerseContentStatus.PROCESSED, result.status());
+        assertEquals(ImmerseContentStatus.PENDING, result.status());
         assertEquals(ContentType.AUDIO, result.contentType());
+        assertFalse(contentRepository.findByUserId(userId, 0, 100).isEmpty());
     }
 
     @Test
-    void worksWithoutTopicOrLevel() throws Exception {
-        UUID userId = createProfileAndReturnId();
-
-        ImmerseContent result = useCase.execute(userId, ContentType.VIDEO, null, null);
-
-        assertEquals(ImmerseContentStatus.PROCESSED, result.status());
-        assertEquals(ContentType.VIDEO, result.contentType());
-        assertNotNull(result.rawText());
-    }
-
-    @Test
-    void savesExercisesFromAiResult() throws Exception {
+    void doesNotSaveExercisesSynchronously() throws Exception {
         UUID userId = createProfileAndReturnId();
 
         ImmerseContent result = useCase.execute(userId, ContentType.TEXT, "b1", null);
 
         var exercises = exerciseRepository.findByContentId(result.id());
-        assertEquals(3, exercises.size());
+        assertTrue(exercises.isEmpty());
     }
 
     @Test

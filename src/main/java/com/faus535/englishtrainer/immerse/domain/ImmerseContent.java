@@ -43,13 +43,12 @@ public final class ImmerseContent extends AggregateRoot<ImmerseContentId> {
                 null, null, List.of(), ContentType.TEXT, ImmerseContentStatus.PENDING, Instant.now());
     }
 
-    public static ImmerseContent generate(UUID userId, ContentType contentType, String title,
-                                           String rawText, String processedText, String cefrLevel,
-                                           List<VocabularyItem> vocabulary) {
+    public static ImmerseContent generate(UUID userId, ContentType contentType, String level, String topic) {
         return new ImmerseContent(
-                ImmerseContentId.generate(), userId, null, title, rawText,
-                processedText, cefrLevel, vocabulary, contentType,
-                ImmerseContentStatus.PROCESSED, Instant.now());
+                ImmerseContentId.generate(), userId, null,
+                contentType.value() + " content", null,
+                null, null, List.of(), contentType,
+                ImmerseContentStatus.PENDING, Instant.now());
     }
 
     public static ImmerseContent reconstitute(ImmerseContentId id, UUID userId, String sourceUrl,
@@ -61,8 +60,8 @@ public final class ImmerseContent extends AggregateRoot<ImmerseContentId> {
                 cefrLevel, vocabulary, contentType, status, createdAt);
     }
 
-    public ImmerseContent markProcessed(String processedText, String detectedLevel,
-                                         List<VocabularyItem> vocabulary) {
+    public ImmerseContent markProcessed(String title, String rawText, String processedText,
+                                         String detectedLevel, List<VocabularyItem> vocabulary) {
         return new ImmerseContent(id, userId, sourceUrl, title, rawText, processedText,
                 detectedLevel, vocabulary, contentType, ImmerseContentStatus.PROCESSED, createdAt);
     }

@@ -34,18 +34,30 @@ public final class ImmerseContentMother {
     }
 
     public static ImmerseContent generated() {
-        return ImmerseContent.generate(
-                DEFAULT_USER_ID, ContentType.TEXT, "A Day in the City",
-                "The city wakes up early.", "The city wakes up early.",
-                "b1", List.of(
-                        new VocabularyItem("rush", "To move quickly", "People rush to work.", "b1")
-                ));
+        return ImmerseContent.reconstitute(
+                ImmerseContentId.generate(), DEFAULT_USER_ID, null,
+                "A Day in the City", "The city wakes up early.",
+                "The city wakes up early.", "b1",
+                List.of(new VocabularyItem("rush", "To move quickly", "People rush to work.", "b1")),
+                ContentType.TEXT, ImmerseContentStatus.PROCESSED, Instant.now());
     }
 
     public static ImmerseContent generatedAudio() {
-        return ImmerseContent.generate(
-                DEFAULT_USER_ID, ContentType.AUDIO, "Morning Radio Show",
-                "Host: Good morning! Guest: Hi there!", "Host: Good morning! Guest: Hi there!",
-                "b1", List.of());
+        return ImmerseContent.reconstitute(
+                ImmerseContentId.generate(), DEFAULT_USER_ID, null,
+                "Morning Radio Show", "Host: Good morning! Guest: Hi there!",
+                "Host: Good morning! Guest: Hi there!", "b1",
+                List.of(), ContentType.AUDIO, ImmerseContentStatus.PROCESSED, Instant.now());
+    }
+
+    public static ImmerseContent pendingGenerated() {
+        return ImmerseContent.generate(DEFAULT_USER_ID, ContentType.TEXT, "b1", "city life");
+    }
+
+    public static ImmerseContent pendingGeneratedWithId(ImmerseContentId id, UUID userId) {
+        return ImmerseContent.reconstitute(
+                id, userId, null, ContentType.TEXT.value() + " content", null,
+                null, null, List.of(), ContentType.TEXT,
+                ImmerseContentStatus.PENDING, Instant.now());
     }
 }

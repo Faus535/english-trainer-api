@@ -37,26 +37,8 @@ public class GenerateImmerseContentUseCase {
         userProfileRepository.findById(new UserProfileId(userId))
                 .orElseThrow(() -> new UserProfileNotFoundException(new UserProfileId(userId)));
 
-        ImmerseAiPort.ImmerseGenerateResult result = aiPort.generateContent(contentType, level, topic);
-
-        ImmerseContent content = ImmerseContent.generate(
-                userId, contentType, result.title(), result.rawText(),
-                result.processedText(), result.detectedLevel(), result.vocabulary());
-
+        ImmerseContent content = ImmerseContent.generate(userId, contentType, level, topic);
         ImmerseContent saved = contentRepository.save(content);
-
-        AtomicInteger orderIndex = new AtomicInteger(0);
-        List<ImmerseExercise> exercises = result.exercises().stream()
-                .map(ge -> new ImmerseExercise(
-                        ImmerseExerciseId.generate(), saved.id(),
-                        ExerciseType.valueOf(ge.type()),
-                        ge.question(), ge.correctAnswer(), ge.options(),
-                        orderIndex.getAndIncrement()))
-                .toList();
-
-        if (!exercises.isEmpty()) {
-            exerciseRepository.saveAll(exercises);
-        }
 
         return saved;
     }

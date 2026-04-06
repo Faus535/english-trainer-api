@@ -32,7 +32,8 @@ public class SubmitImmerseContentUseCase {
 
         ImmerseAiPort.ImmerseProcessResult result = aiPort.processContent(rawText, level);
 
-        content = content.markProcessed(result.processedText(), result.detectedLevel(), result.vocabulary());
+        content = content.markProcessed(content.title(), content.rawText(),
+                result.processedText(), result.detectedLevel(), result.vocabulary());
         ImmerseContent saved = contentRepository.save(content);
 
         AtomicInteger orderIndex = new AtomicInteger(0);
