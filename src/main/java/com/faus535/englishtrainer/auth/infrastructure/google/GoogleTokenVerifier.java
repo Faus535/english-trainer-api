@@ -17,7 +17,7 @@ public class GoogleTokenVerifier implements GoogleAuthPort {
 
     private final GoogleIdTokenVerifier verifier;
 
-    GoogleTokenVerifier(@Value("${google.client-id}") String clientId) {
+    public GoogleTokenVerifier(@Value("${google.client-id}") String clientId) {
         this.verifier = new GoogleIdTokenVerifier.Builder(
                 new NetHttpTransport(),
                 GsonFactory.getDefaultInstance()
