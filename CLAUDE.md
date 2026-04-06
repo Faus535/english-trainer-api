@@ -36,7 +36,7 @@ IMPORTANT: Before generating code, ALWAYS consult the relevant skills in `.claud
 |---------|-------------|
 | `/analyze` | Analyzes backend + frontend in depth, generates/updates `.ai/project-snapshot.md` |
 | `/plan <feature>` | Reads the snapshot (read-only, stops if missing), proposes contracts and phases, generates the plan |
-| `/execute-plan <path>` | Executes the plan phase by phase, verifies compilation and tests, commits per phase, then runs `/analyze` + push + `railway up` |
+| `/execute-plan <path>` | Executes the plan phase by phase, verifies compilation and tests, commits per phase, push + `railway up` |
 | `/revisar` | Validates architecture, naming conventions, and code quality |
 | `/modulo` | Creates a complete DDD module |
 | `/entidad` | Creates an entity in an existing module |

@@ -1,48 +1,41 @@
-# Cross-Cutting Snapshot
+# Cross-Cutting Analysis
 
-## API Contract Mismatches (Frontend vs Backend)
+## API Alignment (Backend ↔ Frontend)
 
-| Frontend Call | Frontend Path | Backend Path | Status |
-|--------------|---------------|--------------|--------|
-| Admin vocab PUT | PUT /api/admin/vocab/{id} | (missing) | BROKEN |
-| Admin vocab DELETE | DELETE /api/admin/vocab/{id} | (missing) | BROKEN |
-| Admin phrases POST | POST /api/admin/phrases | (missing) | BROKEN |
-| Admin phrases PUT | PUT /api/admin/phrases/{id} | (missing) | BROKEN |
-| Admin phrases DELETE | DELETE /api/admin/phrases/{id} | (missing) | BROKEN |
-| Admin reading PUT | PUT /api/admin/reading/{id} | (missing) | BROKEN |
-| Admin reading DELETE | DELETE /api/admin/reading/{id} | (missing) | BROKEN |
-| Admin writing PUT | PUT /api/admin/writing/{id} | (missing) | BROKEN |
-| Admin writing DELETE | DELETE /api/admin/writing/{id} | (missing) | BROKEN |
-| Admin stats | GET /api/admin/stats | (missing) | BROKEN |
-| Admin reading GET | GET /api/admin/reading | (missing) | BROKEN |
-| Admin writing GET | GET /api/admin/writing | (missing) | BROKEN |
-| Module progress | GET /api/profiles/{id}/module-progress | GET /api/profiles/{id}/modules | PATH MISMATCH |
-| Conversations | GET /api/tutor/conversations | GET /api/conversations | PATH MISMATCH |
-| Vocab by level+block | GET /api/content/vocab/level/{l}?block={b} | GET /api/vocab/level/{l} | PATH MISMATCH |
-| Phrases | GET /api/content/phrases | GET /api/phrases | PATH MISMATCH |
-| Assessment submit | POST /api/profiles/{id}/assessments/submit | POST /api/profiles/{id}/assessments/level-test | PATH MISMATCH |
-| Assessment questions | GET /api/assessments/test-questions | GET /api/profiles/{id}/assessments/level-test/questions | PATH MISMATCH |
-| XP grant | POST /api/profiles/{id}/xp/grant | POST /api/profiles/{id}/xp | PATH MISMATCH |
-| Review complete | PUT /api/profiles/{id}/reviews/{itemId} | PUT /api/profiles/{id}/reviews/{itemId}/complete | PATH MISMATCH |
-| Activity dates | GET /api/profiles/{id}/activity/dates | GET /api/profiles/{id}/activity | PATH MISMATCH |
-| Learning path | GET /api/learning-path | GET /api/profiles/{id}/learning-path | MISSING profileId |
-| Session block advance | (not yet implemented in frontend) | PUT /api/profiles/{id}/sessions/{sid}/blocks/{bi}/advance | NEW — needs frontend |
-| Session block exercises | (not yet implemented in frontend) | GET /api/profiles/{id}/sessions/{sid}/blocks/{bi}/exercises | NEW — needs frontend |
+| Area | Backend Endpoints | Frontend Methods | Status |
+|------|------------------|-----------------|--------|
+| Auth | 10 | 7 (AuthService) + 3 (ProfileApiService) | Aligned |
+| Profile | 4 | 10 (ProfileApiService) | **Mismatch** — frontend has 6 stale methods |
+| Activity | 3 | 3 | Aligned |
+| Gamification | 5 | 0 (event-driven only) | No frontend integration |
+| Home | 1 | 1 | Aligned |
+| Immerse | 8 | 7 + polling | Aligned |
+| Review | 3 | 3 | Aligned |
+| Talk | 7 | 5 + SSE | Aligned |
 
-## Security Observations
+## Stale Frontend Methods (No Backend Endpoint)
 
-| Area | Observation |
-|------|-------------|
-| Admin endpoints | No @PreAuthorize/@Secured — any authenticated user can access admin CRUD |
-| Conversation ownership | Missing ownership validation — any user can read/send messages to any conversation |
-| Reading submissions | Missing ownership check on submit |
-| PUT /api/profiles/{id}/levels | Missing @RequireProfileOwnership |
-| DELETE /api/profiles/{id} | Missing @RequireProfileOwnership |
-| Account deletion | Frontend UI exists but backend endpoint lacks ownership guard |
+| Service | Method | HTTP | Endpoint |
+|---------|--------|------|----------|
+| ProfileApiService | markTestCompleted() | PUT | /profiles/{id}/test-completed |
+| ProfileApiService | resetTest() | PUT | /profiles/{id}/reset-test |
+| ProfileApiService | updateModuleLevel() | PUT | /profiles/{id}/modules/{module}/level |
+| ProfileApiService | setAllLevels() | PUT | /profiles/{id}/levels |
+| ProfileApiService | recordSession() | POST | /profiles/{id}/sessions |
+| PushNotificationService | registerSub() | POST | /notifications/subscribe |
 
-## Risks
-- 12 admin CRUD endpoints missing (PUT/DELETE for vocab, phrases, reading, writing + stats + GET reading/writing)
-- Frontend uses different base paths for several APIs (content/vocab vs vocab, tutor/conversations vs conversations)
-- New block advance/exercises endpoints need frontend integration
-- Session completion now requires all exercises completed — frontend must adapt workflow
-- Admin endpoints lack role-based authorization
+## Security
+
+- JWT auth with proactive refresh (5-min margin on frontend)
+- IDOR protection via `@RequireProfileOwnership` aspect
+- Rate limiting filter in shared infrastructure
+- CORS configuration present
+- Frontend stores tokens in sessionStorage
+
+## Risks & Gaps
+
+1. **Profile API dead code**: Frontend ProfileApiService has 5 methods calling non-existent backend endpoints (legacy from pre-redesign)
+2. **Notification infrastructure gone**: Backend dropped notification tables (V10.5.0) but frontend still has PushNotificationService
+3. **Gamification not exposed to frontend**: XP/achievements are event-driven but no UI consumes them
+4. **No pagination on list endpoints**: Review queue, immerse history, activity dates — potential scaling issue
+5. **AI single provider**: Only Anthropic Claude configured, no fallback

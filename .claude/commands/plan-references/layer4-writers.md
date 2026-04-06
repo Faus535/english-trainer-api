@@ -15,17 +15,11 @@ Feature: "$ARGUMENTS"
 
 === SPECIALIST OUTPUTS ===
 
---- Backend Architect (Agent 1) ---
+--- Backend Analyst (Agent 1) ---
 [Insert full text output from Agent 1 here]
 
---- Backend Developer (Agent 2) ---
-[Insert full text output from Agent 2 here]
-
---- Data & Security (Agent 5) ---
-[Insert full text output from Agent 5 here]
-
---- QA & UX (Agent 6) ---
-[Insert full text output from Agent 6 here]
+--- Quality & Data (Agent 3) ---
+[Insert full text output from Agent 3 here]
 
 === APPROVED CONTRACTS & PHASES ===
 {APPROVED_CONTRACTS}
@@ -42,7 +36,6 @@ Your job (in order):
    - Every database change has a Flyway migration with version number not conflicting with existing
    - Every phase includes its corresponding tests (unit and/or integration)
    - Every phase is a vertical slice (not horizontal layers split across phases)
-   - The last phase includes running /revisar for architecture validation
    - Phase dependency order is correct
    - No phase depends on a later phase
 
@@ -115,17 +108,11 @@ Feature: "$ARGUMENTS"
 
 === SPECIALIST OUTPUTS ===
 
---- Frontend Architect (Agent 3) ---
+--- Frontend Analyst (Agent 2) ---
+[Insert full text output from Agent 2 here]
+
+--- Quality & Data (Agent 3) ---
 [Insert full text output from Agent 3 here]
-
---- Frontend Developer (Agent 4) ---
-[Insert full text output from Agent 4 here]
-
---- Data & Security (Agent 5) ---
-[Insert full text output from Agent 5 here]
-
---- QA & UX (Agent 6) ---
-[Insert full text output from Agent 6 here]
 
 === APPROVED CONTRACTS & PHASES ===
 {APPROVED_CONTRACTS}
@@ -141,7 +128,6 @@ Your job (in order):
    - Every API call has matching backend endpoint
    - Every phase includes its corresponding tests
    - Every phase is a vertical slice
-   - The last phase includes running /revisar for validation
    - Phase dependency order is correct
 
 Write the file to: /home/faustinoolivas/dev/proyectos/carmen/english-trainer-web/.ai/plans/<slug>-frontend.md

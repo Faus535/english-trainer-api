@@ -8,13 +8,12 @@ allowed-tools: Read, Glob, Grep, Write, Agent, Bash, AskUserQuestion
 PURPOSE: Multi-agent analysis and phased implementation plan generation
 USAGE: /plan <feature description in natural language>
 OUTPUT: .ai/plans/YYYY_MM_DD-semantic-name-backend.md and/or .ai/plans/YYYY_MM_DD-semantic-name-frontend.md
-ARCHITECTURE: 7-step pipeline
+ARCHITECTURE: 6-step pipeline (token-optimized)
   Step 0: Load Project Snapshots (read-only, requires .ai/project-snapshot.md to exist)
-  Step 1: Context Gathering & Slug
-  Step 1.5: Scope Detector (haiku)
+  Step 1: Context Gathering, Slug & Scope
   Step 2: Public Contracts & Phases Proposal (interactive, user approval required)
-  Step 3: Specialists (sonnet, parallel)
-  Step 4: Writers (opus, parallel) — absorbs synthesis, coordination, and validation
+  Step 3: Specialists (sonnet, parallel — 2-3 agents)
+  Step 4: Writers (opus, parallel) — synthesizes specialist output into plan
   Step 5: Git Branch Preparation
 -->
 
@@ -57,7 +56,7 @@ Show a brief summary (5 lines) of the project state and proceed to Step 1.
 
 ---
 
-## Step 1 — Context Gathering & Slug
+## Step 1 — Context Gathering, Slug & Scope
 
 **1a. Slug**: Generate a date-prefixed semantic name from the feature description.
 
@@ -77,27 +76,17 @@ git -C /home/faustinoolivas/dev/proyectos/carmen/english-trainer-api status --sh
 git -C /home/faustinoolivas/dev/proyectos/carmen/english-trainer-web status --short
 ```
 
-**1d. Skills consultation**: Read CLAUDE.md and consult relevant s2-backend skills to understand architecture and conventions:
+**1d. Scope detection** (inline — no agent needed):
 
-- **s2-backend:architecture** — Package structure
-- **s2-backend:domain-design** — Domain patterns (Aggregates, VOs, Events)
-- **s2-backend:persistence** — Persistence (Entities, Repositories, Flyway)
-- **s2-backend:api-design** — Controllers, validation
-- **s2-backend:error-handling** — Exceptions and ControllerAdvice
-- **s2-backend:testing** — Testing strategy
-- **s2-backend:modulith-usecases** — Use Cases with @Service
-- **s2-backend:security** — Authentication and authorization
-- **s2-backend:logging** — Logging and health checks
+Based on the feature request and `PROJECT_ANALYSIS`, classify as ONE of:
 
-Read the `SKILL.md` and key `references/*.md` files of the skills most relevant to the feature.
+- **BACKEND_ONLY**: Feature only requires API/database/domain changes
+- **FRONTEND_ONLY**: Feature only requires UI changes with existing API endpoints
+- **FULL_STACK**: Feature requires changes in both projects
 
----
+Store as `SCOPE`. Show to user: `Scope: <SCOPE> — <one sentence reason>`
 
-## Step 1.5 — Scope Detector (haiku)
-
-Launch 1 **haiku** agent. Read prompt from: `.claude/commands/plan-references/layer0-scope.md`
-
-Replace `$ARGUMENTS` with the feature request. Store result as `SCOPE` (`BACKEND_ONLY` | `FRONTEND_ONLY` | `FULL_STACK`).
+**Do NOT read skills in this step** — specialists read only the skills they need.
 
 ---
 
@@ -135,12 +124,20 @@ Read agent prompts from: `.claude/commands/plan-references/layer1-specialists.md
 
 Launch in parallel based on SCOPE:
 
-- **BACKEND_ONLY**: Agents 1, 2, 5, 6 (4 agents, model: sonnet)
-- **FRONTEND_ONLY**: Agents 3, 4, 5, 6 (4 agents, model: sonnet)
-- **FULL_STACK**: All 6 agents (model: sonnet)
+- **BACKEND_ONLY**: Agent 1 (Backend Analyst) + Agent 3 (Quality & Data) — 2 agents
+- **FRONTEND_ONLY**: Agent 2 (Frontend Analyst) + Agent 3 (Quality & Data) — 2 agents
+- **FULL_STACK**: All 3 agents
+
+Model: **sonnet** for all.
 
 Replace `{EXISTING_PLANS_CONTEXT}`, `{GIT_CONTEXT}`, and `$ARGUMENTS` in each prompt.
 Also inject `{PROJECT_ANALYSIS}` and the approved public contracts and phases from Step 2 as `{APPROVED_CONTRACTS}` and `{APPROVED_PHASES}` so specialists can focus their analysis.
+
+**Context injection rules** (minimize tokens per agent):
+
+- Agent 1 (Backend): inject only `modules.md`, `endpoints.md`, `database.md` from snapshot-references
+- Agent 2 (Frontend): inject only `modules.md`, `cross-cutting.md` from snapshot-references
+- Agent 3 (Quality & Data): inject only `database.md`, `cross-cutting.md`, `testing.md` from snapshot-references
 
 ---
 
@@ -153,7 +150,7 @@ Launch Writers in parallel based on SCOPE:
 - **BACKEND_ONLY** or **FULL_STACK** with backend work → Launch Backend Writer
 - **FRONTEND_ONLY** or **FULL_STACK** with frontend work → Launch Frontend Writer
 
-**Output injection**: Insert each specialist's full text output verbatim into the `[Insert ... here]` placeholders. Use `SCOPE` from Step 1.5 to determine which writers to launch.
+**Output injection**: Insert each specialist's full text output verbatim into the `[Insert ... here]` placeholders. Use `SCOPE` to determine which writers to launch.
 
 If a specialist was not launched: `"N/A — agent not launched (scope: {SCOPE})"`. If a specialist failed: `"AGENT FAILED — no output available"`.
 
@@ -199,7 +196,7 @@ To start execution, run:
 ### Pipeline execution
 
 - Write ALL content in **English**
-- Execute steps sequentially: 0 → 1 → 1.5 → 2 (wait for approval) → 3 → 4 → 5
+- Execute steps sequentially: 0 → 1 → 2 (wait for approval) → 3 → 4 → 5
 - **Step 0 presents a summary** of the project analysis to the user before continuing
 - **Step 2 is a gate**: do NOT proceed to Step 3 until the user approves contracts and phases
 - Within each layer, launch all agents in a **single message** (parallel)
@@ -210,10 +207,9 @@ To start execution, run:
 | Step | Model  | Agents                                       |
 | ---- | ------ | -------------------------------------------- |
 | 0    | —      | Read snapshots (read-only, stops if missing) |
-| 1    | —      | Context gathering (no agent)                 |
-| 1.5  | haiku  | Scope Detector                               |
+| 1    | —      | Context gathering + scope detection (no agent) |
 | 2    | —      | Interactive (no agent)                       |
-| 3    | sonnet | 6 specialists                                |
+| 3    | sonnet | 2-3 specialists                              |
 | 4    | opus   | 1-2 writers                                  |
 | 5    | —      | Git operations (no agent)                    |
 
@@ -221,7 +217,7 @@ To start execution, run:
 
 | Layer       | Max words |
 | ----------- | --------- |
-| Specialists | 3000      |
+| Specialists | 2000      |
 | Writers     | unlimited |
 
 ### Fallback on agent failure
@@ -235,7 +231,6 @@ To start execution, run:
 - **MANDATORY**: Each phase must end with a verification cycle: compile, run tests, human review, commit. This is non-negotiable.
 - Each phase must be independently committable without breaking the build
 - Don't mix responsibilities in the same phase
-- **The last phase MUST include running `/revisar`** to validate architecture, naming conventions, and code quality across the entire plan.
 
 ### Content rules
 

@@ -1,0 +1,35 @@
+# Build artifacts
+build/
+.gradle/
+
+# IDE
+.idea/
+
+# Git internals
+.git/
+
+# Gradle wrapper
+gradle/
+
+# Gradle scripts
+gradlew
+gradlew.bat
+settings.gradle
+
+# Docker
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Git config files
+.gitattributes
+.gitignore
+
+# GitHub Actions
+.github/
+
+# Railway config
+railway.toml
+
+# Old/completed plans
+plans/

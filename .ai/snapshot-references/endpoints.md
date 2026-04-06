@@ -1,125 +1,87 @@
-# Endpoints Snapshot
+# API Endpoints
 
-## Public Endpoints (9)
+## Auth (10 endpoints)
 
-| Method | Path | Controller | Module |
-|--------|------|------------|--------|
-| POST | /api/auth/login | LoginController | auth |
-| POST | /api/auth/register | RegisterController | auth |
-| POST | /api/auth/google | GoogleLoginController | auth |
-| POST | /api/auth/refresh | RefreshTokenController | auth |
-| POST | /api/auth/forgot-password | ForgotPasswordController | auth |
-| POST | /api/auth/reset-password | ResetPasswordController | auth |
-| POST | /api/auth/logout | LogoutController | auth |
-| GET | /api/assessments/mini-test | GetMiniTestQuestionsController | assessment |
-| GET | /api/pronunciation/minimal-pairs | GetMinimalPairsController | minimalpair |
+| Method | Path | Controller | Use Case |
+|--------|------|-----------|----------|
+| POST | /api/auth/register | RegisterController | RegisterUserUseCase |
+| POST | /api/auth/login | LoginController | LoginUserUseCase |
+| POST | /api/auth/google | GoogleLoginController | GoogleLoginUseCase |
+| POST | /api/auth/refresh | RefreshTokenController | RefreshTokenUseCase |
+| POST | /api/auth/logout | LogoutController | LogoutUserUseCase |
+| POST | /api/auth/forgot-password | ForgotPasswordController | ForgotPasswordUseCase |
+| POST | /api/auth/reset-password | ResetPasswordController | ResetPasswordUseCase |
+| GET | /api/auth/me | GetCurrentUserController | GetCurrentUserUseCase |
+| PUT | /api/auth/change-password | ChangePasswordController | ChangePasswordUseCase |
+| DELETE | /api/auth/account | DeleteAccountController | DeleteAccountUseCase |
 
-## Authenticated Endpoints (105)
+## User Profile (4 endpoints)
 
-| Method | Path | Controller | Module |
-|--------|------|------------|--------|
-| GET | /api/auth/me | GetCurrentUserController | auth |
-| PUT | /api/auth/change-password | ChangePasswordController | auth |
-| POST | /api/profiles/{userId}/activity | RecordActivityController | activity |
-| GET | /api/profiles/{userId}/activity | GetActivityDatesController | activity |
-| GET | /api/profiles/{userId}/streak | GetStreakController | activity |
-| POST | /api/admin/writing/exercises | AdminWritingController | admin |
-| GET | /api/admin/vocab | AdminVocabController | admin |
-| POST | /api/admin/vocab | AdminVocabController | admin |
-| GET | /api/admin/phrases | AdminPhraseController | admin |
-| POST | /api/admin/reading/passages | AdminReadingController | admin |
-| GET | /api/profiles/{userId}/analytics/activity-heatmap | GetActivityHeatmapController | analytics |
-| GET | /api/profiles/{userId}/analytics/summary | GetAnalyticsSummaryController | analytics |
-| GET | /api/profiles/{userId}/analytics/progress | GetProgressHistoryController | analytics |
-| GET | /api/profiles/{userId}/assessments/history | GetTestHistoryController | assessment |
-| POST | /api/profiles/{userId}/assessments/mini-test | SubmitMiniTestController | assessment |
-| POST | /api/profiles/{userId}/assessments/level-test | SubmitLevelTestController | assessment |
-| GET | /api/profiles/{userId}/assessments/level-test/questions | GetLevelTestQuestionsController | assessment |
-| POST | /api/conversations | StartConversationController | conversation |
-| GET | /api/conversations/{id} | GetConversationController | conversation |
-| POST | /api/conversations/{id}/messages | SendMessageController | conversation |
-| GET | /api/conversations/suggested-goals | SuggestGoalsController | conversation |
-| PUT | /api/conversations/{id}/end | EndConversationController | conversation |
-| POST | /api/conversations/{id}/messages/stream | StreamMessageController | conversation |
-| GET | /api/conversations | ListConversationsController | conversation |
-| GET | /api/conversations/suggested-topics | SuggestTopicsController | conversation |
-| GET | /api/conversations/stats | GetConversationStatsController | conversation |
-| GET | /api/curriculum/plan | GetCurriculumPlanController | curriculum |
-| GET | /api/curriculum/modules | GetModuleDefinitionsController | curriculum |
-| GET | /api/curriculum/modules/{name} | GetModuleByNameController | curriculum |
-| GET | /api/curriculum/integrators | GetIntegratorsController | curriculum |
-| GET | /api/challenges/today | GetTodayChallengeController | dailychallenge |
-| PUT | /api/profiles/{userId}/challenges/today/progress | UpdateChallengeProgressController | dailychallenge |
-| GET | /api/profiles/{userId}/challenges/today | GetUserChallengeProgressController | dailychallenge |
-| GET | /api/profiles/{userId}/error-patterns | GetErrorPatternsController | errorpattern |
-| GET | /api/conversations/{id}/exercises | GetConversationExercisesController | exercise |
-| POST | /api/profiles/{userId}/achievements/check | CheckAchievementsController | gamification |
-| GET | /api/profiles/{userId}/xp-level | GetXpLevelController | gamification |
-| POST | /api/profiles/{userId}/xp | GrantXpController | gamification |
-| GET | /api/achievements | GetAllAchievementsController | gamification |
-| GET | /api/profiles/{userId}/achievements | GetUserAchievementsController | gamification |
-| GET | /api/profiles/{profileId}/learning-path | GetLearningPathController | learningpath |
-| POST | /api/profiles/{profileId}/learning-path/generate | GenerateLearningPathController | learningpath |
-| GET | /api/profiles/{profileId}/learning-status | GetLearningStatusController | learningpath |
-| GET | /api/profiles/{userId}/minigames/scores | GetMiniGameScoresController | minigame |
-| POST | /api/profiles/{userId}/minigames/results | SaveGameResultsController | minigame |
-| POST | /api/profiles/{userId}/minigames/scores | SaveMiniGameScoreController | minigame |
-| GET | /api/minigames/unscramble | GetUnscrambleDataController | minigame |
-| GET | /api/minigames/fill-gap | GetFillGapDataController | minigame |
-| GET | /api/minigames/word-match | GetWordMatchDataController | minigame |
-| GET | /api/profiles/{userId}/pronunciation/minimal-pairs/stats | GetMinimalPairStatsController | minimalpair |
-| POST | /api/profiles/{userId}/pronunciation/minimal-pairs/results | RecordMinimalPairResultController | minimalpair |
-| GET | /api/profiles/{userId}/modules/{module}/levels/{level}/level-up | CheckLevelUpController | moduleprogress |
-| PUT | /api/profiles/{userId}/modules/{module}/levels/{level}/units/{unit} | CompleteUnitController | moduleprogress |
-| GET | /api/profiles/{userId}/modules | GetAllModuleProgressController | moduleprogress |
-| POST | /api/profiles/{userId}/modules/{module}/levels/{level} | InitModuleProgressController | moduleprogress |
-| GET | /api/profiles/{userId}/modules/{module}/levels/{level} | GetModuleProgressController | moduleprogress |
-| GET | /api/notifications/preferences | GetNotificationPreferencesController | notification |
-| POST | /api/notifications/subscribe | SubscribePushController | notification |
-| PUT | /api/notifications/preferences | UpdateNotificationPreferencesController | notification |
-| GET | /api/phrases | GetPhrasesByLevelController | phrase |
-| GET | /api/phrases/random | GetRandomPhrasesController | phrase |
-| GET | /api/profiles/{userId}/pronunciation/errors | GetFrequentErrorsController | pronunciation |
-| POST | /api/profiles/{userId}/pronunciation/errors | RecordPronunciationErrorController | pronunciation |
-| GET | /api/profiles/{userId}/pronunciation/problematic-sounds | GetProblematicSoundsController | pronunciation |
-| POST | /api/profiles/{userId}/reading/submit | SubmitReadingAnswersController | reading |
-| GET | /api/reading/passages | GetPassagesByLevelController | reading |
-| POST | /api/reading/passages/{textId}/answers | SubmitPassageAnswersController | reading |
-| GET | /api/reading/passages/{id} | GetPassageByIdController | reading |
-| GET | /api/reading/passages/{id}/questions | GetPassageQuestionsController | reading |
-| GET | /api/profiles/{userId}/sessions | GetSessionHistoryController | session |
-| POST | /api/profiles/{profileId}/sessions/{sessionId}/exercises/{exerciseIndex}/result | RecordExerciseResultController | session |
-| GET | /api/profiles/{userId}/sessions/current | GetCurrentSessionController | session |
-| PUT | /api/profiles/{userId}/sessions/{sessionId}/complete | CompleteSessionController | session |
-| GET | /api/profiles/{profileId}/sessions/{sessionId}/blocks/{blockIndex}/exercises | GetBlockExercisesController | session |
-| POST | /api/profiles/{userId}/sessions/generate | GenerateSessionController | session |
-| PUT | /api/profiles/{profileId}/sessions/{sessionId}/blocks/{blockIndex}/advance | AdvanceBlockController | session |
-| PUT | /api/profiles/{userId}/reviews/{itemId}/complete | CompleteReviewController | spacedrepetition |
-| GET | /api/profiles/{userId}/reviews/due | GetDueReviewsController | spacedrepetition |
-| POST | /api/profiles/{userId}/reviews | AddToReviewQueueController | spacedrepetition |
-| GET | /api/profiles/{userId}/reviews/stats | GetReviewStatsController | spacedrepetition |
-| POST | /api/profiles/{userId}/tutor/errors | RecordTutorErrorController | tutorerror |
-| GET | /api/profiles/{userId}/tutor/errors/trend | GetErrorTrendController | tutorerror |
-| POST | /api/profiles/{userId}/tutor/errors/{errorId}/exercise | GenerateErrorExerciseController | tutorerror |
-| GET | /api/profiles/{userId}/tutor/errors | GetUserErrorsController | tutorerror |
-| PUT | /api/profiles/{id}/reset-test | ResetTestController | user |
-| GET | /api/profiles/{id} | GetUserProfileController | user |
-| POST | /api/profiles/{id}/sessions | RecordSessionController | user |
-| PUT | /api/profiles/{id}/test-completed | MarkTestCompletedController | user |
-| POST | /api/profiles | CreateUserProfileController | user |
-| PUT | /api/profiles/{id}/modules/{module}/level | UpdateModuleLevelController | user |
-| PUT | /api/profiles/{id}/levels | SetAllLevelsController | user |
-| DELETE | /api/profiles/{id} | DeleteUserProfileController | user |
-| POST | /api/profiles/{id}/xp | AddXpController | user |
-| GET | /api/vocab | GetAllVocabController | vocabulary |
-| GET | /api/profiles/{userId}/vocabulary/unlearned | GetUnlearnedVocabController | vocabulary |
-| GET | /api/profiles/{userId}/vocabulary/progress | GetVocabProgressController | vocabulary |
-| GET | /api/vocab/search | SearchVocabController | vocabulary |
-| GET | /api/vocab/random | GetRandomVocabController | vocabulary |
-| GET | /api/vocab/level/{level} | GetVocabByLevelController | vocabulary |
-| POST | /api/vocab | CreateVocabEntryController | vocabulary |
-| POST | /api/vocabulary/{wordId}/context | GenerateContextController | vocabularycontext |
-| GET | /api/writing/exercises | GetWritingExercisesController | writing |
-| POST | /api/writing/submissions | SubmitWritingSubmissionController | writing |
-| POST | /api/profiles/{userId}/writing/submit | SubmitWritingController | writing |
-| GET | /api/profiles/{userId}/writing/history | GetWritingHistoryController | writing |
+| Method | Path | Controller | Use Case |
+|--------|------|-----------|----------|
+| POST | /api/profiles | CreateUserProfileController | CreateUserProfileUseCase |
+| GET | /api/profiles/{id} | GetUserProfileController | GetUserProfileUseCase |
+| POST | /api/profiles/{id}/xp | AddXpController | AddXpUseCase |
+| DELETE | /api/profiles/{id} | DeleteUserProfileController | DeleteUserProfileUseCase |
+
+## Activity (3 endpoints)
+
+| Method | Path | Controller | Use Case |
+|--------|------|-----------|----------|
+| POST | /api/profiles/{userId}/activity | RecordActivityController | RecordActivityUseCase |
+| GET | /api/profiles/{userId}/activity | GetActivityDatesController | GetActivityDatesUseCase |
+| GET | /api/profiles/{userId}/streak | GetStreakController | GetStreakUseCase |
+
+## Gamification (5 endpoints)
+
+| Method | Path | Controller | Use Case |
+|--------|------|-----------|----------|
+| POST | /api/profiles/{userId}/xp | GrantXpController | GrantXpUseCase |
+| POST | /api/profiles/{userId}/achievements/check | CheckAchievementsController | CheckAndUnlockAchievementsUseCase |
+| GET | /api/profiles/{userId}/achievements | GetUserAchievementsController | GetUserAchievementsUseCase |
+| GET | /api/profiles/{userId}/xp-level | GetXpLevelController | GetXpLevelUseCase |
+| GET | /api/achievements | GetAllAchievementsController | GetAllAchievementsUseCase |
+
+## Home (1 endpoint)
+
+| Method | Path | Controller | Use Case |
+|--------|------|-----------|----------|
+| GET | /api/profiles/{userId}/home | GetHomeController | GetHomeUseCase |
+
+## Immerse (8 endpoints)
+
+| Method | Path | Controller | Use Case |
+|--------|------|-----------|----------|
+| POST | /api/immerse/content | SubmitImmerseContentController | SubmitImmerseContentUseCase |
+| POST | /api/immerse/generate | GenerateImmerseContentController | GenerateImmerseContentUseCase |
+| GET | /api/immerse/content/{id} | GetImmerseContentController | GetImmerseContentUseCase |
+| GET | /api/immerse/content/{id}/exercises | GetImmerseExercisesController | GetImmerseExercisesUseCase |
+| GET | /api/immerse/content/{id}/vocabulary | GetImmerseVocabularyController | GetImmerseVocabularyUseCase |
+| GET | /api/immerse/content/suggested | GetSuggestedImmerseContentController | GetSuggestedImmerseContentUseCase |
+| GET | /api/profiles/{userId}/immerse/history | GetImmerseHistoryController | GetImmerseHistoryUseCase |
+| POST | /api/immerse/content/{contentId}/exercises/{exerciseId}/submit | SubmitExerciseAnswerController | SubmitExerciseAnswerUseCase |
+
+## Review (3 endpoints)
+
+| Method | Path | Controller | Use Case |
+|--------|------|-----------|----------|
+| GET | /api/profiles/{userId}/review/stats | GetReviewStatsController | GetReviewStatsUseCase |
+| GET | /api/profiles/{userId}/review/queue | GetReviewQueueController | GetReviewQueueUseCase |
+| POST | /api/profiles/{userId}/review/items/{itemId}/result | SubmitReviewResultController | SubmitReviewResultUseCase |
+
+## Talk (7 endpoints)
+
+| Method | Path | Controller | Use Case |
+|--------|------|-----------|----------|
+| POST | /api/talk/conversations | StartTalkConversationController | StartTalkConversationUseCase |
+| POST | /api/talk/conversations/{id}/messages | SendTalkMessageController | SendTalkMessageUseCase |
+| POST | /api/talk/conversations/{id}/speech | SubmitTalkSpeechController | SendTalkMessageUseCase |
+| POST | /api/talk/conversations/{id}/end | EndTalkConversationController | EndTalkConversationUseCase |
+| GET | /api/talk/conversations/{id}/summary | GetTalkConversationSummaryController | GetTalkConversationSummaryUseCase |
+| GET | /api/profiles/{userId}/talk/stats | GetTalkStatsController | GetTalkStatsUseCase |
+| GET | /api/talk/scenarios | ListTalkScenariosController | ListTalkScenariosUseCase |
+
+## Totals
+
+- **Total endpoints**: 41
+- **GET**: 17 | **POST**: 19 | **PUT**: 1 | **DELETE**: 2

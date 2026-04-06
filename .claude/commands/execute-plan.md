@@ -8,13 +8,14 @@ allowed-tools: Read, Glob, Grep, Write, Edit, Agent, Bash, AskUserQuestion
 PURPOSE: Execute an implementation plan file, phase by phase
 USAGE: /execute-plan .ai/plans/2026_03_26-feature-name-backend.md
 OUTPUT: Implemented code, committed, pushed, and deployed
+TOKEN OPTIMIZATION: Skills read once at startup, Gradle output truncated
 -->
 
 **Plan file**: $ARGUMENTS
 
 ---
 
-## Step 0 — Load & Validate Plan
+## Step 0 — Load, Validate & Preload Skills
 
 **0a. Read the plan file**: Read the file at the path provided in `$ARGUMENTS`.
 
@@ -34,6 +35,24 @@ OUTPUT: Implemented code, committed, pushed, and deployed
 
 **0d. Check plan status**: Look for checked `[x]` checkboxes in the plan to determine which phases are already completed. Resume from the first incomplete phase.
 
+**0e. Preload skills (once for the entire plan)**: Scan ALL phases to determine which skills are needed. Read each matched skill's `SKILL.md` + key `references/*.md` ONCE here — do NOT re-read them in each phase.
+
+Skill mapping (read based on what ANY phase touches):
+
+- Domain classes (aggregates, VOs, events, exceptions) → domain-design/
+- Persistence (entities, repositories, migrations) → persistence/
+- Controllers, endpoints, DTOs → api-design/
+- Error handling, ControllerAdvice → error-handling/
+- Tests → testing/
+- Use cases, services → modulith-usecases/
+- Auth, security, JWT → security/
+- Logging, health → logging/
+- Package structure, new module → architecture/
+
+For **backend plans**: Read from `/home/faustinoolivas/dev/proyectos/carmen/english-trainer-api/.claude/plugins/s2-backend/skills/<skill>/`
+
+For **frontend plans**: Read from `/home/faustinoolivas/dev/proyectos/carmen/english-trainer-web/.claude/skills/angular/` if they exist.
+
 Show to the user:
 
 ```
@@ -41,6 +60,7 @@ Plan: <plan file name>
 Total phases: N
 Completed: X
 Remaining: Y (starting from Phase Z)
+Skills loaded: <list of skill names>
 ```
 
 ---
@@ -58,63 +78,42 @@ Phase N: <Phase Name>
 Goal: <phase goal>
 ```
 
-### 1b. Read relevant skills
-
-Before writing code, read ONLY the skills relevant to this phase's content:
-
-Skill mapping (read based on what the phase touches):
-
-- Domain classes (aggregates, VOs, events, exceptions) → domain-design/
-- Persistence (entities, repositories, migrations) → persistence/
-- Controllers, endpoints, DTOs → api-design/
-- Error handling, ControllerAdvice → error-handling/
-- Tests → testing/
-- Use cases, services → modulith-usecases/
-- Auth, security, JWT → security/
-- Logging, health → logging/
-- Package structure, new module → architecture/
-
-For **backend plans**: Read `SKILL.md` + key `references/*.md` from `/home/faustinoolivas/dev/proyectos/carmen/english-trainer-api/.claude/plugins/s2-backend/skills/<skill>/` for each matched skill.
-
-For **frontend plans**: Read relevant skills from `/home/faustinoolivas/dev/proyectos/carmen/english-trainer-web/.claude/skills/angular/` if they exist.
-
-Do NOT read all skills — only those matching the phase content.
-
-### 1c. Implement
+### 1b. Implement
 
 Execute all actions listed in the phase:
 
 - Create/modify files as specified
-- Follow the architecture conventions from the skills
+- Follow the architecture conventions from the skills (already loaded in Step 0e)
 - Write tests as specified in the phase (this is mandatory — never skip tests)
+- **Do NOT re-read skills here** — they were preloaded in Step 0e
 
-### 1d. Verify
+### 1c. Verify
 
 Run the verification cycle — this is **non-negotiable**:
 
 **For backend plans**:
 
 ```bash
-./gradlew compileJava compileTestJava
-./gradlew test
+./gradlew compileJava compileTestJava 2>&1 | tail -20
+./gradlew test 2>&1 | tail -30
 ```
 
 **For frontend plans**:
 
 ```bash
-cd /home/faustinoolivas/dev/proyectos/carmen/english-trainer-web && npm run build
-cd /home/faustinoolivas/dev/proyectos/carmen/english-trainer-web && npm test
+cd /home/faustinoolivas/dev/proyectos/carmen/english-trainer-web && npm run build 2>&1 | tail -20
+cd /home/faustinoolivas/dev/proyectos/carmen/english-trainer-web && npm test 2>&1 | tail -30
 ```
 
-- If compilation/build fails → fix the errors and retry
-- If tests fail → fix the failing tests and retry
+- If compilation/build fails → read the FULL error output, fix the errors and retry
+- If tests fail → read the FULL test output, fix the failing tests and retry
 - Do NOT proceed to the next phase until both pass
 
-### 1e. Update plan file
+### 1d. Update plan file
 
 Mark the completed actions as done in the plan file by changing `- [ ]` to `- [x]` for each completed item.
 
-### 1f. Commit the phase
+### 1e. Commit the phase
 
 ```bash
 git add <specific files created/modified in this phase>
@@ -123,45 +122,36 @@ git commit -m "<descriptive message for this phase>"
 
 Use a descriptive commit message that matches the phase goal. Do NOT use `--amend`.
 
-### 1g. Proceed to next phase
+### 1f. Proceed to next phase
 
 Move to the next incomplete phase and repeat from 1a.
 
 ---
 
-## Step 2 — Run /revisar
+## Step 2 — Push & Deploy
 
-After ALL phases are completed, run the `/revisar` skill to validate architecture, naming conventions, and code quality across the entire implementation.
-
-- If issues are found → fix them and commit the fixes
-- If no issues → proceed
-
----
-
-## Step 3 — Push & Deploy
-
-**3a. Push to GitHub**:
+**2a. Push to GitHub**:
 
 ```bash
 git push origin HEAD
 ```
 
-**3b. Deploy to Railway**:
+**2b. Deploy to Railway**:
 
 ```bash
 railway up --detach
 ```
 
-**3c. Delete plan file**:
+**2c. Delete plan file**:
 Remove the plan `.md` file that was executed, since it is now fully completed:
 
 ```bash
 rm <plan file path>
 git add <plan file path>
-git commit -m "Remove completed plan file"
+git commit -m "chore: remove completed plan file"
 ```
 
-**3d. Final output**:
+**2d. Final output**:
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -194,8 +184,7 @@ Deployed to: Railway
 
 ### Skills consultation
 
-- Only read skills that match the phase content (see mapping in Step 1b)
-- Never read all skills for every phase
+- **Read skills ONCE in Step 0e** — never re-read them during phase execution
 - Follow the patterns from the skills strictly (naming, structure, testing patterns)
 - **Backend skills**: `.claude/plugins/s2-backend/skills/<skill>/`
 - **Frontend skills**: `/home/faustinoolivas/dev/proyectos/carmen/english-trainer-web/.claude/skills/angular/`

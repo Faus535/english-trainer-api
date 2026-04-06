@@ -1,37 +1,50 @@
-# Config Snapshot
+# Configuration
 
-## Security
-- JWT Auth: HS256, 60min access token, 7-day refresh token
-- Rate Limiting: 10 requests/60s on auth endpoints (RateLimitingFilter)
-- Profile Ownership: @RequireProfileOwnership AOP aspect
-- CORS: Configurable origins (default localhost:4200), GET/POST/PUT/DELETE/OPTIONS
-- Public endpoints: login, register, google, refresh, forgot/reset-password, logout, mini-test questions, minimal-pairs
+## Stack
 
-## Dependencies
-
-| Dependency | Version |
-|------------|---------|
+| Component | Version |
+|-----------|---------|
 | Spring Boot | 3.5.3 |
-| Java | 25 |
-| Spring Data JPA | (managed by Boot) |
-| Spring Security | (managed by Boot) |
-| PostgreSQL | (managed by Boot) |
-| Flyway | (managed by Boot) |
-| JJWT | 0.12.6 |
-| Google API Client | 2.7.2 |
-| springdoc-openapi | 2.8.4 |
-| Testcontainers | (managed by Boot) |
+| Java | 25 (toolchain) |
+| Build | Gradle |
+| Database | PostgreSQL + Flyway |
+| Auth | JWT (jjwt 0.12.6) + Google OAuth (google-api-client 2.7.2) |
+| AI | Anthropic Claude (claude-haiku-4-5-20251001) |
+| Docs | SpringDoc OpenAPI 2.8.4 |
+| Testing | Testcontainers 1.20.4 |
+
+## Shared Module (16 classes)
+
+| Category | Classes |
+|----------|---------|
+| Annotations | @UseCase |
+| Base | AggregateRoot |
+| Domain errors | NotFoundException, AlreadyExistsException, InvalidValueException |
+| Events | DomainEvent |
+| Config | AsyncConfig, CorsConfig, SecurityConfig, OpenApiConfig |
+| Error handling | GlobalControllerAdvice |
+| Security | RequireProfileOwnership, RateLimitingFilter, ProfileOwnershipAspect |
+| Infrastructure | PageResponse, AnthropicHealthIndicator |
 
 ## Key Properties
-- `server.port`: 8081
-- `spring.jpa.hibernate.ddl-auto`: validate
-- `anthropic.model`: claude-haiku-4-5-20251001 (max-tokens: 300)
-- `anthropic.writing-model`: claude-haiku-4-5-20251001 (max-tokens: 600)
 
-## Shared Module
-- AggregateRoot base class
-- DomainEvent interface
-- @UseCase annotation (wraps @Service)
-- GlobalControllerAdvice: NotFoundException(404), AlreadyExistsException(409), MethodArgumentNotValidException(422), InvalidValueException(400), ProfileOwnershipException(403), ObjectOptimisticLockingFailureException(409)
-- PageResponse generic pagination record
-- AnthropicHealthIndicator
+| Property | Dev | Prod |
+|----------|-----|------|
+| Server port | 8081 | ${PORT:8081} |
+| DB host | localhost:45432 | ${PGHOST}:${PGPORT} |
+| JWT expiry | 1h | configurable |
+| JWT refresh | 7d | configurable |
+| AI model | claude-haiku-4-5 | configurable |
+
+## Event Listeners (8)
+
+| Subscriber | Event | Module | Action |
+|-----------|-------|--------|--------|
+| ReviewCompletedGamificationListener | ReviewCompletedEvent | gamification | Grant 5 XP + 20 bonus |
+| ImmerseAnsweredGamificationListener | ImmerseExerciseAnsweredEvent | gamification | Grant 10 XP |
+| TalkCompletedGamificationListener | TalkConversationCompletedEvent | gamification | Grant 50 XP + 5/turn |
+| ImmerseAnsweredReviewListener | ImmerseExerciseAnsweredEvent | review | Create review item |
+| TalkCompletedReviewListener | TalkConversationCompletedEvent | review | Create review items |
+| TalkCompletedActivityListener | TalkConversationCompletedEvent | activity | Record activity |
+| ReviewCompletedActivityListener | ReviewCompletedEvent | activity | Record activity |
+| ImmerseSubmittedActivityListener | ImmerseExerciseAnsweredEvent | activity | Record activity |

@@ -1,62 +1,52 @@
-# Testing Snapshot
+# Testing
 
-## Patterns
-- **Object Mothers**: 15 test data builders across modules
-- **In-Memory Repositories**: Used in unit tests (InMemorySessionRepository, etc.)
-- **Integration Tests**: @SpringBootTest + Testcontainers (PostgreSQL)
-- **Unit Tests**: Plain JUnit 5 with mocks and Object Mothers
-- **Test task**: `./gradlew test` (unit), `./gradlew integrationTest` (integration, requires Docker)
+- **Framework**: JUnit 5 + Spring Boot Test
+- **Test separation**: Tags (`integration` excluded by default)
+- **Total test classes**: 73 (55 unit + 4 integration + 10 Object Mothers + 9 listener tests - some overlap)
+- **Integration tests**: 4 (@SpringBootTest)
+- **Object Mothers**: 10
 
-## Object Mothers (15)
+## Object Mothers
 
-| Mother | Module |
-|--------|--------|
+| Class | Module |
+|-------|--------|
 | AchievementMother | gamification |
 | UserAchievementMother | gamification |
-| ActivityDateMother | activity |
-| AuthUserMother | auth |
-| ConversationMother | conversation |
-| LearningPathMother | learningpath |
-| LearningUnitMother | learningpath |
-| LevelTestResultMother | assessment |
-| ModuleProgressMother | moduleprogress |
-| PhraseMother | phrase |
-| SessionMother | session |
-| SpacedRepetitionItemMother | spacedrepetition |
+| ReviewItemMother | review |
 | UserProfileMother | user |
-| VocabEntryMother | vocabulary |
-| VocabMasteryMother | vocabulary |
+| AuthUserMother | auth |
+| ActivityDateMother | activity |
+| ImmerseContentMother | immerse |
+| ImmerseExerciseMother | immerse |
+| TalkScenarioMother | talk |
+| TalkConversationMother | talk |
 
-## Test Classes (117 total)
+## Integration Tests
 
-### Integration Tests (12)
-| Test Class | Module |
-|------------|--------|
-| EnglishTrainerApiApplicationTests | root |
-| HealthCheckIntegrationTest | root |
-| ActivityDateRepositoryIT | activity |
-| AuthIntegrationTest | auth |
-| GoogleAuthIntegrationTest | auth |
-| SecurityStatusCodeTest | auth |
-| ModuleProgressRepositoryIT | moduleprogress |
-| SessionRepositoryIT | session |
-| SpacedRepetitionRepositoryIT | spacedrepetition |
-| UserProfileRepositoryIT | user |
-| VocabIntegrationTest | vocabulary |
+| Class | Focus |
+|-------|-------|
+| AuthIntegrationTest | Full auth flow with Testcontainers |
+| GoogleAuthIntegrationTest | Google OAuth flow |
+| HealthCheckIntegrationTest | Actuator health endpoint |
+| SecurityStatusCodeTest | Security response codes |
 
-### Unit Tests (86+)
-- Domain tests: SessionTest, SessionGeneratorTest, ConversationTest, UserProfileTest, etc.
-- Application tests: AdvanceBlockUseCaseTest, GetBlockExercisesUseCaseTest, CompleteSessionUseCaseTest, etc.
-- All use cases have corresponding test classes
+## Unit Tests by Module
 
-## Cross-Module Event Listeners (7)
+| Module | Count | Tests |
+|--------|-------|-------|
+| activity | 6 | ActivityDateTest, GetActivityCalendarUseCaseTest, GetActivityDatesUseCaseTest, GetStreakUseCaseTest, RecordActivityUseCaseTest, StreakCalculatorTest |
+| auth | 11 | AuthUserTest, ChangePasswordUseCaseTest, DeleteAccountUseCaseTest, ForgotPasswordUseCaseTest, GetCurrentUserUseCaseTest, GoogleLoginUseCaseTest, GoogleTokenVerifierTest, LoginUserUseCaseTest, LogoutUserUseCaseTest, RefreshTokenUseCaseTest, RegisterUserUseCaseTest |
+| gamification | 7 | CheckAndUnlockAchievementsUseCaseTest, GetAllAchievementsUseCaseTest, GetUserAchievementsUseCaseTest, GetXpLevelUseCaseTest, GrantXpUseCaseTest, UserAchievementTest, XpLevelTest |
+| home | 1 | GetHomeUseCaseTest |
+| immerse | 11 | GenerateImmerseContentUseCaseTest, GetImmerseContentUseCaseTest, GetImmerseExercisesUseCaseTest, GetImmerseHistoryUseCaseTest, GetImmerseVocabularyUseCaseTest, GetSuggestedImmerseContentUseCaseTest, ImmerseContentSizingTest, ImmerseContentTest, ProcessImmerseContentAsyncServiceTest, SubmitExerciseAnswerUseCaseTest, SubmitImmerseContentUseCaseTest |
+| review | 6 | CreateReviewItemFromImmerseUseCaseTest, CreateReviewItemFromTalkUseCaseTest, GetReviewQueueUseCaseTest, GetReviewStatsUseCaseTest, SubmitReviewResultUseCaseTest, ReviewItemTest |
+| talk | 4 | EndTalkConversationUseCaseTest, SendTalkMessageUseCaseTest, StartTalkConversationUseCaseTest, TalkConversationTest |
+| user | 5 | AddXpUseCaseTest, CreateUserProfileUseCaseTest, DeleteUserProfileUseCaseTest, GetUserProfileUseCaseTest, UserProfileTest |
 
-| Listener | Event | From Module | To Module |
-|----------|-------|-------------|-----------|
-| WordLearnedListener | WordLearnedEvent | vocabulary | spacedrepetition |
-| SrsGraduationListener | ReviewCompletedEvent | spacedrepetition | vocabulary |
-| LevelTestCompletedListener | LevelTestCompletedEvent | assessment | learningpath |
-| ConversationCompletedEventListener | ConversationCompletedEvent | conversation | user (XP) |
-| VocabularyFeedbackEventListener | VocabularyFeedbackEvent | conversation | spacedrepetition |
-| GrammarErrorEventListener | VocabularyFeedbackEvent | conversation | errorpattern |
-| ConversationCompletedExerciseListener | ConversationCompletedEvent | conversation | exercise |
+## Patterns
+
+- One test class per use case
+- In-memory repository stubs for unit tests
+- Object Mother pattern for test fixtures
+- Failing stub ports for error-path testing (e.g., `FailingStubImmerseAiPort`)
+- Constructor injection in tests (package-private use case constructors)

@@ -1,27 +1,32 @@
-# Activity Snapshot
+# Recent Activity
 
-## Recent Commits
+## Last 20 Commits
 
-```
-e62319b Add @Transactional to block use cases, update CLAUDE.md with commands documentation
-9468d11 Add block controllers, enrich session responses with exercises and block progress, add 422 error handlers
-74bed30 Add AdvanceBlock and GetBlockExercises use cases, extend RecordResult with block progress, enforce completion validation
-631bd04 Assign blockIndex to exercises in SessionGenerator.buildExercises
-f3afbf1 Add block-level domain logic: blockIndex on exercises, block completion tracking, validation exceptions
-8973e25 Fix startup crash: remove final from AddXpController to allow CGLIB proxying
-de9c452 Add learning journey redesign: structured learning paths, smart content selection, per-word mastery tracking, and security hardening
-8cf3754 Fix level differentiation: rich CEFR profiles, per-level feedback, C2 support, expanded question bank
-776a1c8 Fix concurrency bugs: optimistic locking on UserProfile and duplicate refresh tokens
-bf3b94e Allow logout without authentication so expired tokens can still revoke refresh tokens
-165a7aa Auth robustness: ownership checks, JWT logging, and 60min token expiration
-e41f6af Add logout endpoint, reduce JWT to 30min, persist Google refresh tokens
-6a83cb8 Fix 403 on expired JWT and add profile ownership checks
-a802a46 Disable anonymous auth so expired tokens return 401 not 403
-6e1cb16 Add batch levels endpoint to fix optimistic locking on concurrent PUTs
-98cb9a0 Complete vocabulary seeds: A1 blocks 6-10 and A2 blocks 1-10
-```
+| Hash | Message |
+|------|---------|
+| 03d76b8 | chore: remove completed plan file |
+| 6cd1418 | fix(immerse): remove rawText duplication from generate path |
+| 856bedf | chore: add claude commands and remove completed plan |
+| 65205f4 | feat: reduce AI token consumption across immerse + talk |
+| fdaaf9c | chore: remove completed async-immerse plan file |
+| 3732766 | test(immerse): add ProcessImmerseContentAsyncServiceTest |
+| d58da10 | fix(immerse): add IDOR protection on GET content/exercises |
+| 9662005 | feat(immerse): rewire generate use case to return PENDING + async |
+| dcff3f5 | Remove completed plan file |
+| 2dbf17d | feat(immerse): add AsyncConfig + ProcessImmerseContentAsyncService |
+| 738c376 | fix: restore GoogleTokenVerifier test constructor |
+| 704d9af | fix(immerse): include title and rawText in entity updateFrom() |
+| 1f28014 | feat(immerse): make generate() return PENDING, extend markProcessed |
+| 1cbe490 | fix: make use case constructors package-private, add 9 tests |
+| 22c8936 | fix: extract GoogleAuthPort, RefreshTokenUseCase, add 6 tests |
+| f37ab67 | fix: make immerse use case constructors package-private + 5 tests |
+| fbcf312 | fix: guard Google OAuth returning-user path + backfill migration |
+| f34d329 | fix: use profileId from JWT in immerse/talk controllers |
+| e94ac7e | feat(auth): add DELETE /api/auth/account endpoint |
+| 15a57b5 | fix: indent build.gradle, add provider/createdAt to /auth/me |
 
 ## Active Areas
-- **Daily exercises restructure**: Block-level exercise tracking, advance validation, enriched session responses (current branch)
-- **Learning path & mastery**: LearningPath, LearningUnit, VocabMastery aggregates, V9.x migrations
-- **Auth hardening**: Ownership checks, JWT tuning, rate limiting, optimistic locking
+
+- **Immerse module**: Async content generation, IDOR protection, AI token optimization
+- **Auth module**: Google OAuth hardening, account deletion, token management
+- **Testing**: Expanding test coverage across all modules with Object Mothers + failing stubs
