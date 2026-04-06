@@ -34,7 +34,7 @@ class ImmerseContentEntity implements Persistable<UUID> {
     @Column(nullable = false, length = 500)
     private String title;
 
-    @Column(name = "raw_text", nullable = false, columnDefinition = "TEXT")
+    @Column(name = "raw_text", columnDefinition = "TEXT")
     private String rawText;
 
     @Column(name = "processed_text", columnDefinition = "TEXT")
@@ -83,6 +83,8 @@ class ImmerseContentEntity implements Persistable<UUID> {
     }
 
     void updateFrom(ImmerseContent aggregate) {
+        this.title = aggregate.title();
+        this.rawText = aggregate.rawText();
         this.processedText = aggregate.processedText();
         this.cefrLevel = aggregate.cefrLevel();
         this.extractedVocabularyJson = serializeVocabulary(aggregate.extractedVocabulary());

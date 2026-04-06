@@ -75,7 +75,7 @@
    ```
 
 **Acceptance criteria**:
-- [ ] `updateFrom()` persists title and rawText changes (not just status/processedText)
+- [x] `updateFrom()` persists title and rawText changes (not just status/processedText)
 
 ---
 
