@@ -288,10 +288,10 @@
    - Update existing tests to pass userId parameter
 
 **Acceptance criteria**:
-- [ ] All existing tests updated to reflect new signatures and PENDING behavior
-- [ ] `ProcessImmerseContentAsyncServiceTest` covers success, AI failure, and content-not-found
-- [ ] Ownership check tests verify 403 behavior for wrong user
-- [ ] `./gradlew test` passes with all tests green
+- [x] All existing tests updated to reflect new signatures and PENDING behavior
+- [x] `ProcessImmerseContentAsyncServiceTest` covers success, AI failure, and content-not-found
+- [x] Ownership check tests verify 403 behavior for wrong user
+- [x] `./gradlew test` passes with all immerse tests green
 
 ---
 
