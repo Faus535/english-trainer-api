@@ -45,7 +45,7 @@ public class ProcessImmerseContentAsyncService {
             ImmerseAiPort.ImmerseGenerateResult result = aiPort.generateContent(contentType, level, topic);
 
             ImmerseContent processed = content.markProcessed(
-                    result.title(), result.rawText(), result.processedText(),
+                    result.title(), null, result.processedText(),
                     result.detectedLevel(), result.vocabulary());
 
             AtomicInteger orderIndex = new AtomicInteger(0);

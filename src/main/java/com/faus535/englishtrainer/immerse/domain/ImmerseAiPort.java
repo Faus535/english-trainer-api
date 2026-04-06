@@ -19,7 +19,6 @@ public interface ImmerseAiPort {
 
     record ImmerseGenerateResult(
             String title,
-            String rawText,
             String processedText,
             String detectedLevel,
             List<VocabularyItem> vocabulary,

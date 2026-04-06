@@ -279,7 +279,7 @@ class AnthropicImmerseAiAdapter implements ImmerseAiPort {
                     }).toList();
         }
 
-        return new ImmerseGenerateResult(title, text, text, detectedLevel, vocabulary, exercises);
+        return new ImmerseGenerateResult(title, text, detectedLevel, vocabulary, exercises);
     }
 
     private Map<String, Object> buildGenerateContentTool() {

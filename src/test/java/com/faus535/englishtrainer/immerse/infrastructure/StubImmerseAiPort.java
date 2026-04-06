@@ -37,7 +37,6 @@ public class StubImmerseAiPort implements ImmerseAiPort {
         return new ImmerseGenerateResult(
                 "A Day in the City",
                 text,
-                text,
                 effectiveLevel,
                 List.of(
                         new VocabularyItem("rush", "To move quickly", "People rush to work every morning.", effectiveLevel),
