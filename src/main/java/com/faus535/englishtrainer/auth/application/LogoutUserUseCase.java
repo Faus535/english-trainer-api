@@ -3,6 +3,7 @@ package com.faus535.englishtrainer.auth.application;
 import com.faus535.englishtrainer.auth.domain.RefreshToken;
 import com.faus535.englishtrainer.auth.domain.RefreshTokenRepository;
 import com.faus535.englishtrainer.shared.application.annotation.UseCase;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -15,6 +16,7 @@ public class LogoutUserUseCase {
         this.refreshTokenRepository = refreshTokenRepository;
     }
 
+    @Transactional
     public void execute(String refreshTokenHash) {
         Optional<RefreshToken> storedToken = refreshTokenRepository.findByTokenHash(refreshTokenHash);
 
