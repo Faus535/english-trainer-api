@@ -16,7 +16,7 @@ public class GetStreakUseCase {
 
     private final ActivityDateRepository repository;
 
-    public GetStreakUseCase(ActivityDateRepository repository) {
+    GetStreakUseCase(ActivityDateRepository repository) {
         this.repository = repository;
     }
 

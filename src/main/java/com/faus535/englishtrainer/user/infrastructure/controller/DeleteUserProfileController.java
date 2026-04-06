@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.UUID;
 
 @RestController
-final class DeleteUserProfileController {
+class DeleteUserProfileController {
 
     private final DeleteUserProfileUseCase useCase;
 

@@ -13,7 +13,7 @@ public class GetUserAchievementsUseCase {
 
     private final UserAchievementRepository userAchievementRepository;
 
-    public GetUserAchievementsUseCase(UserAchievementRepository userAchievementRepository) {
+    GetUserAchievementsUseCase(UserAchievementRepository userAchievementRepository) {
         this.userAchievementRepository = userAchievementRepository;
     }
 

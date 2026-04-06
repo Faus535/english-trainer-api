@@ -13,7 +13,7 @@ public class GetXpLevelUseCase {
 
     private final UserProfileRepository userProfileRepository;
 
-    public GetXpLevelUseCase(UserProfileRepository userProfileRepository) {
+    GetXpLevelUseCase(UserProfileRepository userProfileRepository) {
         this.userProfileRepository = userProfileRepository;
     }
 

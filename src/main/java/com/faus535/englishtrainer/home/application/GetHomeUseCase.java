@@ -20,9 +20,9 @@ public class GetHomeUseCase {
     private final ImmerseContentRepository immerseRepository;
     private final GetReviewStatsUseCase getReviewStatsUseCase;
 
-    public GetHomeUseCase(TalkConversationRepository talkRepository,
-                           ImmerseContentRepository immerseRepository,
-                           GetReviewStatsUseCase getReviewStatsUseCase) {
+    GetHomeUseCase(TalkConversationRepository talkRepository,
+                    ImmerseContentRepository immerseRepository,
+                    GetReviewStatsUseCase getReviewStatsUseCase) {
         this.talkRepository = talkRepository;
         this.immerseRepository = immerseRepository;
         this.getReviewStatsUseCase = getReviewStatsUseCase;

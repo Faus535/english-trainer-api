@@ -242,12 +242,12 @@
 11. **GetHomeUseCaseTest**: Use `InMemoryTalkConversationRepository` + `InMemoryImmerseContentRepository` + mock/stub `GetReviewStatsUseCase`. Tests: `returnsSuggestedActionReviewWhenDueItemsExist`, `returnsSuggestedActionTalkWhenNoActiveConversation`, `returnsSuggestedActionImmerseAsDefault`.
 
 **Acceptance criteria**:
-- [ ] `DeleteUserProfileController` is non-final
-- [ ] All use cases that are only used within their own module are package-private
-- [ ] Use cases with cross-module usage remain `public` (e.g., `GetReviewStatsUseCase`)
-- [ ] 9 new test classes pass
-- [ ] All existing tests still pass
-- [ ] Project compiles (`./gradlew compileJava`)
+- [x] `DeleteUserProfileController` is non-final
+- [x] All use cases that are only used within their own module are package-private
+- [x] Use cases with cross-module usage remain `public` (e.g., `GetReviewStatsUseCase`)
+- [x] 9 new test classes pass
+- [x] All existing tests still pass
+- [x] Project compiles (`./gradlew compileJava`)
 
 ---
 

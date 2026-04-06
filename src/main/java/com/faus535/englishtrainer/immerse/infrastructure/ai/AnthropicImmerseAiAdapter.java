@@ -3,6 +3,7 @@ package com.faus535.englishtrainer.immerse.infrastructure.ai;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.faus535.englishtrainer.immerse.domain.ContentType;
 import com.faus535.englishtrainer.immerse.domain.ImmerseAiPort;
+import com.faus535.englishtrainer.immerse.domain.ImmerseContentSizing;
 import com.faus535.englishtrainer.immerse.domain.VocabularyItem;
 import com.faus535.englishtrainer.immerse.domain.error.ImmerseAiException;
 import org.slf4j.Logger;
@@ -50,13 +51,14 @@ class AnthropicImmerseAiAdapter implements ImmerseAiPort {
     @SuppressWarnings("unchecked")
     public ImmerseProcessResult processContent(String rawText, String level) throws ImmerseAiException {
         try {
+            ImmerseContentSizing sizing = ImmerseContentSizing.forLevel(level);
             Map<String, Object> tool = buildProcessContentTool();
             String userMessage = "Process this text for a %s level English learner:\n\n%s"
                     .formatted(level != null ? level.toUpperCase() : "B1", rawText);
 
             Map<String, Object> requestBody = Map.of(
                     "model", model,
-                    "max_tokens", 2000,
+                    "max_tokens", sizing.processingMaxTokens(),
                     "system", "You process English text for language learners. Extract vocabulary, annotate difficulty, and generate exercises.",
                     "tools", List.of(tool),
                     "tool_choice", Map.of("type", "tool", "name", "process_content"),
@@ -165,14 +167,15 @@ class AnthropicImmerseAiAdapter implements ImmerseAiPort {
     public ImmerseGenerateResult generateContent(ContentType contentType, String level, String topic)
             throws ImmerseAiException {
         try {
+            ImmerseContentSizing sizing = ImmerseContentSizing.forLevel(level);
             Map<String, Object> tool = buildGenerateContentTool();
             String effectiveLevel = level != null ? level.toUpperCase() : "B1";
             String systemPrompt = buildGenerateSystemPrompt(contentType);
-            String userMessage = buildGenerateUserMessage(contentType, effectiveLevel, topic);
+            String userMessage = buildGenerateUserMessage(contentType, effectiveLevel, topic, sizing);
 
             Map<String, Object> requestBody = Map.of(
                     "model", model,
-                    "max_tokens", 4000,
+                    "max_tokens", sizing.generateMaxTokens(),
                     "system", systemPrompt,
                     "tools", List.of(tool),
                     "tool_choice", Map.of("type", "tool", "name", "generate_content"),
@@ -229,7 +232,8 @@ class AnthropicImmerseAiAdapter implements ImmerseAiPort {
         };
     }
 
-    private String buildGenerateUserMessage(ContentType contentType, String level, String topic) {
+    private String buildGenerateUserMessage(ContentType contentType, String level, String topic,
+                                               ImmerseContentSizing sizing) {
         String contentDescription = switch (contentType) {
             case TEXT -> "an article or short story";
             case AUDIO -> "a podcast transcript or dialogue";
@@ -246,9 +250,9 @@ class AnthropicImmerseAiAdapter implements ImmerseAiPort {
             message.append(" Choose an interesting and engaging topic.");
         }
 
-        message.append("\n\nThe content should be 300-600 words.");
-        message.append(" Generate 5-6 varied exercises (MULTIPLE_CHOICE, FILL_THE_GAP, TRUE_FALSE, WORD_DEFINITION).");
-        message.append(" Extract 6-10 key vocabulary items with definitions and example sentences.");
+        message.append("\n\nThe content should be %d-%d words.".formatted(sizing.minWords(), sizing.maxWords()));
+        message.append(" Generate %d varied exercises (MULTIPLE_CHOICE, FILL_THE_GAP, TRUE_FALSE, WORD_DEFINITION).".formatted(sizing.exerciseCount()));
+        message.append(" Extract %d key vocabulary items with definitions and example sentences.".formatted(sizing.vocabCount()));
 
         return message.toString();
     }
@@ -256,8 +260,7 @@ class AnthropicImmerseAiAdapter implements ImmerseAiPort {
     @SuppressWarnings("unchecked")
     private ImmerseGenerateResult parseGenerateResult(Map<String, Object> input) {
         String title = (String) input.getOrDefault("title", "Generated Content");
-        String rawText = (String) input.getOrDefault("rawText", "");
-        String processedText = (String) input.getOrDefault("processedText", rawText);
+        String text = (String) input.getOrDefault("text", "");
         String detectedLevel = (String) input.getOrDefault("detectedLevel", "b1");
 
         List<VocabularyItem> vocabulary = List.of();
@@ -293,7 +296,7 @@ class AnthropicImmerseAiAdapter implements ImmerseAiPort {
                     }).toList();
         }
 
-        return new ImmerseGenerateResult(title, rawText, processedText, detectedLevel, vocabulary, exercises);
+        return new ImmerseGenerateResult(title, text, detectedLevel, vocabulary, exercises);
     }
 
     private Map<String, Object> buildGenerateContentTool() {
@@ -304,8 +307,7 @@ class AnthropicImmerseAiAdapter implements ImmerseAiPort {
                         "type", "object",
                         "properties", Map.ofEntries(
                                 Map.entry("title", Map.of("type", "string", "description", "An engaging title for the content")),
-                                Map.entry("rawText", Map.of("type", "string", "description", "The generated content text")),
-                                Map.entry("processedText", Map.of("type", "string", "description", "The content with annotations and highlights")),
+                                Map.entry("text", Map.of("type", "string", "description", "The content with annotations and highlights")),
                                 Map.entry("detectedLevel", Map.of("type", "string", "description", "CEFR level: a1,a2,b1,b2,c1,c2")),
                                 Map.entry("vocabulary", Map.of("type", "array", "items", Map.of(
                                         "type", "object",
@@ -324,7 +326,7 @@ class AnthropicImmerseAiAdapter implements ImmerseAiPort {
                                                 "options", Map.of("type", "array", "items", Map.of("type", "string"))
                                         ))))
                         ),
-                        "required", List.of("title", "rawText", "processedText", "detectedLevel", "vocabulary", "exercises")
+                        "required", List.of("title", "text", "detectedLevel", "vocabulary", "exercises")
                 )
         );
     }

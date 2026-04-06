@@ -15,7 +15,7 @@ public class GetActivityCalendarUseCase {
 
     private final ActivityDateRepository repository;
 
-    public GetActivityCalendarUseCase(ActivityDateRepository repository) {
+    GetActivityCalendarUseCase(ActivityDateRepository repository) {
         this.repository = repository;
     }
 

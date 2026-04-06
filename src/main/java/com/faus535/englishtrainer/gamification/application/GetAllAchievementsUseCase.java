@@ -12,7 +12,7 @@ public class GetAllAchievementsUseCase {
 
     private final AchievementRepository achievementRepository;
 
-    public GetAllAchievementsUseCase(AchievementRepository achievementRepository) {
+    GetAllAchievementsUseCase(AchievementRepository achievementRepository) {
         this.achievementRepository = achievementRepository;
     }
 
