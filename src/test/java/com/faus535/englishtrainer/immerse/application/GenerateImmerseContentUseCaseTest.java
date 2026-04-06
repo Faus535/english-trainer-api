@@ -12,6 +12,7 @@ import com.faus535.englishtrainer.user.domain.error.UserProfileNotFoundException
 import com.faus535.englishtrainer.user.infrastructure.InMemoryUserProfileRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import java.time.Instant;
 import java.util.UUID;
@@ -23,6 +24,7 @@ class GenerateImmerseContentUseCaseTest {
     private InMemoryImmerseContentRepository contentRepository;
     private InMemoryImmerseExerciseRepository exerciseRepository;
     private InMemoryUserProfileRepository userProfileRepository;
+    private SpyProcessImmerseContentAsyncService spyAsyncService;
     private GenerateImmerseContentUseCase useCase;
 
     @BeforeEach
@@ -30,7 +32,9 @@ class GenerateImmerseContentUseCaseTest {
         contentRepository = new InMemoryImmerseContentRepository();
         exerciseRepository = new InMemoryImmerseExerciseRepository();
         userProfileRepository = new InMemoryUserProfileRepository();
-        useCase = new GenerateImmerseContentUseCase(contentRepository, exerciseRepository, new StubImmerseAiPort(), userProfileRepository);
+        spyAsyncService = new SpyProcessImmerseContentAsyncService(
+                contentRepository, exerciseRepository, new StubImmerseAiPort());
+        useCase = new GenerateImmerseContentUseCase(contentRepository, spyAsyncService, userProfileRepository);
     }
 
     private UUID createProfileAndReturnId() {
@@ -63,6 +67,16 @@ class GenerateImmerseContentUseCaseTest {
         assertEquals(ImmerseContentStatus.PENDING, result.status());
         assertEquals(ContentType.AUDIO, result.contentType());
         assertFalse(contentRepository.findByUserId(userId, 0, 100).isEmpty());
+    }
+
+    @Test
+    void triggersAsyncProcessing() throws Exception {
+        UUID userId = createProfileAndReturnId();
+
+        ImmerseContent result = useCase.execute(userId, ContentType.TEXT, "b1", "city life");
+
+        assertTrue(spyAsyncService.wasProcessCalled());
+        assertEquals(result.id().value(), spyAsyncService.lastContentId());
     }
 
     @Test

@@ -165,13 +165,13 @@
      ```
 
 **Acceptance criteria**:
-- [ ] POST /api/immerse/generate returns 201 with status "PENDING"
-- [ ] Response is immediate (no AI call on HTTP thread)
-- [ ] Background processing is triggered
-- [ ] `level` validated against CEFR values (a1-c2), null allowed
-- [ ] `topic` validated with max 200 chars, null allowed
-- [ ] Invalid level returns 400
-- [ ] `ImmerseAiException` no longer thrown by controller
+- [x] POST /api/immerse/generate returns 201 with status "PENDING"
+- [x] Response is immediate (no AI call on HTTP thread)
+- [x] Background processing is triggered
+- [x] `level` validated against CEFR values (a1-c2), null allowed
+- [x] `topic` validated with max 200 chars, null allowed
+- [x] Invalid level returns 400
+- [x] `ImmerseAiException` no longer thrown by controller
 
 ---
 
