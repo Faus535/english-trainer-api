@@ -26,9 +26,9 @@ public class GoogleTokenVerifier implements GoogleAuthPort {
                 .build();
     }
 
-//    GoogleTokenVerifier(GoogleIdTokenVerifier verifier) {
-//        this.verifier = verifier;
-//    }
+    GoogleTokenVerifier(GoogleIdTokenVerifier verifier) {
+        this.verifier = verifier;
+    }
 
     @Override
     public GoogleVerifiedUser verify(String idToken) throws GoogleAuthException {

@@ -32,12 +32,12 @@ public class StubImmerseAiPort implements ImmerseAiPort {
     public ImmerseGenerateResult generateContent(ContentType contentType, String level, String topic)
             throws ImmerseAiException {
         String effectiveLevel = level != null ? level : "b1";
-        String rawText = "The city wakes up early. People rush to work, grab coffee, and check their phones. " +
+        String text = "The city wakes up early. People rush to work, grab coffee, and check their phones. " +
                 "Life in a modern city is fast-paced and full of surprises.";
         return new ImmerseGenerateResult(
                 "A Day in the City",
-                rawText,
-                rawText,
+                text,
+                text,
                 effectiveLevel,
                 List.of(
                         new VocabularyItem("rush", "To move quickly", "People rush to work every morning.", effectiveLevel),

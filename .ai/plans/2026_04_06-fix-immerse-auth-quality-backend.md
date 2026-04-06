@@ -263,10 +263,10 @@
 5. Verify no `public` on use case classes/constructors that are module-internal.
 
 **Acceptance criteria**:
-- [ ] `./gradlew build` passes with 0 failures
-- [ ] No `@Service` annotations on use case classes
-- [ ] No infrastructure imports in application-layer use cases (except approved exceptions)
-- [ ] `/revisar` reports no critical issues
+- [x] `./gradlew build` passes with 0 failures
+- [x] No `@Service` annotations on use case classes
+- [x] No infrastructure imports in application-layer use cases (except approved exceptions)
+- [x] `/revisar` reports no critical issues
 
 ## API Contract
 

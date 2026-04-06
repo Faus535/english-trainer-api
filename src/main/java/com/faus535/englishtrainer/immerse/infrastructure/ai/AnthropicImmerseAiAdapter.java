@@ -59,7 +59,7 @@ class AnthropicImmerseAiAdapter implements ImmerseAiPort {
             Map<String, Object> requestBody = Map.of(
                     "model", model,
                     "max_tokens", sizing.processingMaxTokens(),
-                    "system", "You process English text for language learners. Extract vocabulary, annotate difficulty, and generate exercises.",
+                    "system", "Process English text for learners. Extract vocabulary, annotate difficulty, generate exercises.",
                     "tools", List.of(tool),
                     "tool_choice", Map.of("type", "tool", "name", "process_content"),
                     "messages", List.of(Map.of("role", "user", "content", userMessage))
@@ -134,12 +134,12 @@ class AnthropicImmerseAiAdapter implements ImmerseAiPort {
     private Map<String, Object> buildProcessContentTool() {
         return Map.of(
                 "name", "process_content",
-                "description", "Process text for English language learning",
+                "description", "Process English text for learners",
                 "input_schema", Map.of(
                         "type", "object",
                         "properties", Map.of(
-                                "processedText", Map.of("type", "string", "description", "The original text with annotations"),
-                                "detectedLevel", Map.of("type", "string", "description", "Detected CEFR level: a1,a2,b1,b2,c1,c2"),
+                                "processedText", Map.of("type", "string", "description", "Annotated text"),
+                                "detectedLevel", Map.of("type", "string", "description", "CEFR level"),
                                 "vocabulary", Map.of("type", "array", "items", Map.of(
                                         "type", "object",
                                         "properties", Map.of(
@@ -151,7 +151,7 @@ class AnthropicImmerseAiAdapter implements ImmerseAiPort {
                                 "exercises", Map.of("type", "array", "items", Map.of(
                                         "type", "object",
                                         "properties", Map.of(
-                                                "type", Map.of("type", "string", "description", "MULTIPLE_CHOICE, FILL_THE_GAP, TRUE_FALSE, WORD_DEFINITION"),
+                                                "type", Map.of("type", "string", "description", "MULTIPLE_CHOICE|FILL_THE_GAP|TRUE_FALSE|WORD_DEFINITION"),
                                                 "question", Map.of("type", "string"),
                                                 "correctAnswer", Map.of("type", "string"),
                                                 "options", Map.of("type", "array", "items", Map.of("type", "string"))
@@ -209,26 +209,9 @@ class AnthropicImmerseAiAdapter implements ImmerseAiPort {
 
     private String buildGenerateSystemPrompt(ContentType contentType) {
         return switch (contentType) {
-            case TEXT -> """
-                    You are an English language content creator for learners. Generate an engaging, \
-                    educational article, blog post, or short story in English. The content should be \
-                    interesting, culturally rich, and appropriate for the requested CEFR level. \
-                    Include varied vocabulary and natural sentence structures. \
-                    Also extract key vocabulary, annotate difficulty, and generate exercises based on the content.""";
-            case AUDIO -> """
-                    You are an English language content creator for learners. Generate a realistic \
-                    podcast transcript, radio interview, or dialogue between two or more speakers in English. \
-                    Use natural conversational language with speaker labels (e.g., "Host:", "Guest:"). \
-                    The content should feel authentic, with fillers, turn-taking, and colloquial expressions \
-                    appropriate for the requested CEFR level. \
-                    Also extract key vocabulary, annotate difficulty, and generate exercises based on the content.""";
-            case VIDEO -> """
-                    You are an English language content creator for learners. Generate a documentary narration, \
-                    video essay script, or scene description with visual context in English. \
-                    Include descriptions of what the viewer would see (in brackets like [Scene: ...]) \
-                    mixed with narration text. The content should be vivid, informative, and appropriate \
-                    for the requested CEFR level. \
-                    Also extract key vocabulary, annotate difficulty, and generate exercises based on the content.""";
+            case TEXT -> "You create English learning content. Generate an engaging article/story at the requested CEFR level with varied vocabulary. Extract key vocabulary and generate exercises.";
+            case AUDIO -> "You create English learning content. Generate a realistic podcast transcript or dialogue with speaker labels (Host:, Guest:) at the requested CEFR level. Extract key vocabulary and generate exercises.";
+            case VIDEO -> "You create English learning content. Generate a documentary narration or video script with visual context [Scene: ...] at the requested CEFR level. Extract key vocabulary and generate exercises.";
         };
     }
 
@@ -296,31 +279,31 @@ class AnthropicImmerseAiAdapter implements ImmerseAiPort {
                     }).toList();
         }
 
-        return new ImmerseGenerateResult(title, text, detectedLevel, vocabulary, exercises);
+        return new ImmerseGenerateResult(title, text, text, detectedLevel, vocabulary, exercises);
     }
 
     private Map<String, Object> buildGenerateContentTool() {
         return Map.of(
                 "name", "generate_content",
-                "description", "Generate English learning content with vocabulary and exercises",
+                "description", "Generate English learning content",
                 "input_schema", Map.of(
                         "type", "object",
                         "properties", Map.ofEntries(
-                                Map.entry("title", Map.of("type", "string", "description", "An engaging title for the content")),
-                                Map.entry("text", Map.of("type", "string", "description", "The content with annotations and highlights")),
-                                Map.entry("detectedLevel", Map.of("type", "string", "description", "CEFR level: a1,a2,b1,b2,c1,c2")),
+                                Map.entry("title", Map.of("type", "string", "description", "Content title")),
+                                Map.entry("text", Map.of("type", "string", "description", "Content text")),
+                                Map.entry("detectedLevel", Map.of("type", "string", "description", "CEFR level")),
                                 Map.entry("vocabulary", Map.of("type", "array", "items", Map.of(
                                         "type", "object",
                                         "properties", Map.of(
                                                 "word", Map.of("type", "string"),
                                                 "definition", Map.of("type", "string"),
-                                                "exampleSentence", Map.of("type", "string"),
+                                                "exampleSentence", Map.of("type", "string", "description", "Example"),
                                                 "cefrLevel", Map.of("type", "string")
                                         )))),
                                 Map.entry("exercises", Map.of("type", "array", "items", Map.of(
                                         "type", "object",
                                         "properties", Map.of(
-                                                "type", Map.of("type", "string", "description", "MULTIPLE_CHOICE, FILL_THE_GAP, TRUE_FALSE, WORD_DEFINITION"),
+                                                "type", Map.of("type", "string", "description", "MULTIPLE_CHOICE|FILL_THE_GAP|TRUE_FALSE|WORD_DEFINITION"),
                                                 "question", Map.of("type", "string"),
                                                 "correctAnswer", Map.of("type", "string"),
                                                 "options", Map.of("type", "array", "items", Map.of("type", "string"))
