@@ -9,6 +9,7 @@ import com.faus535.englishtrainer.talk.domain.TalkStatus;
 import com.faus535.englishtrainer.immerse.domain.ImmerseContent;
 import com.faus535.englishtrainer.immerse.domain.ImmerseContentRepository;
 import com.faus535.englishtrainer.shared.application.annotation.UseCase;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
@@ -28,6 +29,7 @@ public class GetHomeUseCase {
         this.getReviewStatsUseCase = getReviewStatsUseCase;
     }
 
+    @Transactional(readOnly = true)
     public HomeData execute(UUID userId) {
         // Talk summary
         List<TalkConversation> talkConversations = talkRepository.findByUserId(userId);

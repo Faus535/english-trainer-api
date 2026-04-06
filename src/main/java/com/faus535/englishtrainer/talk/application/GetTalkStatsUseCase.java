@@ -5,6 +5,7 @@ import com.faus535.englishtrainer.talk.domain.TalkConversationRepository;
 import com.faus535.englishtrainer.talk.domain.TalkStats;
 import com.faus535.englishtrainer.talk.domain.TalkStatus;
 import com.faus535.englishtrainer.shared.application.annotation.UseCase;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
@@ -18,6 +19,7 @@ public class GetTalkStatsUseCase {
         this.repository = repository;
     }
 
+    @Transactional(readOnly = true)
     public TalkStats execute(UUID userId) {
         List<TalkConversation> conversations = repository.findByUserId(userId);
 

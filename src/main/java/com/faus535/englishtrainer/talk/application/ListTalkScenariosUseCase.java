@@ -4,6 +4,7 @@ import com.faus535.englishtrainer.talk.domain.TalkLevel;
 import com.faus535.englishtrainer.talk.domain.TalkScenario;
 import com.faus535.englishtrainer.talk.domain.TalkScenarioRepository;
 import com.faus535.englishtrainer.shared.application.annotation.UseCase;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -16,6 +17,7 @@ public class ListTalkScenariosUseCase {
         this.repository = repository;
     }
 
+    @Transactional(readOnly = true)
     public List<TalkScenario> execute(String level) {
         if (level == null || level.isBlank()) {
             return repository.findAll();

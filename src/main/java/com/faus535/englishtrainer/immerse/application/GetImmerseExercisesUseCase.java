@@ -5,6 +5,7 @@ import com.faus535.englishtrainer.immerse.domain.error.ImmerseContentAccessDenie
 import com.faus535.englishtrainer.immerse.domain.error.ImmerseContentNotFoundException;
 import com.faus535.englishtrainer.immerse.domain.error.ImmerseContentNotProcessedException;
 import com.faus535.englishtrainer.shared.application.annotation.UseCase;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
@@ -21,6 +22,7 @@ public class GetImmerseExercisesUseCase {
         this.exerciseRepository = exerciseRepository;
     }
 
+    @Transactional(readOnly = true)
     public List<ImmerseExercise> execute(UUID contentId, UUID userId)
             throws ImmerseContentNotFoundException, ImmerseContentNotProcessedException,
                    ImmerseContentAccessDeniedException {

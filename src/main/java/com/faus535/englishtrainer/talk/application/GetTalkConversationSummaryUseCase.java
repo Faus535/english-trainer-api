@@ -3,6 +3,7 @@ package com.faus535.englishtrainer.talk.application;
 import com.faus535.englishtrainer.talk.domain.*;
 import com.faus535.englishtrainer.talk.domain.error.TalkConversationNotFoundException;
 import com.faus535.englishtrainer.shared.application.annotation.UseCase;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
@@ -15,6 +16,7 @@ public class GetTalkConversationSummaryUseCase {
         this.repository = repository;
     }
 
+    @Transactional(readOnly = true)
     public TalkConversationSummary execute(UUID conversationIdValue) throws TalkConversationNotFoundException {
         TalkConversationId conversationId = new TalkConversationId(conversationIdValue);
         TalkConversation conversation = repository.findById(conversationId)
