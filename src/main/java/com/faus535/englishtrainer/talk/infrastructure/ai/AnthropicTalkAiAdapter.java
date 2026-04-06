@@ -93,8 +93,8 @@ class AnthropicTalkAiAdapter implements TalkAiPort {
             Map<String, Object> tool = buildEvaluationTool();
             Map<String, Object> requestBody = new java.util.HashMap<>(Map.of(
                     "model", model,
-                    "max_tokens", 500,
-                    "system", "You are an English tutor evaluator. Evaluate the student's performance.",
+                    "max_tokens", 350,
+                    "system", "Evaluate the student's English conversation.",
                     "tools", List.of(tool),
                     "tool_choice", Map.of("type", "tool", "name", "evaluate_talk"),
                     "messages", List.of(Map.of("role", "user", "content", conversationText.toString()))
@@ -128,16 +128,16 @@ class AnthropicTalkAiAdapter implements TalkAiPort {
     private Map<String, Object> buildEvaluationTool() {
         return Map.of(
                 "name", "evaluate_talk",
-                "description", "Evaluate a student's English conversation performance",
+                "description", "Evaluate English conversation",
                 "input_schema", Map.of(
                         "type", "object",
                         "properties", Map.of(
-                                "grammarAccuracy", Map.of("type", "integer", "description", "Grammar accuracy 0-100"),
-                                "vocabularyRange", Map.of("type", "integer", "description", "Vocabulary range 0-100"),
-                                "fluency", Map.of("type", "integer", "description", "Fluency score 0-100"),
-                                "taskCompletion", Map.of("type", "integer", "description", "Task/topic completion 0-100"),
-                                "overallScore", Map.of("type", "integer", "description", "Overall score 0-100"),
-                                "levelDemonstrated", Map.of("type", "string", "description", "CEFR level: a1,a2,b1,b2,c1,c2"),
+                                "grammarAccuracy", Map.of("type", "integer", "description", "0-100"),
+                                "vocabularyRange", Map.of("type", "integer", "description", "0-100"),
+                                "fluency", Map.of("type", "integer", "description", "0-100"),
+                                "taskCompletion", Map.of("type", "integer", "description", "0-100"),
+                                "overallScore", Map.of("type", "integer", "description", "0-100"),
+                                "levelDemonstrated", Map.of("type", "string", "description", "CEFR level"),
                                 "strengths", Map.of("type", "array", "items", Map.of("type", "string")),
                                 "areasToImprove", Map.of("type", "array", "items", Map.of("type", "string"))
                         ),

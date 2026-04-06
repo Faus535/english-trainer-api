@@ -12,9 +12,10 @@ record ImmerseContentResponse(
         String contentType, String status, Instant createdAt
 ) {
     static ImmerseContentResponse from(ImmerseContent content) {
+        String text = content.processedText() != null ? content.processedText() : content.rawText();
         return new ImmerseContentResponse(
                 content.id().value().toString(), content.title(), content.sourceUrl(),
-                content.processedText(), content.cefrLevel(), content.extractedVocabulary(),
+                text, content.cefrLevel(), content.extractedVocabulary(),
                 content.contentType() != null ? content.contentType().value() : null,
                 content.status().value(), content.createdAt());
     }
