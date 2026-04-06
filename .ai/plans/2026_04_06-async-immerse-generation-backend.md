@@ -124,12 +124,12 @@
      - **Preferred**: Option A (TransactionTemplate) for simplicity
 
 **Acceptance criteria**:
-- [ ] `AsyncConfig` defines `immerseAsyncExecutor` bean with bounded thread pool
-- [ ] `ProcessImmerseContentAsyncService.process()` is `@Async("immerseAsyncExecutor")`
-- [ ] AI call happens outside any transaction
-- [ ] On success: content is PROCESSED with title, rawText, exercises saved
-- [ ] On failure (any Throwable): content is FAILED, error is logged
-- [ ] On content not found: logs warning, returns without error
+- [x] `AsyncConfig` defines `immerseAsyncExecutor` bean with bounded thread pool
+- [x] `ProcessImmerseContentAsyncService.process()` is `@Async("immerseAsyncExecutor")`
+- [x] AI call happens outside any transaction
+- [x] On success: content is PROCESSED with title, rawText, exercises saved
+- [x] On failure (any Throwable): content is FAILED, error is logged
+- [x] On content not found: logs warning, returns without error
 
 ---
 
