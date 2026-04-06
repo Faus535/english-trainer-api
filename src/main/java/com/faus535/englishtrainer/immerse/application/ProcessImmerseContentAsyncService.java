@@ -4,14 +4,14 @@ import com.faus535.englishtrainer.immerse.domain.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.stereotype.Service;
+import com.faus535.englishtrainer.shared.application.annotation.UseCase;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
-@Service
+@UseCase
 public class ProcessImmerseContentAsyncService {
 
     private static final Logger log = LoggerFactory.getLogger(ProcessImmerseContentAsyncService.class);
