@@ -392,13 +392,13 @@
   — Returns pre-stored hintText; question not in article throws `ArticleQuestionNotFoundException`
 
 **Acceptance criteria**:
-- [ ] `GET /api/article/{id}/questions` returns questions (after article completed in Phase 4)
-- [ ] `POST /api/article/{id}/questions/{qId}/answer` returns `200` with grading
-- [ ] `POST` with fewer than 40 words returns `422`
-- [ ] Second answer submission returns `409`
-- [ ] `GET /api/article/{id}/questions/{qId}/hint` returns stored hint text (no extra Claude call)
-- [ ] `ArticleQuestionAnswerTest` 40-word boundary passes
-- [ ] `SubmitAnswerUseCaseTest` all paths pass
+- [x] `GET /api/article/{id}/questions` returns questions (after article completed in Phase 4)
+- [x] `POST /api/article/{id}/questions/{qId}/answer` returns `200` with grading
+- [x] `POST` with fewer than 40 words returns `422`
+- [x] Second answer submission returns `409`
+- [x] `GET /api/article/{id}/questions/{qId}/hint` returns stored hint text (no extra Claude call)
+- [x] `ArticleQuestionAnswerTest` 40-word boundary passes
+- [x] `SubmitAnswerUseCaseTest` all paths pass
 
 ---
 
