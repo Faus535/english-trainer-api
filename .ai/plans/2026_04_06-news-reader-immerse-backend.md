@@ -439,13 +439,13 @@
   — Activity recorded; auth user not found handled gracefully
 
 **Acceptance criteria**:
-- [ ] `POST /api/article/{id}/complete` returns `204` and transitions article to COMPLETED
-- [ ] Questions are generated and persisted after completion
-- [ ] `GET /api/article/{id}/questions` returns 5-7 questions after completion
-- [ ] Calling `/complete` twice returns `409`
-- [ ] XP is awarded in `gamification` after event
-- [ ] Activity is recorded in `activity` after event
-- [ ] `CompleteArticleUseCaseTest` all paths pass
+- [x] `POST /api/article/{id}/complete` returns `204` and transitions article to COMPLETED
+- [x] Questions are generated and persisted after completion
+- [x] `GET /api/article/{id}/questions` returns 5-7 questions after completion
+- [x] Calling `/complete` twice returns `409`
+- [x] XP is awarded in `gamification` after event
+- [x] Activity is recorded in `activity` after event
+- [x] `CompleteArticleUseCaseTest` all paths pass
 
 ---
 
