@@ -4,7 +4,8 @@ public enum ReviewSourceType {
 
     TALK_ERROR("TALK_ERROR"),
     IMMERSE_VOCAB("IMMERSE_VOCAB"),
-    PRONUNCIATION("PRONUNCIATION");
+    PRONUNCIATION("PRONUNCIATION"),
+    ARTICLE("ARTICLE");
 
     private final String value;
 

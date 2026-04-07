@@ -273,12 +273,12 @@
 **Flyway migration**: `V11.1.0__review_add_article_source_type.sql` (see Database Changes)
 
 **Acceptance criteria**:
-- [ ] `POST /api/article/{id}/words` returns `201` with translation
-- [ ] A row exists in `review_items` with `source_type = 'ARTICLE'` after marking a word
-- [ ] Duplicate word mark returns `409`
-- [ ] `GET /api/article/{id}/words` returns marked words for the owning user only
-- [ ] `MarkWordUseCaseTest` passes including ReviewItem side-effect assertion
-- [ ] `ReviewSourceType.ARTICLE` compiles and existing tests still pass
+- [x] `POST /api/article/{id}/words` returns `201` with translation
+- [x] A row exists in `review_items` with `source_type = 'ARTICLE'` after marking a word
+- [x] Duplicate word mark returns `409`
+- [x] `GET /api/article/{id}/words` returns marked words for the owning user only
+- [x] `MarkWordUseCaseTest` passes including ReviewItem side-effect assertion
+- [x] `ReviewSourceType.ARTICLE` compiles and existing tests still pass
 
 ---
 
