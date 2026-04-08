@@ -5,10 +5,9 @@ import com.faus535.englishtrainer.article.domain.error.ArticleAccessDeniedExcept
 import com.faus535.englishtrainer.article.domain.error.ArticleAiException;
 import com.faus535.englishtrainer.article.domain.error.ArticleNotFoundException;
 import com.faus535.englishtrainer.article.domain.error.DuplicateMarkedWordException;
-import com.faus535.englishtrainer.review.domain.ReviewItem;
-import com.faus535.englishtrainer.review.domain.ReviewItemRepository;
-import com.faus535.englishtrainer.review.domain.ReviewSourceType;
+import com.faus535.englishtrainer.article.domain.event.ArticleWordMarkedEvent;
 import com.faus535.englishtrainer.shared.application.annotation.UseCase;
+import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.UUID;
 
@@ -18,16 +17,16 @@ public class MarkWordUseCase {
     private final ArticleReadingRepository articleReadingRepository;
     private final ArticleMarkedWordRepository markedWordRepository;
     private final ArticleAiPort aiPort;
-    private final ReviewItemRepository reviewItemRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
     MarkWordUseCase(ArticleReadingRepository articleReadingRepository,
                     ArticleMarkedWordRepository markedWordRepository,
                     ArticleAiPort aiPort,
-                    ReviewItemRepository reviewItemRepository) {
+                    ApplicationEventPublisher eventPublisher) {
         this.articleReadingRepository = articleReadingRepository;
         this.markedWordRepository = markedWordRepository;
         this.aiPort = aiPort;
-        this.reviewItemRepository = reviewItemRepository;
+        this.eventPublisher = eventPublisher;
     }
 
     public ArticleMarkedWord execute(UUID userId, ArticleReadingId articleId,
@@ -46,9 +45,9 @@ public class MarkWordUseCase {
                 tr.translation(), contextSentence);
         markedWordRepository.save(marked);
 
-        ReviewItem reviewItem = ReviewItem.create(userId, ReviewSourceType.ARTICLE,
-                marked.id().value(), wordOrPhrase, tr.translation());
-        reviewItemRepository.save(reviewItem);
+        eventPublisher.publishEvent(new ArticleWordMarkedEvent(
+                articleId.value(), userId, marked.id().value(),
+                wordOrPhrase, tr.translation(), contextSentence));
 
         return marked;
     }

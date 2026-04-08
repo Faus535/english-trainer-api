@@ -215,11 +215,11 @@ public class ArticleWordMarkedReviewListener {
 - Integration: ArticleWordMarkedReviewListenerIT (Testcontainers) — event published → review item created
 
 **Acceptance criteria:**
-- [ ] MarkWordUseCase no longer injects ReviewItemRepository
-- [ ] MarkWordUseCase publishes ArticleWordMarkedEvent
-- [ ] ArticleWordMarkedReviewListener listens and creates ReviewItem transactionally
-- [ ] Unit + integration tests pass
-- [ ] No functional change to user (still creates review items)
+- [x] MarkWordUseCase no longer injects ReviewItemRepository
+- [x] MarkWordUseCase publishes ArticleWordMarkedEvent
+- [x] ArticleWordMarkedReviewListener listens and creates ReviewItem transactionally
+- [x] Unit + integration tests pass
+- [x] No functional change to user (still creates review items)
 
 ---
 

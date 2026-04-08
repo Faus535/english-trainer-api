@@ -5,15 +5,17 @@ import com.faus535.englishtrainer.article.domain.error.ArticleAccessDeniedExcept
 import com.faus535.englishtrainer.article.domain.error.ArticleAiException;
 import com.faus535.englishtrainer.article.domain.error.ArticleNotFoundException;
 import com.faus535.englishtrainer.article.domain.error.DuplicateMarkedWordException;
+import com.faus535.englishtrainer.article.domain.event.ArticleWordMarkedEvent;
 import com.faus535.englishtrainer.article.infrastructure.FailingStubArticleAiPort;
 import com.faus535.englishtrainer.article.infrastructure.InMemoryArticleMarkedWordRepository;
 import com.faus535.englishtrainer.article.infrastructure.InMemoryArticleReadingRepository;
 import com.faus535.englishtrainer.article.infrastructure.StubArticleAiPort;
-import com.faus535.englishtrainer.review.domain.ReviewSourceType;
-import com.faus535.englishtrainer.review.infrastructure.InMemoryReviewItemRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.context.ApplicationEventPublisher;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -22,20 +24,21 @@ class MarkWordUseCaseTest {
 
     private InMemoryArticleReadingRepository articleReadingRepository;
     private InMemoryArticleMarkedWordRepository markedWordRepository;
-    private InMemoryReviewItemRepository reviewItemRepository;
+    private List<Object> publishedEvents;
     private MarkWordUseCase useCase;
 
     @BeforeEach
     void setUp() {
         articleReadingRepository = new InMemoryArticleReadingRepository();
         markedWordRepository = new InMemoryArticleMarkedWordRepository();
-        reviewItemRepository = new InMemoryReviewItemRepository();
+        publishedEvents = new ArrayList<>();
+        ApplicationEventPublisher publisher = publishedEvents::add;
         useCase = new MarkWordUseCase(articleReadingRepository, markedWordRepository,
-                new StubArticleAiPort(), reviewItemRepository);
+                new StubArticleAiPort(), publisher);
     }
 
     @Test
-    void happyPathCreatesMarkedWordAndReviewItemWithArticleSourceType() throws Exception {
+    void happyPathCreatesMarkedWordAndPublishesEvent() throws Exception {
         UUID userId = UUID.randomUUID();
         ArticleReading article = ArticleReadingMother.inProgress(userId);
         articleReadingRepository.save(article);
@@ -47,11 +50,14 @@ class MarkWordUseCaseTest {
         assertEquals("traducción de prueba", result.translation());
         assertEquals(1, markedWordRepository.count());
 
-        var reviewItems = reviewItemRepository.findDueByUserId(userId, java.time.Instant.now().plusSeconds(1), 10);
-        assertEquals(1, reviewItems.size());
-        assertEquals(ReviewSourceType.ARTICLE, reviewItems.get(0).sourceType());
-        assertEquals(result.id().value(), reviewItems.get(0).sourceId());
-        assertEquals("spark debate", reviewItems.get(0).frontContent());
+        assertEquals(1, publishedEvents.size());
+        assertInstanceOf(ArticleWordMarkedEvent.class, publishedEvents.get(0));
+        ArticleWordMarkedEvent event = (ArticleWordMarkedEvent) publishedEvents.get(0);
+        assertEquals(article.id().value(), event.articleReadingId());
+        assertEquals(userId, event.userId());
+        assertEquals(result.id().value(), event.markedWordId());
+        assertEquals("spark debate", event.wordOrPhrase());
+        assertEquals("traducción de prueba", event.translation());
     }
 
     @Test
@@ -92,10 +98,11 @@ class MarkWordUseCaseTest {
         ArticleReading article = ArticleReadingMother.inProgress(userId);
         articleReadingRepository.save(article);
         useCase = new MarkWordUseCase(articleReadingRepository, markedWordRepository,
-                new FailingStubArticleAiPort(), reviewItemRepository);
+                new FailingStubArticleAiPort(), publishedEvents::add);
 
         assertThrows(ArticleAiException.class,
                 () -> useCase.execute(userId, article.id(), "word", null));
         assertEquals(0, markedWordRepository.count());
+        assertTrue(publishedEvents.isEmpty());
     }
 }
