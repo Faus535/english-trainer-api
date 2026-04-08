@@ -8,14 +8,12 @@ import com.faus535.englishtrainer.immerse.domain.VocabularyItem;
 import com.faus535.englishtrainer.immerse.domain.error.ImmerseAiException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
-import org.springframework.http.client.JdkClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 
-import java.net.http.HttpClient;
-import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 
@@ -88,22 +86,10 @@ class AnthropicImmerseAiAdapter implements ImmerseAiPort {
     private final String model;
 
     AnthropicImmerseAiAdapter(
-            @Value("${anthropic.api-key}") String apiKey,
+            @Qualifier("anthropicRestClient") RestClient restClient,
             @Value("${anthropic.model:claude-haiku-4-5-20251001}") String model) {
+        this.restClient = restClient;
         this.model = model;
-        HttpClient httpClient = HttpClient.newBuilder()
-                .connectTimeout(Duration.ofSeconds(10))
-                .build();
-        JdkClientHttpRequestFactory requestFactory = new JdkClientHttpRequestFactory(httpClient);
-        requestFactory.setReadTimeout(Duration.ofSeconds(60));
-        this.restClient = RestClient.builder()
-                .requestFactory(requestFactory)
-                .baseUrl("https://api.anthropic.com/v1")
-                .defaultHeader("x-api-key", apiKey)
-                .defaultHeader("anthropic-version", "2023-06-01")
-                .defaultHeader("anthropic-beta", "prompt-caching-2024-07-31")
-                .defaultHeader("Content-Type", "application/json")
-                .build();
     }
 
     @Override

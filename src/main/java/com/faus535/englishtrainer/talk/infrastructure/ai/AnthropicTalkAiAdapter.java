@@ -5,6 +5,7 @@ import com.faus535.englishtrainer.talk.domain.*;
 import com.faus535.englishtrainer.talk.domain.error.TalkAiException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
@@ -27,23 +28,37 @@ class AnthropicTalkAiAdapter implements TalkAiPort {
     private static final int NO_FEEDBACK_MAX_TOKENS = 200;
     private static final int SUMMARY_MAX_TOKENS = 200;
 
+    private static final Map<String, Object> TOOL_EVALUATE_TALK = Map.of(
+            "name", "evaluate_talk",
+            "description", "Evaluate English conversation",
+            "input_schema", Map.of(
+                    "type", "object",
+                    "properties", Map.of(
+                            "grammarAccuracy", Map.of("type", "integer", "description", "0-100"),
+                            "vocabularyRange", Map.of("type", "integer", "description", "0-100"),
+                            "fluency", Map.of("type", "integer", "description", "0-100"),
+                            "taskCompletion", Map.of("type", "integer", "description", "0-100"),
+                            "overallScore", Map.of("type", "integer", "description", "0-100"),
+                            "levelDemonstrated", Map.of("type", "string", "description", "CEFR level"),
+                            "strengths", Map.of("type", "array", "items", Map.of("type", "string")),
+                            "areasToImprove", Map.of("type", "array", "items", Map.of("type", "string"))
+                    ),
+                    "required", List.of("grammarAccuracy", "vocabularyRange", "fluency", "taskCompletion",
+                            "overallScore", "levelDemonstrated", "strengths", "areasToImprove")
+            )
+    );
+
     private final RestClient restClient;
     private final String model;
     private final int maxTokens;
 
     AnthropicTalkAiAdapter(
-            @Value("${anthropic.api-key}") String apiKey,
+            @Qualifier("anthropicRestClient") RestClient restClient,
             @Value("${anthropic.model:claude-haiku-4-5-20251001}") String model,
             @Value("${anthropic.max-tokens:300}") int maxTokens) {
+        this.restClient = restClient;
         this.model = model;
         this.maxTokens = maxTokens;
-        this.restClient = RestClient.builder()
-                .baseUrl("https://api.anthropic.com/v1")
-                .defaultHeader("x-api-key", apiKey)
-                .defaultHeader("anthropic-version", "2023-06-01")
-                .defaultHeader("anthropic-beta", "prompt-caching-2024-07-31")
-                .defaultHeader("Content-Type", "application/json")
-                .build();
     }
 
     @Override
@@ -90,12 +105,15 @@ class AnthropicTalkAiAdapter implements TalkAiPort {
                 conversationText.append(msg.role().charAt(0)).append(": ").append(msg.content()).append("\n");
             }
 
-            Map<String, Object> tool = buildEvaluationTool();
             Map<String, Object> requestBody = new java.util.HashMap<>(Map.of(
                     "model", model,
                     "max_tokens", 350,
-                    "system", "Evaluate the student's English conversation.",
-                    "tools", List.of(tool),
+                    "system", List.of(Map.of(
+                            "type", "text",
+                            "text", "Evaluate the student's English conversation.",
+                            "cache_control", Map.of("type", "ephemeral")
+                    )),
+                    "tools", List.of(TOOL_EVALUATE_TALK),
                     "tool_choice", Map.of("type", "tool", "name", "evaluate_talk"),
                     "messages", List.of(Map.of("role", "user", "content", conversationText.toString()))
             ));
@@ -123,28 +141,6 @@ class AnthropicTalkAiAdapter implements TalkAiPort {
             log.error("Failed to evaluate talk conversation: {}", e.getMessage(), e);
             return TalkEvaluation.empty();
         }
-    }
-
-    private Map<String, Object> buildEvaluationTool() {
-        return Map.of(
-                "name", "evaluate_talk",
-                "description", "Evaluate English conversation",
-                "input_schema", Map.of(
-                        "type", "object",
-                        "properties", Map.of(
-                                "grammarAccuracy", Map.of("type", "integer", "description", "0-100"),
-                                "vocabularyRange", Map.of("type", "integer", "description", "0-100"),
-                                "fluency", Map.of("type", "integer", "description", "0-100"),
-                                "taskCompletion", Map.of("type", "integer", "description", "0-100"),
-                                "overallScore", Map.of("type", "integer", "description", "0-100"),
-                                "levelDemonstrated", Map.of("type", "string", "description", "CEFR level"),
-                                "strengths", Map.of("type", "array", "items", Map.of("type", "string")),
-                                "areasToImprove", Map.of("type", "array", "items", Map.of("type", "string"))
-                        ),
-                        "required", List.of("grammarAccuracy", "vocabularyRange", "fluency", "taskCompletion",
-                                "overallScore", "levelDemonstrated", "strengths", "areasToImprove")
-                )
-        );
     }
 
     private String callClaude(String systemPrompt, List<Map<String, String>> messages, int tokensLimit)

@@ -296,15 +296,15 @@ Replace constructor's manual `RestClient` construction with `@Qualifier("anthrop
 Same as 3.3 — inject shared RestClient, remove manual construction.
 
 **Acceptance criteria**:
-- [ ] `AnthropicRestClientFactory` is a `@Configuration` class in `shared.infrastructure.config`
-- [ ] Factory bean uses `JdkClientHttpRequestFactory` with 90 s read timeout
-- [ ] Factory bean includes `anthropic-beta: prompt-caching-2024-07-31` header
-- [ ] `AnthropicTalkAiAdapter` injects `RestClient` via constructor (no manual `RestClient.builder()`)
-- [ ] `AnthropicArticleAiAdapter` injects `RestClient` via constructor (no manual `RestClient.builder()`)
-- [ ] `AnthropicImmerseAiAdapter` injects `RestClient` via constructor (no manual `RestClient.builder()`)
-- [ ] `TOOL_EVALUATE_TALK` is a `private static final` constant
-- [ ] `evaluate()` sends `system` as a cacheable block array
-- [ ] All 73 existing tests pass (`./gradlew test`)
+- [x] `AnthropicRestClientFactory` is a `@Configuration` class in `shared.infrastructure.config`
+- [x] Factory bean uses `JdkClientHttpRequestFactory` with 90 s read timeout
+- [x] Factory bean includes `anthropic-beta: prompt-caching-2024-07-31` header
+- [x] `AnthropicTalkAiAdapter` injects `RestClient` via constructor (no manual `RestClient.builder()`)
+- [x] `AnthropicArticleAiAdapter` injects `RestClient` via constructor (no manual `RestClient.builder()`)
+- [x] `AnthropicImmerseAiAdapter` injects `RestClient` via constructor (no manual `RestClient.builder()`)
+- [x] `TOOL_EVALUATE_TALK` is a `private static final` constant
+- [x] `evaluate()` sends `system` as a cacheable block array
+- [x] All 73 existing tests pass (`./gradlew test`)
 
 ---
 
