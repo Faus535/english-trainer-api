@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class ArticleReadingTest {
 
     @Test
-    void createInitializesInProgressWithEmptyParagraphs() {
+    void createInitializesPendingWithEmptyParagraphs() {
         UUID userId = UUID.randomUUID();
         ArticleReading reading = ArticleReading.create(userId, new ArticleTopic("Climate"), ArticleLevel.B2);
 
@@ -20,6 +20,7 @@ class ArticleReadingTest {
         assertEquals("Climate", reading.topic().value());
         assertEquals(ArticleLevel.B2, reading.level());
         assertTrue(reading.paragraphs().isEmpty());
+        assertEquals(0, reading.xpEarned());
         assertNotNull(reading.id());
         assertNotNull(reading.createdAt());
     }
@@ -27,23 +28,25 @@ class ArticleReadingTest {
     @Test
     void completeTransitionsToCompletedAndRegistersEvent() throws ArticleAlreadyCompletedException {
         ArticleReading reading = ArticleReadingMother.inProgress();
-        ArticleReading completed = reading.complete();
+        ArticleReading completed = reading.complete(41);
 
         assertEquals(ArticleStatus.COMPLETED, completed.status());
+        assertEquals(41, completed.xpEarned());
         var events = completed.pullDomainEvents();
         assertEquals(1, events.size());
         assertInstanceOf(ArticleReadingCompletedEvent.class, events.get(0));
         ArticleReadingCompletedEvent event = (ArticleReadingCompletedEvent) events.get(0);
         assertEquals(reading.id().value(), event.articleReadingId());
         assertEquals(reading.userId(), event.userId());
+        assertEquals(41, event.xpEarned());
     }
 
     @Test
     void completeAgainThrowsArticleAlreadyCompletedException() throws ArticleAlreadyCompletedException {
         ArticleReading reading = ArticleReadingMother.inProgress();
-        ArticleReading completed = reading.complete();
+        ArticleReading completed = reading.complete(25);
 
-        assertThrows(ArticleAlreadyCompletedException.class, completed::complete);
+        assertThrows(ArticleAlreadyCompletedException.class, () -> completed.complete(25));
     }
 
     @Test

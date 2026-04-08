@@ -15,8 +15,6 @@ import org.springframework.transaction.event.TransactionalEventListener;
 class ArticleCompletedGamificationListener {
 
     private static final Logger log = LoggerFactory.getLogger(ArticleCompletedGamificationListener.class);
-    private static final int XP_PER_ARTICLE = 25;
-
     private final AuthUserRepository authUserRepository;
     private final AddXpUseCase addXpUseCase;
 
@@ -32,8 +30,8 @@ class ArticleCompletedGamificationListener {
             authUserRepository.findById(new AuthUserId(event.userId()))
                     .ifPresent(authUser -> {
                         try {
-                            addXpUseCase.execute(authUser.userProfileId(), XP_PER_ARTICLE);
-                            log.info("Granted {} XP for completing article {}", XP_PER_ARTICLE,
+                            addXpUseCase.execute(authUser.userProfileId(), event.xpEarned());
+                            log.info("Granted {} XP for completing article {}", event.xpEarned(),
                                     event.articleReadingId());
                         } catch (Exception e) {
                             log.error("Failed to grant XP for article completion: {}", e.getMessage());

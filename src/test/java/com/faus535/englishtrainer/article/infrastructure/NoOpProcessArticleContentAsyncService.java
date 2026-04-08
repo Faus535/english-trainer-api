@@ -9,7 +9,7 @@ public class NoOpProcessArticleContentAsyncService extends ProcessArticleContent
     private boolean processCalled = false;
 
     public NoOpProcessArticleContentAsyncService() {
-        super(null, null, null);
+        super(null, null, null, null);
     }
 
     @Override

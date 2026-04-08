@@ -39,7 +39,7 @@ class ArticleCompletedActivityListenerTest {
         authUserRepository.save(authUser);
         UUID userId = authUser.id().value();
 
-        listener.handle(new ArticleReadingCompletedEvent(UUID.randomUUID(), userId));
+        listener.handle(new ArticleReadingCompletedEvent(UUID.randomUUID(), userId, 25));
 
         verify(recordActivityUseCase).execute(eq(authUser.userProfileId()), any(LocalDate.class));
     }
@@ -49,7 +49,7 @@ class ArticleCompletedActivityListenerTest {
         UUID unknownUserId = UUID.randomUUID();
 
         assertDoesNotThrow(() ->
-                listener.handle(new ArticleReadingCompletedEvent(UUID.randomUUID(), unknownUserId)));
+                listener.handle(new ArticleReadingCompletedEvent(UUID.randomUUID(), unknownUserId, 25)));
         verifyNoInteractions(recordActivityUseCase);
     }
 

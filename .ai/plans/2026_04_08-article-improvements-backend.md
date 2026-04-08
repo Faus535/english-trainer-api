@@ -546,14 +546,14 @@ CREATE INDEX IF NOT EXISTS idx_article_readings_user_xp_earned
 - Edge case: Concurrent SubmitAnswer on same question → UNIQUE constraint enforced by DB
 
 **Acceptance criteria:**
-- [ ] CompleteArticleUseCase returns 202, does NOT wait for questions
-- [ ] XP earned calculated: 25 + (5 * correct) + (2 * marked), persisted to DB
-- [ ] ArticleReadyEvent triggers async question generation with level scaffolding
-- [ ] B1 questions: guided (MC, fill-blank), min_words=20
-- [ ] B2 questions: mixed, min_words=30
-- [ ] C1 questions: analysis/opinion, min_words=40
-- [ ] Questions generated asynchronously, no blocking
-- [ ] Unit + integration tests pass
+- [x] CompleteArticleUseCase returns 202, does NOT wait for questions
+- [x] XP earned calculated: 25 + (5 * correct) + (2 * marked), persisted to DB
+- [x] ArticleReadyEvent triggers async question generation with level scaffolding
+- [x] B1 questions: guided (MC, fill-blank), min_words=20
+- [x] B2 questions: mixed, min_words=30
+- [x] C1 questions: analysis/opinion, min_words=40
+- [x] Questions generated asynchronously, no blocking
+- [x] Unit + integration tests pass
 
 ---
 

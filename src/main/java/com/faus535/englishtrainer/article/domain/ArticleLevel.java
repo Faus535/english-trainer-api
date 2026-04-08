@@ -16,6 +16,22 @@ public enum ArticleLevel {
         return value;
     }
 
+    public int minWords() {
+        return switch (this) {
+            case B1 -> 20;
+            case B2 -> 30;
+            case C1 -> 40;
+        };
+    }
+
+    public String questionStyle() {
+        return switch (this) {
+            case B1 -> "GUIDED";
+            case B2 -> "MIXED";
+            case C1 -> "ANALYSIS";
+        };
+    }
+
     public static ArticleLevel fromString(String level) {
         for (ArticleLevel l : values()) {
             if (l.value.equalsIgnoreCase(level)) {

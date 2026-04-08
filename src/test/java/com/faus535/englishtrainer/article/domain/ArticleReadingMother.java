@@ -15,7 +15,7 @@ public final class ArticleReadingMother {
                 ArticleParagraph.create(id, "Critics argue that the timeline...", 1, ArticleSpeaker.USER)
         );
         return ArticleReading.reconstitute(id, userId, new ArticleTopic("Climate change"),
-                ArticleLevel.B2, "EU Climate Debate", ArticleStatus.IN_PROGRESS, paragraphs, Instant.now());
+                ArticleLevel.B2, "EU Climate Debate", ArticleStatus.IN_PROGRESS, paragraphs, 0, Instant.now());
     }
 
     public static ArticleReading inProgress() {
@@ -29,7 +29,7 @@ public final class ArticleReadingMother {
                 ArticleParagraph.create(id, "Critics argue that the timeline...", 1, ArticleSpeaker.USER)
         );
         return ArticleReading.reconstitute(id, userId, new ArticleTopic("Climate change"),
-                ArticleLevel.B2, "EU Climate Debate", ArticleStatus.COMPLETED, paragraphs, Instant.now());
+                ArticleLevel.B2, "EU Climate Debate", ArticleStatus.COMPLETED, paragraphs, 25, Instant.now());
     }
 
     public static ArticleReading completed() {
@@ -42,6 +42,6 @@ public final class ArticleReadingMother {
                 ArticleParagraph.create(id, "Test paragraph USER...", 1, ArticleSpeaker.USER)
         );
         return ArticleReading.reconstitute(id, userId, new ArticleTopic("Technology"),
-                ArticleLevel.B1, "Tech Article", ArticleStatus.IN_PROGRESS, paragraphs, Instant.now());
+                ArticleLevel.B1, "Tech Article", ArticleStatus.IN_PROGRESS, paragraphs, 0, Instant.now());
     }
 }

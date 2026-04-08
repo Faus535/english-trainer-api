@@ -4,9 +4,10 @@ import com.faus535.englishtrainer.article.domain.*;
 import com.faus535.englishtrainer.article.domain.error.ArticleAccessDeniedException;
 import com.faus535.englishtrainer.article.domain.error.ArticleAlreadyCompletedException;
 import com.faus535.englishtrainer.article.domain.event.ArticleReadingCompletedEvent;
+import com.faus535.englishtrainer.article.infrastructure.InMemoryArticleMarkedWordRepository;
+import com.faus535.englishtrainer.article.infrastructure.InMemoryArticleQuestionAnswerRepository;
 import com.faus535.englishtrainer.article.infrastructure.InMemoryArticleQuestionRepository;
 import com.faus535.englishtrainer.article.infrastructure.InMemoryArticleReadingRepository;
-import com.faus535.englishtrainer.article.infrastructure.StubArticleAiPort;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationEventPublisher;
@@ -20,6 +21,8 @@ import static org.junit.jupiter.api.Assertions.*;
 class CompleteArticleUseCaseTest {
 
     private InMemoryArticleReadingRepository articleReadingRepository;
+    private InMemoryArticleMarkedWordRepository markedWordRepository;
+    private InMemoryArticleQuestionAnswerRepository answerRepository;
     private InMemoryArticleQuestionRepository questionRepository;
     private List<Object> publishedEvents;
     private CompleteArticleUseCase useCase;
@@ -27,16 +30,17 @@ class CompleteArticleUseCaseTest {
     @BeforeEach
     void setUp() {
         articleReadingRepository = new InMemoryArticleReadingRepository();
+        markedWordRepository = new InMemoryArticleMarkedWordRepository();
+        answerRepository = new InMemoryArticleQuestionAnswerRepository();
         questionRepository = new InMemoryArticleQuestionRepository();
         publishedEvents = new ArrayList<>();
         ApplicationEventPublisher publisher = publishedEvents::add;
-        GenerateQuestionsUseCase generateQuestionsUseCase =
-                new GenerateQuestionsUseCase(new StubArticleAiPort(), questionRepository);
-        useCase = new CompleteArticleUseCase(articleReadingRepository, generateQuestionsUseCase, publisher);
+        useCase = new CompleteArticleUseCase(articleReadingRepository, markedWordRepository,
+                answerRepository, questionRepository, publisher);
     }
 
     @Test
-    void happyPathStatusBecomesCompletedAndQuestionsGeneratedAndEventPublished() throws Exception {
+    void shouldCompleteArticleWithBaseXpAndPublishEvent() throws Exception {
         UUID userId = UUID.randomUUID();
         ArticleReading article = ArticleReadingMother.inProgress(userId);
         articleReadingRepository.save(article);
@@ -44,16 +48,38 @@ class CompleteArticleUseCaseTest {
         ArticleReading result = useCase.execute(userId, article.id());
 
         assertEquals(ArticleStatus.COMPLETED, result.status());
-        assertEquals(2, questionRepository.count());
+        assertEquals(25, result.xpEarned());
         assertEquals(1, publishedEvents.size());
         assertInstanceOf(ArticleReadingCompletedEvent.class, publishedEvents.get(0));
         ArticleReadingCompletedEvent event = (ArticleReadingCompletedEvent) publishedEvents.get(0);
-        assertEquals(article.id().value(), event.articleReadingId());
-        assertEquals(userId, event.userId());
+        assertEquals(25, event.xpEarned());
     }
 
     @Test
-    void callingCompleteTwiceThrowsArticleAlreadyCompletedException() throws Exception {
+    void shouldCalculateXpWithCorrectAnswersAndMarkedWords() throws Exception {
+        UUID userId = UUID.randomUUID();
+        ArticleReading article = ArticleReadingMother.inProgress(userId);
+        articleReadingRepository.save(article);
+
+        markedWordRepository.save(ArticleMarkedWordMother.withWord(article.id(), userId, "debate"));
+        markedWordRepository.save(ArticleMarkedWordMother.withWord(article.id(), userId, "policy"));
+        markedWordRepository.save(ArticleMarkedWordMother.withWord(article.id(), userId, "climate"));
+
+        ArticleQuestion q1 = ArticleQuestionMother.withHint(article.id());
+        ArticleQuestion q2 = ArticleQuestionMother.ordered(article.id(), 1);
+        questionRepository.save(q1);
+        questionRepository.save(q2);
+        answerRepository.save(ArticleQuestionAnswerMother.valid(q1.id()));
+        answerRepository.save(ArticleQuestionAnswerMother.withGrading(q2.id()));
+
+        ArticleReading result = useCase.execute(userId, article.id());
+
+        // XP = 25 base + 5*1 (1 correct) + 2*3 (3 words) = 36
+        assertEquals(36, result.xpEarned());
+    }
+
+    @Test
+    void shouldThrowArticleAlreadyCompletedOnSecondCall() throws Exception {
         UUID userId = UUID.randomUUID();
         ArticleReading article = ArticleReadingMother.inProgress(userId);
         articleReadingRepository.save(article);
@@ -65,7 +91,7 @@ class CompleteArticleUseCaseTest {
     }
 
     @Test
-    void throwsArticleAccessDeniedForWrongUser() {
+    void shouldThrowArticleAccessDeniedForWrongUser() {
         UUID ownerUserId = UUID.randomUUID();
         UUID otherUserId = UUID.randomUUID();
         ArticleReading article = ArticleReadingMother.inProgress(ownerUserId);

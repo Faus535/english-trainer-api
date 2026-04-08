@@ -40,9 +40,9 @@ class ArticleCompletedGamificationListenerTest {
         authUserRepository.save(authUser);
         UUID userId = authUser.id().value();
 
-        listener.handle(new ArticleReadingCompletedEvent(UUID.randomUUID(), userId));
+        listener.handle(new ArticleReadingCompletedEvent(UUID.randomUUID(), userId, 41));
 
-        verify(addXpUseCase).execute(eq(authUser.userProfileId()), eq(25));
+        verify(addXpUseCase).execute(eq(authUser.userProfileId()), eq(41));
     }
 
     @Test
@@ -50,7 +50,7 @@ class ArticleCompletedGamificationListenerTest {
         UUID unknownUserId = UUID.randomUUID();
 
         assertDoesNotThrow(() ->
-                listener.handle(new ArticleReadingCompletedEvent(UUID.randomUUID(), unknownUserId)));
+                listener.handle(new ArticleReadingCompletedEvent(UUID.randomUUID(), unknownUserId, 25)));
         verifyNoInteractions(addXpUseCase);
     }
 

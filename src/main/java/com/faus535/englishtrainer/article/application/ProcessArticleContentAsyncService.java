@@ -1,8 +1,10 @@
 package com.faus535.englishtrainer.article.application;
 
 import com.faus535.englishtrainer.article.domain.*;
+import com.faus535.englishtrainer.article.domain.event.ArticleReadyEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -19,13 +21,16 @@ public class ProcessArticleContentAsyncService {
     private final ArticleReadingRepository readingRepository;
     private final ArticleAiPort aiPort;
     private final TransactionTemplate transactionTemplate;
+    private final ApplicationEventPublisher eventPublisher;
 
     public ProcessArticleContentAsyncService(ArticleReadingRepository readingRepository,
                                        ArticleAiPort aiPort,
-                                       TransactionTemplate transactionTemplate) {
+                                       TransactionTemplate transactionTemplate,
+                                       ApplicationEventPublisher eventPublisher) {
         this.readingRepository = readingRepository;
         this.aiPort = aiPort;
         this.transactionTemplate = transactionTemplate;
+        this.eventPublisher = eventPublisher;
     }
 
     @Async("articleAsyncExecutor")
@@ -53,11 +58,14 @@ public class ProcessArticleContentAsyncService {
                             ArticleSpeaker.fromString(p.speaker())))
                     .toList();
 
-            transactionTemplate.executeWithoutResult(status -> {
+            UUID userId = transactionTemplate.execute(status -> {
                 ArticleReading current = readingRepository.findById(new ArticleReadingId(articleId))
                         .orElseThrow();
                 readingRepository.save(current.markReady(result.title(), paragraphs));
+                return current.userId();
             });
+
+            eventPublisher.publishEvent(new ArticleReadyEvent(articleId, userId));
 
             log.info("Article content processed successfully: {}", articleId);
 

@@ -37,6 +37,9 @@ class ArticleReadingEntity implements Persistable<UUID> {
     @Column(length = 20, nullable = false)
     private String status;
 
+    @Column(name = "xp_earned", nullable = false)
+    private int xpEarned;
+
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
 
@@ -56,6 +59,7 @@ class ArticleReadingEntity implements Persistable<UUID> {
         entity.level = reading.level().value();
         entity.title = reading.title();
         entity.status = reading.status().value();
+        entity.xpEarned = reading.xpEarned();
         entity.createdAt = reading.createdAt();
         entity.paragraphs = reading.paragraphs().stream()
                 .map(ArticleParagraphEntity::fromDomain)
@@ -75,12 +79,14 @@ class ArticleReadingEntity implements Persistable<UUID> {
                 title,
                 ArticleStatus.fromString(status),
                 domainParagraphs,
+                xpEarned,
                 createdAt);
     }
 
     void updateFrom(ArticleReading reading) {
         this.title = reading.title();
         this.status = reading.status().value();
+        this.xpEarned = reading.xpEarned();
         this.paragraphs.clear();
         this.paragraphs.addAll(reading.paragraphs().stream()
                 .map(ArticleParagraphEntity::fromDomain)

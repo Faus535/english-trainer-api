@@ -1,11 +1,12 @@
 package com.faus535.englishtrainer.article.infrastructure.controller;
 
 import com.faus535.englishtrainer.article.application.CompleteArticleUseCase;
+import com.faus535.englishtrainer.article.domain.ArticleReading;
 import com.faus535.englishtrainer.article.domain.ArticleReadingId;
 import com.faus535.englishtrainer.article.domain.error.ArticleAccessDeniedException;
-import com.faus535.englishtrainer.article.domain.error.ArticleAiException;
 import com.faus535.englishtrainer.article.domain.error.ArticleAlreadyCompletedException;
 import com.faus535.englishtrainer.article.domain.error.ArticleNotFoundException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,15 +25,19 @@ class CompleteArticleController {
         this.useCase = useCase;
     }
 
+    record CompleteArticleResponse(UUID id, String status, int xpEarned) {}
+
     @PostMapping("/api/article/{id}/complete")
-    ResponseEntity<Void> handle(@PathVariable UUID id, Authentication authentication)
+    ResponseEntity<CompleteArticleResponse> handle(@PathVariable UUID id, Authentication authentication)
             throws ArticleNotFoundException, ArticleAccessDeniedException,
-            ArticleAlreadyCompletedException, ArticleAiException {
+            ArticleAlreadyCompletedException {
         @SuppressWarnings("unchecked")
         Map<String, String> details = (Map<String, String>) authentication.getDetails();
         UUID userId = UUID.fromString(details.get("profileId"));
 
-        useCase.execute(userId, new ArticleReadingId(id));
-        return ResponseEntity.noContent().build();
+        ArticleReading completed = useCase.execute(userId, new ArticleReadingId(id));
+        return ResponseEntity.status(HttpStatus.ACCEPTED)
+                .body(new CompleteArticleResponse(
+                        completed.id().value(), completed.status().value(), completed.xpEarned()));
     }
 }
