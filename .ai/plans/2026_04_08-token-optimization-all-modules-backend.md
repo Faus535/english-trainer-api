@@ -180,11 +180,11 @@ Replace with:
 The three system strings (TEXT/AUDIO/VIDEO) are ~25 tokens each — below the cache minimum. Same rationale: added for forward-compatibility.
 
 **Acceptance criteria**:
-- [ ] `TOOL_PROCESS_CONTENT` and `TOOL_GENERATE_CONTENT` are `private static final` constants
-- [ ] `buildProcessContentTool()` and `buildGenerateContentTool()` methods are removed
-- [ ] `processContent()` sends `system` as a cacheable block array (not plain string)
-- [ ] `generateContent()` sends `system` as a cacheable block array (not plain string)
-- [ ] All 73 existing tests pass (`./gradlew test`)
+- [x] `TOOL_PROCESS_CONTENT` and `TOOL_GENERATE_CONTENT` are `private static final` constants
+- [x] `buildProcessContentTool()` and `buildGenerateContentTool()` methods are removed
+- [x] `processContent()` sends `system` as a cacheable block array (not plain string)
+- [x] `generateContent()` sends `system` as a cacheable block array (not plain string)
+- [x] All 73 existing tests pass (`./gradlew test`)
 
 ---
 

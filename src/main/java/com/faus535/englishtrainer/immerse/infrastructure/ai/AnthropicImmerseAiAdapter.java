@@ -25,6 +25,65 @@ class AnthropicImmerseAiAdapter implements ImmerseAiPort {
     private static final Logger log = LoggerFactory.getLogger(AnthropicImmerseAiAdapter.class);
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
+    private static final Map<String, Object> TOOL_PROCESS_CONTENT = Map.of(
+            "name", "process_content",
+            "description", "Process English text for learners",
+            "input_schema", Map.of(
+                    "type", "object",
+                    "properties", Map.of(
+                            "processedText", Map.of("type", "string", "description", "Annotated text"),
+                            "detectedLevel", Map.of("type", "string", "description", "CEFR level"),
+                            "vocabulary", Map.of("type", "array", "items", Map.of(
+                                    "type", "object",
+                                    "properties", Map.of(
+                                            "word", Map.of("type", "string"),
+                                            "definition", Map.of("type", "string"),
+                                            "exampleSentence", Map.of("type", "string"),
+                                            "cefrLevel", Map.of("type", "string")
+                                    ))),
+                            "exercises", Map.of("type", "array", "items", Map.of(
+                                    "type", "object",
+                                    "properties", Map.of(
+                                            "type", Map.of("type", "string", "description", "MULTIPLE_CHOICE|FILL_THE_GAP|TRUE_FALSE|WORD_DEFINITION"),
+                                            "question", Map.of("type", "string"),
+                                            "correctAnswer", Map.of("type", "string"),
+                                            "options", Map.of("type", "array", "items", Map.of("type", "string"))
+                                    )))
+                    ),
+                    "required", List.of("processedText", "detectedLevel", "vocabulary", "exercises")
+            )
+    );
+
+    private static final Map<String, Object> TOOL_GENERATE_CONTENT = Map.of(
+            "name", "generate_content",
+            "description", "Generate English learning content",
+            "input_schema", Map.of(
+                    "type", "object",
+                    "properties", Map.ofEntries(
+                            Map.entry("title", Map.of("type", "string", "description", "Content title")),
+                            Map.entry("text", Map.of("type", "string", "description", "Content text")),
+                            Map.entry("detectedLevel", Map.of("type", "string", "description", "CEFR level")),
+                            Map.entry("vocabulary", Map.of("type", "array", "items", Map.of(
+                                    "type", "object",
+                                    "properties", Map.of(
+                                            "word", Map.of("type", "string"),
+                                            "definition", Map.of("type", "string"),
+                                            "exampleSentence", Map.of("type", "string", "description", "Example"),
+                                            "cefrLevel", Map.of("type", "string")
+                                    )))),
+                            Map.entry("exercises", Map.of("type", "array", "items", Map.of(
+                                    "type", "object",
+                                    "properties", Map.of(
+                                            "type", Map.of("type", "string", "description", "MULTIPLE_CHOICE|FILL_THE_GAP|TRUE_FALSE|WORD_DEFINITION"),
+                                            "question", Map.of("type", "string"),
+                                            "correctAnswer", Map.of("type", "string"),
+                                            "options", Map.of("type", "array", "items", Map.of("type", "string"))
+                                    ))))
+                    ),
+                    "required", List.of("title", "text", "detectedLevel", "vocabulary", "exercises")
+            )
+    );
+
     private final RestClient restClient;
     private final String model;
 
@@ -52,15 +111,18 @@ class AnthropicImmerseAiAdapter implements ImmerseAiPort {
     public ImmerseProcessResult processContent(String rawText, String level) throws ImmerseAiException {
         try {
             ImmerseContentSizing sizing = ImmerseContentSizing.forLevel(level);
-            Map<String, Object> tool = buildProcessContentTool();
             String userMessage = "Process this text for a %s level English learner:\n\n%s"
                     .formatted(level != null ? level.toUpperCase() : "B1", rawText);
 
             Map<String, Object> requestBody = Map.of(
                     "model", model,
                     "max_tokens", sizing.processingMaxTokens(),
-                    "system", "Process English text for learners. Extract vocabulary, annotate difficulty, generate exercises.",
-                    "tools", List.of(tool),
+                    "system", List.of(Map.of(
+                            "type", "text",
+                            "text", "Process English text for learners. Extract vocabulary, annotate difficulty, generate exercises.",
+                            "cache_control", Map.of("type", "ephemeral")
+                    )),
+                    "tools", List.of(TOOL_PROCESS_CONTENT),
                     "tool_choice", Map.of("type", "tool", "name", "process_content"),
                     "messages", List.of(Map.of("role", "user", "content", userMessage))
             );
@@ -131,44 +193,12 @@ class AnthropicImmerseAiAdapter implements ImmerseAiPort {
         return new ImmerseProcessResult(processedText, detectedLevel, vocabulary, exercises);
     }
 
-    private Map<String, Object> buildProcessContentTool() {
-        return Map.of(
-                "name", "process_content",
-                "description", "Process English text for learners",
-                "input_schema", Map.of(
-                        "type", "object",
-                        "properties", Map.of(
-                                "processedText", Map.of("type", "string", "description", "Annotated text"),
-                                "detectedLevel", Map.of("type", "string", "description", "CEFR level"),
-                                "vocabulary", Map.of("type", "array", "items", Map.of(
-                                        "type", "object",
-                                        "properties", Map.of(
-                                                "word", Map.of("type", "string"),
-                                                "definition", Map.of("type", "string"),
-                                                "exampleSentence", Map.of("type", "string"),
-                                                "cefrLevel", Map.of("type", "string")
-                                        ))),
-                                "exercises", Map.of("type", "array", "items", Map.of(
-                                        "type", "object",
-                                        "properties", Map.of(
-                                                "type", Map.of("type", "string", "description", "MULTIPLE_CHOICE|FILL_THE_GAP|TRUE_FALSE|WORD_DEFINITION"),
-                                                "question", Map.of("type", "string"),
-                                                "correctAnswer", Map.of("type", "string"),
-                                                "options", Map.of("type", "array", "items", Map.of("type", "string"))
-                                        )))
-                        ),
-                        "required", List.of("processedText", "detectedLevel", "vocabulary", "exercises")
-                )
-        );
-    }
-
     @Override
     @SuppressWarnings("unchecked")
     public ImmerseGenerateResult generateContent(ContentType contentType, String level, String topic)
             throws ImmerseAiException {
         try {
             ImmerseContentSizing sizing = ImmerseContentSizing.forLevel(level);
-            Map<String, Object> tool = buildGenerateContentTool();
             String effectiveLevel = level != null ? level.toUpperCase() : "B1";
             String systemPrompt = buildGenerateSystemPrompt(contentType);
             String userMessage = buildGenerateUserMessage(contentType, effectiveLevel, topic, sizing);
@@ -176,8 +206,12 @@ class AnthropicImmerseAiAdapter implements ImmerseAiPort {
             Map<String, Object> requestBody = Map.of(
                     "model", model,
                     "max_tokens", sizing.generateMaxTokens(),
-                    "system", systemPrompt,
-                    "tools", List.of(tool),
+                    "system", List.of(Map.of(
+                            "type", "text",
+                            "text", systemPrompt,
+                            "cache_control", Map.of("type", "ephemeral")
+                    )),
+                    "tools", List.of(TOOL_GENERATE_CONTENT),
                     "tool_choice", Map.of("type", "tool", "name", "generate_content"),
                     "messages", List.of(Map.of("role", "user", "content", userMessage))
             );
@@ -280,37 +314,5 @@ class AnthropicImmerseAiAdapter implements ImmerseAiPort {
         }
 
         return new ImmerseGenerateResult(title, text, detectedLevel, vocabulary, exercises);
-    }
-
-    private Map<String, Object> buildGenerateContentTool() {
-        return Map.of(
-                "name", "generate_content",
-                "description", "Generate English learning content",
-                "input_schema", Map.of(
-                        "type", "object",
-                        "properties", Map.ofEntries(
-                                Map.entry("title", Map.of("type", "string", "description", "Content title")),
-                                Map.entry("text", Map.of("type", "string", "description", "Content text")),
-                                Map.entry("detectedLevel", Map.of("type", "string", "description", "CEFR level")),
-                                Map.entry("vocabulary", Map.of("type", "array", "items", Map.of(
-                                        "type", "object",
-                                        "properties", Map.of(
-                                                "word", Map.of("type", "string"),
-                                                "definition", Map.of("type", "string"),
-                                                "exampleSentence", Map.of("type", "string", "description", "Example"),
-                                                "cefrLevel", Map.of("type", "string")
-                                        )))),
-                                Map.entry("exercises", Map.of("type", "array", "items", Map.of(
-                                        "type", "object",
-                                        "properties", Map.of(
-                                                "type", Map.of("type", "string", "description", "MULTIPLE_CHOICE|FILL_THE_GAP|TRUE_FALSE|WORD_DEFINITION"),
-                                                "question", Map.of("type", "string"),
-                                                "correctAnswer", Map.of("type", "string"),
-                                                "options", Map.of("type", "array", "items", Map.of("type", "string"))
-                                        ))))
-                        ),
-                        "required", List.of("title", "text", "detectedLevel", "vocabulary", "exercises")
-                )
-        );
     }
 }
