@@ -1,10 +1,8 @@
 package com.faus535.englishtrainer.article.application;
 
 import com.faus535.englishtrainer.article.domain.*;
-import com.faus535.englishtrainer.article.domain.error.ArticleAiException;
-import com.faus535.englishtrainer.article.infrastructure.FailingStubArticleAiPort;
 import com.faus535.englishtrainer.article.infrastructure.InMemoryArticleReadingRepository;
-import com.faus535.englishtrainer.article.infrastructure.StubArticleAiPort;
+import com.faus535.englishtrainer.article.infrastructure.NoOpProcessArticleContentAsyncService;
 import com.faus535.englishtrainer.user.domain.UserProfile;
 import com.faus535.englishtrainer.user.domain.UserProfileId;
 import com.faus535.englishtrainer.user.domain.error.UserProfileNotFoundException;
@@ -20,13 +18,15 @@ class GenerateArticleUseCaseTest {
 
     private InMemoryArticleReadingRepository repository;
     private InMemoryUserProfileRepository userProfileRepository;
+    private NoOpProcessArticleContentAsyncService asyncService;
     private GenerateArticleUseCase useCase;
 
     @BeforeEach
     void setUp() {
         repository = new InMemoryArticleReadingRepository();
         userProfileRepository = new InMemoryUserProfileRepository();
-        useCase = new GenerateArticleUseCase(repository, new StubArticleAiPort(), userProfileRepository);
+        asyncService = new NoOpProcessArticleContentAsyncService();
+        useCase = new GenerateArticleUseCase(repository, asyncService, userProfileRepository);
     }
 
     private UUID createUser() {
@@ -37,35 +37,26 @@ class GenerateArticleUseCaseTest {
     }
 
     @Test
-    void happyPathSavesArticleWithTitleAndParagraphs() throws Exception {
+    void shouldSavePendingArticleAndTriggerAsyncProcessing() throws Exception {
         UUID userId = createUser();
 
         ArticleReading result = useCase.execute(userId, new ArticleTopic("Climate change"), ArticleLevel.B2);
 
         assertNotNull(result.id());
-        assertEquals("EU's New Climate Targets Spark Debate", result.title());
-        assertEquals(ArticleStatus.IN_PROGRESS, result.status());
-        assertEquals(3, result.paragraphs().size());
-        assertEquals(ArticleSpeaker.AI, result.paragraphs().get(0).speaker());
+        assertEquals(ArticleStatus.PENDING, result.status());
+        assertEquals("", result.title());
+        assertTrue(result.paragraphs().isEmpty());
         assertEquals(1, repository.count());
+        assertTrue(asyncService.wasProcessCalled());
     }
 
     @Test
-    void aiFailureThrowsArticleAiException() {
-        UUID userId = createUser();
-        useCase = new GenerateArticleUseCase(repository, new FailingStubArticleAiPort(), userProfileRepository);
-
-        assertThrows(ArticleAiException.class,
-                () -> useCase.execute(userId, new ArticleTopic("Climate"), ArticleLevel.B1));
-        assertEquals(0, repository.count());
-    }
-
-    @Test
-    void userNotFoundThrowsUserProfileNotFoundException() {
+    void shouldThrowUserProfileNotFoundWhenUserDoesNotExist() {
         UUID unknownUserId = UUID.randomUUID();
 
         assertThrows(UserProfileNotFoundException.class,
                 () -> useCase.execute(unknownUserId, new ArticleTopic("Tech"), ArticleLevel.B1));
         assertEquals(0, repository.count());
+        assertFalse(asyncService.wasProcessCalled());
     }
 }

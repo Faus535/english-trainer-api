@@ -354,12 +354,12 @@ CREATE INDEX IF NOT EXISTS idx_article_readings_user_status_created
 - Integration: ProcessArticleContentAsyncServiceIT (Testcontainers) — verify database transitions through PENDING → PROCESSING → READY
 
 **Acceptance criteria:**
-- [ ] POST /api/article/generate returns 202 with status=PENDING
-- [ ] Article status transitions PENDING → PROCESSING → READY asynchronously
-- [ ] On AI failure, status = FAILED, failure_reason populated
-- [ ] Database migration applied, new columns + index created
-- [ ] Backward compatibility: legacy IN_PROGRESS/COMPLETED still supported
-- [ ] Unit + integration tests pass
+- [x] POST /api/article/generate returns 202 with status=PENDING
+- [x] Article status transitions PENDING → PROCESSING → READY asynchronously
+- [x] On AI failure, status = FAILED, failure_reason populated
+- [x] Database migration applied, new columns + index created
+- [x] Backward compatibility: legacy IN_PROGRESS/COMPLETED still supported
+- [x] Unit + integration tests pass
 
 ---
 

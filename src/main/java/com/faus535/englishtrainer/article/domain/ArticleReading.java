@@ -34,7 +34,7 @@ public final class ArticleReading extends AggregateRoot<ArticleReadingId> {
 
     public static ArticleReading create(UUID userId, ArticleTopic topic, ArticleLevel level) {
         return new ArticleReading(ArticleReadingId.generate(), userId, topic, level,
-                "", ArticleStatus.IN_PROGRESS, List.of(), Instant.now());
+                "", ArticleStatus.PENDING, List.of(), Instant.now());
     }
 
     public static ArticleReading reconstitute(ArticleReadingId id, UUID userId, ArticleTopic topic,
@@ -45,6 +45,18 @@ public final class ArticleReading extends AggregateRoot<ArticleReadingId> {
 
     public ArticleReading withTitleAndParagraphs(String title, List<ArticleParagraph> paragraphs) {
         return new ArticleReading(id, userId, topic, level, title, status, paragraphs, createdAt);
+    }
+
+    public ArticleReading markProcessing() {
+        return new ArticleReading(id, userId, topic, level, title, ArticleStatus.PROCESSING, paragraphs, createdAt);
+    }
+
+    public ArticleReading markReady(String title, List<ArticleParagraph> paragraphs) {
+        return new ArticleReading(id, userId, topic, level, title, ArticleStatus.READY, paragraphs, createdAt);
+    }
+
+    public ArticleReading markFailed() {
+        return new ArticleReading(id, userId, topic, level, title, ArticleStatus.FAILED, paragraphs, createdAt);
     }
 
     public ArticleReading complete() throws ArticleAlreadyCompletedException {

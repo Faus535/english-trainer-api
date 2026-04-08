@@ -15,7 +15,7 @@ class ArticleReadingTest {
         UUID userId = UUID.randomUUID();
         ArticleReading reading = ArticleReading.create(userId, new ArticleTopic("Climate"), ArticleLevel.B2);
 
-        assertEquals(ArticleStatus.IN_PROGRESS, reading.status());
+        assertEquals(ArticleStatus.PENDING, reading.status());
         assertEquals(userId, reading.userId());
         assertEquals("Climate", reading.topic().value());
         assertEquals(ArticleLevel.B2, reading.level());
@@ -58,6 +58,6 @@ class ArticleReadingTest {
 
         assertEquals("Tech Advances", updated.title());
         assertEquals(2, updated.paragraphs().size());
-        assertEquals(ArticleStatus.IN_PROGRESS, updated.status());
+        assertEquals(ArticleStatus.PENDING, updated.status());
     }
 }

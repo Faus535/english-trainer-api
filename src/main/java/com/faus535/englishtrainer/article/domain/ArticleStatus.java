@@ -2,6 +2,10 @@ package com.faus535.englishtrainer.article.domain;
 
 public enum ArticleStatus {
 
+    PENDING("PENDING"),
+    PROCESSING("PROCESSING"),
+    READY("READY"),
+    FAILED("FAILED"),
     IN_PROGRESS("IN_PROGRESS"),
     COMPLETED("COMPLETED");
 
