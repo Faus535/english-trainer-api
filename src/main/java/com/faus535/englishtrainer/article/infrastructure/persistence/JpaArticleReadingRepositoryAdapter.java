@@ -41,4 +41,10 @@ class JpaArticleReadingRepositoryAdapter implements ArticleReadingRepository {
                 .map(ArticleReadingEntity::toDomain)
                 .toList();
     }
+
+    @Override
+    public void deleteById(ArticleReadingId id) {
+        jpaRepository.deleteById(id.value());
+        jpaRepository.flush();
+    }
 }

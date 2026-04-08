@@ -1,37 +1,36 @@
 package com.faus535.englishtrainer.article.infrastructure.controller;
 
-import com.faus535.englishtrainer.article.application.GetArticleQuestionsWithAnswersUseCase;
+import com.faus535.englishtrainer.article.application.DeleteArticleUseCase;
 import com.faus535.englishtrainer.article.domain.ArticleReadingId;
-import com.faus535.englishtrainer.article.domain.QuestionWithAnswer;
 import com.faus535.englishtrainer.article.domain.error.ArticleAccessDeniedException;
+import com.faus535.englishtrainer.article.domain.error.ArticleCannotBeDeletedException;
 import com.faus535.englishtrainer.article.domain.error.ArticleNotFoundException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 @RestController
-class GetArticleQuestionsController {
+class DeleteArticleController {
 
-    private final GetArticleQuestionsWithAnswersUseCase useCase;
+    private final DeleteArticleUseCase useCase;
 
-    GetArticleQuestionsController(GetArticleQuestionsWithAnswersUseCase useCase) {
+    DeleteArticleController(DeleteArticleUseCase useCase) {
         this.useCase = useCase;
     }
 
-    @GetMapping("/api/article/{id}/questions")
-    ResponseEntity<List<QuestionWithAnswer>> handle(@PathVariable UUID id, Authentication authentication)
-            throws ArticleNotFoundException, ArticleAccessDeniedException {
+    @DeleteMapping("/api/article/{id}")
+    ResponseEntity<Void> handle(@PathVariable UUID id, Authentication authentication)
+            throws ArticleNotFoundException, ArticleAccessDeniedException, ArticleCannotBeDeletedException {
         @SuppressWarnings("unchecked")
         Map<String, String> details = (Map<String, String>) authentication.getDetails();
         UUID userId = UUID.fromString(details.get("profileId"));
 
-        List<QuestionWithAnswer> questions = useCase.execute(userId, new ArticleReadingId(id));
-        return ResponseEntity.ok(questions);
+        useCase.execute(userId, new ArticleReadingId(id));
+        return ResponseEntity.noContent().build();
     }
 }

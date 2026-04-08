@@ -11,4 +11,6 @@ public interface ArticleReadingRepository {
     Optional<ArticleReading> findById(ArticleReadingId id);
 
     List<ArticleReading> findByUserIdOrderByCreatedAtDesc(UUID userId);
+
+    void deleteById(ArticleReadingId id);
 }

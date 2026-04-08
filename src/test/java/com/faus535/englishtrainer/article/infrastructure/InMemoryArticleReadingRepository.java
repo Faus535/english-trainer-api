@@ -28,6 +28,11 @@ public class InMemoryArticleReadingRepository implements ArticleReadingRepositor
                 .toList();
     }
 
+    @Override
+    public void deleteById(ArticleReadingId id) {
+        store.remove(id.value());
+    }
+
     public int count() { return store.size(); }
     public void clear() { store.clear(); }
 }
