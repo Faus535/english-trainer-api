@@ -774,13 +774,13 @@ public class ArticleWordMarkedReviewListenerIT extends ArticleIntegrationTestBas
 - Async services tested with TransactionTemplate and eventual consistency waits
 
 **Acceptance criteria:**
-- [ ] All 10 integration test classes created with >90% use case coverage
-- [ ] All tests pass on clean PostgreSQL container
-- [ ] Constraint violations caught (UNIQUE, FK, CHECK)
-- [ ] Cascade deletes verified
-- [ ] XP calculation validated end-to-end
-- [ ] Async event listeners verified
-- [ ] N+1 query risks identified and mitigated
+- [x] All 10 integration test classes created with >90% use case coverage
+- [x] All tests pass on clean PostgreSQL container
+- [x] Constraint violations caught (UNIQUE, FK, CHECK)
+- [x] Cascade deletes verified
+- [x] XP calculation validated end-to-end
+- [x] Async event listeners verified
+- [x] N+1 query risks identified and mitigated
 
 ---
 
