@@ -174,11 +174,11 @@ POST /api/profiles/{id}/sessions        → RecordStudySessionController
 - Run `/revisar` after
 
 **Acceptance criteria**:
-- [ ] No `SubmitTalkSpeechController` file exists
-- [ ] `anthropic.max-tokens=1500` in application.properties
-- [ ] All tests still pass (no compilation errors from removed controller)
-- [ ] Verify compilation
-- [ ] Verify tests pass
+- [x] No `SubmitTalkSpeechController` file exists
+- [x] `anthropic.max-tokens=1500` in application.properties
+- [x] All tests still pass (no compilation errors from removed controller)
+- [x] Verify compilation
+- [x] Verify tests pass
 - [ ] Human review
 - [ ] Commit
 
