@@ -276,10 +276,10 @@ public List<ReviewItem> execute(UUID userId, int limit) {
 **`SubmitReviewResultUseCaseTest.java`** — `assertEquals(1, updated.repetitions())` (was `consecutiveCorrect()`)
 
 **Acceptance criteria**:
-- [ ] `./gradlew test --tests "*.review.*"` all green
-- [ ] No `Instant` references in application or controller layer
-- [ ] Verify compilation
-- [ ] Verify tests pass
+- [x] `./gradlew test --tests "*.review.*"` all green
+- [x] No `Instant` references in application or controller layer
+- [x] Verify compilation
+- [x] Verify tests pass
 - [ ] Human review
 - [ ] Commit: `feat(review): align GetReviewQueue and controllers to SM-2 LocalDate contracts`
 
