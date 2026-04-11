@@ -149,10 +149,10 @@ POST /api/profiles/{id}/sessions        → RecordStudySessionController
 - `RecordStudySessionUseCaseTest.execute_throwsUserNotFoundException_whenUserNotFound()`
 
 **Acceptance criteria**:
-- [ ] `POST /api/profiles/{id}/sessions` returns 201
-- [ ] Session persisted to `study_sessions` table
-- [ ] Verify compilation
-- [ ] Verify tests pass
+- [x] `POST /api/profiles/{id}/sessions` returns 201
+- [x] Session persisted to `study_sessions` table
+- [x] Verify compilation
+- [x] Verify tests pass
 - [ ] Human review
 - [ ] Commit
 
