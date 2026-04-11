@@ -48,7 +48,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             authToken.setDetails(Map.of("profileId", profileId));
             SecurityContextHolder.getContext().setAuthentication(authToken);
         } else {
-            log.debug("Invalid/expired token for {} {}", request.getMethod(), request.getRequestURI());
+            log.warn("Invalid/expired JWT token for {} {} — returning 401", request.getMethod(), request.getRequestURI());
         }
 
         chain.doFilter(request, response);

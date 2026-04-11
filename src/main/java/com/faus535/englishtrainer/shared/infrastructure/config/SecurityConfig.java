@@ -13,7 +13,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.http.HttpStatus;
 
@@ -55,7 +54,12 @@ public class SecurityConfig {
                         .requestMatchers("/api/**").authenticated()
                         .anyRequest().authenticated())
                 .exceptionHandling(ex -> ex
-                        .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
+                        .authenticationEntryPoint((request, response, authException) -> {
+                            log.warn("401 Unauthorized: {} {} from {} — {}",
+                                    request.getMethod(), request.getRequestURI(),
+                                    request.getHeader("Origin"), authException.getMessage());
+                            response.setStatus(HttpStatus.UNAUTHORIZED.value());
+                        })
                         .accessDeniedHandler((request, response, accessDeniedException) -> {
                             log.warn("403 Access Denied: {} {} from {} - {}",
                                     request.getMethod(), request.getRequestURI(),
