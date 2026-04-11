@@ -47,4 +47,16 @@ public class StubArticleAiPort implements ArticleAiPort {
                 "What do you think this article will discuss about climate change?"
         );
     }
+
+    @Override
+    public WordEnrichmentResult enrichWord(String wordOrPhrase, String contextSentence, String articleParagraph)
+            throws ArticleAiException {
+        return new WordEnrichmentResult(
+                "To cause or provoke a discussion or argument",
+                "/spɑːrk dɪˈbeɪt/",
+                List.of("ignite discussion", "stir controversy", "provoke argument"),
+                "The new reforms are likely to spark debate in parliament.",
+                "verb phrase"
+        );
+    }
 }

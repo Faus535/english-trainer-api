@@ -98,6 +98,22 @@ class AnthropicArticleAiAdapter implements ArticleAiPort {
             )
     );
 
+    private static final Map<String, Object> TOOL_ENRICH_WORD = Map.of(
+            "name", "enrich_word",
+            "description", "Enrich an English word or phrase for a language learner with definition, phonetics, synonyms, example sentence, and part of speech",
+            "input_schema", Map.of(
+                    "type", "object",
+                    "properties", Map.ofEntries(
+                            Map.entry("definition", Map.of("type", "string", "description", "Learner-friendly English definition in context")),
+                            Map.entry("phonetics", Map.of("type", "string", "description", "IPA transcription, e.g. /spɑːrk dɪˈbeɪt/")),
+                            Map.entry("synonyms", Map.of("type", "array", "items", Map.of("type", "string"), "description", "2-4 synonyms or related phrases")),
+                            Map.entry("example_sentence", Map.of("type", "string", "description", "Natural example sentence using the word/phrase")),
+                            Map.entry("part_of_speech", Map.of("type", "string", "description", "e.g. noun, verb phrase, adjective"))
+                    ),
+                    "required", List.of("definition", "phonetics", "synonyms", "example_sentence", "part_of_speech")
+            )
+    );
+
     private static final Map<String, Object> TOOL_CORRECT_ANSWER = Map.of(
             "name", "correct_answer",
             "description", "Grade and provide feedback on a student's answer",
@@ -327,6 +343,61 @@ class AnthropicArticleAiAdapter implements ArticleAiPort {
         } catch (Exception e) {
             log.error("Answer correction failed: {}", e.getMessage(), e);
             throw new ArticleAiException("Answer correction failed", e);
+        }
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public WordEnrichmentResult enrichWord(String wordOrPhrase, String contextSentence, String articleParagraph)
+            throws ArticleAiException {
+        try {
+            String userMessage = ("Enrich the English word/phrase '%s' for a language learner. " +
+                    "Context: '%s'. Paragraph: '%s'.")
+                    .formatted(wordOrPhrase,
+                            contextSentence != null ? contextSentence : "",
+                            articleParagraph != null ? articleParagraph : "");
+
+            Map<String, Object> requestBody = Map.of(
+                    "model", model,
+                    "max_tokens", 300,
+                    "system", List.of(Map.of(
+                            "type", "text",
+                            "text", "You are an English language educator. Provide learner-friendly, context-aware word enrichment for language learners.",
+                            "cache_control", Map.of("type", "ephemeral")
+                    )),
+                    "tools", List.of(TOOL_ENRICH_WORD),
+                    "tool_choice", Map.of("type", "tool", "name", "enrich_word"),
+                    "messages", List.of(Map.of("role", "user", "content", userMessage))
+            );
+
+            Map<String, Object> response = restClient.post()
+                    .uri("/messages")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(requestBody)
+                    .retrieve()
+                    .body(Map.class);
+
+            if (response == null) throw new ArticleAiException("Empty response from Claude API");
+
+            List<Map<String, Object>> content = (List<Map<String, Object>>) response.get("content");
+            for (Map<String, Object> block : content) {
+                if ("tool_use".equals(block.get("type"))) {
+                    Map<String, Object> input = (Map<String, Object>) block.get("input");
+                    List<String> synonyms = (List<String>) input.get("synonyms");
+                    return new WordEnrichmentResult(
+                            (String) input.get("definition"),
+                            (String) input.get("phonetics"),
+                            synonyms != null ? synonyms : List.of(),
+                            (String) input.get("example_sentence"),
+                            (String) input.get("part_of_speech"));
+                }
+            }
+            throw new ArticleAiException("No tool_use block in Claude response");
+        } catch (ArticleAiException e) {
+            throw e;
+        } catch (Exception e) {
+            log.error("Word enrichment failed: {}", e.getMessage(), e);
+            throw new ArticleAiException("Word enrichment failed", e);
         }
     }
 

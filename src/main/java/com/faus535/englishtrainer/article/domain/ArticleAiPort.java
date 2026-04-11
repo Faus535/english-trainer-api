@@ -16,6 +16,8 @@ public interface ArticleAiPort {
 
     PreReadingResult generatePreReading(String articleText, String level) throws ArticleAiException;
 
+    WordEnrichmentResult enrichWord(String wordOrPhrase, String contextSentence, String articleParagraph) throws ArticleAiException;
+
     record ArticleGenerateResult(String title, List<ArticleParagraphData> paragraphs) {}
 
     record ArticleParagraphData(String content, int orderIndex, String speaker) {}
@@ -32,4 +34,7 @@ public interface ArticleAiPort {
     record PreReadingResult(List<KeyWordData> keyWords, String predictiveQuestion) {}
 
     record KeyWordData(String word, String translation, String definition) {}
+
+    record WordEnrichmentResult(String definition, String phonetics, List<String> synonyms,
+                                String exampleSentence, String partOfSpeech) {}
 }

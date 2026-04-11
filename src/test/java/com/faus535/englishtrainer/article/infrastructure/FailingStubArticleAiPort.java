@@ -29,4 +29,10 @@ public class FailingStubArticleAiPort implements ArticleAiPort {
     public PreReadingResult generatePreReading(String articleText, String level) throws ArticleAiException {
         throw new ArticleAiException("Claude API unavailable");
     }
+
+    @Override
+    public WordEnrichmentResult enrichWord(String wordOrPhrase, String contextSentence, String articleParagraph)
+            throws ArticleAiException {
+        throw new ArticleAiException("Claude API unavailable");
+    }
 }
