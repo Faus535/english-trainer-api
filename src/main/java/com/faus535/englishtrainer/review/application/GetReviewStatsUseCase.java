@@ -4,6 +4,7 @@ import com.faus535.englishtrainer.review.domain.ReviewItemRepository;
 import com.faus535.englishtrainer.review.domain.ReviewResultRepository;
 import com.faus535.englishtrainer.review.domain.ReviewStats;
 import com.faus535.englishtrainer.shared.application.annotation.UseCase;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -23,6 +24,7 @@ public class GetReviewStatsUseCase {
         this.resultRepository = resultRepository;
     }
 
+    @Transactional(readOnly = true)
     public ReviewStats execute(UUID userId) {
         int totalItems = itemRepository.countByUserId(userId);
         int dueToday = itemRepository.countDueByUserId(userId, Instant.now());
