@@ -59,4 +59,5 @@ tasks.register('integrationTest', Test) {
 		includeTags 'integration'
 	}
 	shouldRunAfter tasks.named('test')
+	jvmArgs '-DDOCKER_API_VERSION=1.44'
 }

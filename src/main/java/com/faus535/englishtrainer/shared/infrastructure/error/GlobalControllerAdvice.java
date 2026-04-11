@@ -37,7 +37,7 @@ class GlobalControllerAdvice {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     ResponseEntity<ApiError> handleValidation(MethodArgumentNotValidException ex) {
         log.error("Validation error: {}", ex.getMessage());
-        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(new ApiError("validation_error", "Invalid request data"));
     }
 
