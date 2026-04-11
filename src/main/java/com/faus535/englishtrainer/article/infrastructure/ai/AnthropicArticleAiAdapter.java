@@ -76,6 +76,27 @@ class AnthropicArticleAiAdapter implements ArticleAiPort {
             )
     );
 
+    private static final Map<String, Object> TOOL_GENERATE_PRE_READING = Map.of(
+            "name", "generate_pre_reading",
+            "description", "Generate pre-reading data: key vocabulary and a predictive question",
+            "input_schema", Map.of(
+                    "type", "object",
+                    "properties", Map.of(
+                            "key_words", Map.of("type", "array", "items", Map.of(
+                                    "type", "object",
+                                    "properties", Map.ofEntries(
+                                            Map.entry("word", Map.of("type", "string")),
+                                            Map.entry("translation", Map.of("type", "string", "description", "Spanish translation")),
+                                            Map.entry("definition", Map.of("type", "string", "description", "Brief English definition"))
+                                    ),
+                                    "required", List.of("word", "translation", "definition")
+                            )),
+                            "predictive_question", Map.of("type", "string", "description", "One question to engage the reader before reading")
+                    ),
+                    "required", List.of("key_words", "predictive_question")
+            )
+    );
+
     private static final Map<String, Object> TOOL_CORRECT_ANSWER = Map.of(
             "name", "correct_answer",
             "description", "Grade and provide feedback on a student's answer",
@@ -304,6 +325,56 @@ class AnthropicArticleAiAdapter implements ArticleAiPort {
         } catch (Exception e) {
             log.error("Answer correction failed: {}", e.getMessage(), e);
             throw new ArticleAiException("Answer correction failed", e);
+        }
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public PreReadingResult generatePreReading(String articleText, String level) throws ArticleAiException {
+        try {
+            String userMessage = ("Analyze this %s level article and provide: " +
+                    "1) 5-8 key vocabulary words with Spanish translation and English definition, " +
+                    "2) One predictive question to engage the reader before reading. " +
+                    "Article:\n\n%s")
+                    .formatted(level, articleText);
+
+            Map<String, Object> requestBody = Map.of(
+                    "model", model,
+                    "max_tokens", 400,
+                    "tools", List.of(TOOL_GENERATE_PRE_READING),
+                    "tool_choice", Map.of("type", "tool", "name", "generate_pre_reading"),
+                    "messages", List.of(Map.of("role", "user", "content", userMessage))
+            );
+
+            Map<String, Object> response = restClient.post()
+                    .uri("/messages")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(requestBody)
+                    .retrieve()
+                    .body(Map.class);
+
+            if (response == null) throw new ArticleAiException("Empty response from Claude API");
+
+            List<Map<String, Object>> content = (List<Map<String, Object>>) response.get("content");
+            for (Map<String, Object> block : content) {
+                if ("tool_use".equals(block.get("type"))) {
+                    Map<String, Object> input = (Map<String, Object>) block.get("input");
+                    List<Map<String, Object>> rawKeyWords = (List<Map<String, Object>>) input.get("key_words");
+                    List<KeyWordData> keyWords = rawKeyWords.stream()
+                            .map(k -> new KeyWordData(
+                                    (String) k.get("word"),
+                                    (String) k.get("translation"),
+                                    (String) k.get("definition")))
+                            .toList();
+                    return new PreReadingResult(keyWords, (String) input.get("predictive_question"));
+                }
+            }
+            throw new ArticleAiException("No tool_use block in Claude response");
+        } catch (ArticleAiException e) {
+            throw e;
+        } catch (Exception e) {
+            log.error("Pre-reading generation failed: {}", e.getMessage(), e);
+            throw new ArticleAiException("Pre-reading generation failed", e);
         }
     }
 }

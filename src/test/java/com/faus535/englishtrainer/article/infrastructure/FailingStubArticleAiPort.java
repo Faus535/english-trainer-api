@@ -24,4 +24,9 @@ public class FailingStubArticleAiPort implements ArticleAiPort {
     public ArticleAnswerCorrectionResult correctAnswer(String question, String userAnswer, String articleText) throws ArticleAiException {
         throw new ArticleAiException("Claude API unavailable");
     }
+
+    @Override
+    public PreReadingResult generatePreReading(String articleText, String level) throws ArticleAiException {
+        throw new ArticleAiException("Claude API unavailable");
+    }
 }

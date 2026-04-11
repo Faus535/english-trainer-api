@@ -36,4 +36,15 @@ public class StubArticleAiPort implements ArticleAiPort {
     public ArticleAnswerCorrectionResult correctAnswer(String question, String userAnswer, String articleText) throws ArticleAiException {
         return new ArticleAnswerCorrectionResult(true, "Good grammar.", "Clear style.", "Well answered.");
     }
+
+    @Override
+    public PreReadingResult generatePreReading(String articleText, String level) throws ArticleAiException {
+        return new PreReadingResult(
+                List.of(
+                        new KeyWordData("resilience", "resiliencia", "the ability to recover quickly from difficulties"),
+                        new KeyWordData("debate", "debate", "a formal discussion on a particular topic")
+                ),
+                "What do you think this article will discuss about climate change?"
+        );
+    }
 }

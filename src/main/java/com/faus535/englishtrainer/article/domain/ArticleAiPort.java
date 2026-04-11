@@ -14,6 +14,8 @@ public interface ArticleAiPort {
 
     ArticleAnswerCorrectionResult correctAnswer(String question, String userAnswer, String articleText) throws ArticleAiException;
 
+    PreReadingResult generatePreReading(String articleText, String level) throws ArticleAiException;
+
     record ArticleGenerateResult(String title, List<ArticleParagraphData> paragraphs) {}
 
     record ArticleParagraphData(String content, int orderIndex, String speaker) {}
@@ -26,4 +28,8 @@ public interface ArticleAiPort {
 
     record ArticleAnswerCorrectionResult(boolean isContentCorrect, String grammarFeedback,
                                          String styleFeedback, String correctionSummary) {}
+
+    record PreReadingResult(List<KeyWordData> keyWords, String predictiveQuestion) {}
+
+    record KeyWordData(String word, String translation, String definition) {}
 }

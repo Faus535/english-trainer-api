@@ -182,12 +182,12 @@
    - Stub returns fixed key words and predictive question
 
 **Acceptance criteria**:
-- [ ] `GET /api/article/{id}/pre-reading` returns key words + predictive question
-- [ ] Requires authentication, validates article ownership
-- [ ] Returns 404 for non-existent article, 403 for wrong user
-- [ ] StubArticleAiPort implements `generatePreReading()`
-- [ ] Unit test covers happy path + error cases
-- [ ] Compile + tests green
+- [x] `GET /api/article/{id}/pre-reading` returns key words + predictive question
+- [x] Requires authentication, validates article ownership
+- [x] Returns 404 for non-existent article, 403 for wrong user
+- [x] StubArticleAiPort implements `generatePreReading()`
+- [x] Unit test covers happy path + error cases
+- [x] Compile + tests green
 
 ---
 
