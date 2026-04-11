@@ -23,7 +23,7 @@ class GetUserProfileController {
         this.useCase = useCase;
     }
 
-    record UserProfileResponse(String id, int xp, Instant createdAt) {}
+    record UserProfileResponse(String id, int xp, Instant createdAt, String englishLevel) {}
 
     @GetMapping("/api/profiles/{id}")
     ResponseEntity<UserProfileResponse> handle(@PathVariable UUID id, Authentication authentication)
@@ -33,7 +33,8 @@ class GetUserProfileController {
         return ResponseEntity.ok(new UserProfileResponse(
                 profile.id().value().toString(),
                 profile.xp(),
-                profile.createdAt()
+                profile.createdAt(),
+                profile.englishLevel() != null ? profile.englishLevel().name() : null
         ));
     }
 }
