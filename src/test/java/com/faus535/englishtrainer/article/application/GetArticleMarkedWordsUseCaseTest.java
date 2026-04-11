@@ -56,4 +56,24 @@ class GetArticleMarkedWordsUseCaseTest {
 
         assertThrows(ArticleAccessDeniedException.class, () -> useCase.execute(otherUserId, article.id()));
     }
+
+    @Test
+    void shouldReturnEnrichmentFieldsWhenWordIsEnriched() throws Exception {
+        UUID userId = UUID.randomUUID();
+        ArticleReading article = ArticleReadingMother.inProgress(userId);
+        articleReadingRepository.save(article);
+        ArticleMarkedWord enriched = ArticleMarkedWordMother.enriched(article.id(), userId, "spark debate");
+        markedWordRepository.save(enriched);
+
+        List<ArticleMarkedWord> result = useCase.execute(userId, article.id());
+
+        assertEquals(1, result.size());
+        ArticleMarkedWord word = result.get(0);
+        assertNotNull(word.definition());
+        assertNotNull(word.phonetics());
+        assertNotNull(word.synonyms());
+        assertFalse(word.synonyms().isEmpty());
+        assertNotNull(word.exampleSentence());
+        assertNotNull(word.partOfSpeech());
+    }
 }

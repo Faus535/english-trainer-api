@@ -16,6 +16,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -34,10 +35,14 @@ class MarkWordController {
     ) {}
 
     record MarkedWordResponse(UUID id, String wordOrPhrase, String translation,
-                               String englishDefinition, String contextSentence, Instant createdAt) {
+                               String englishDefinition, String contextSentence, Instant createdAt,
+                               String definition, String phonetics, List<String> synonyms,
+                               String exampleSentence, String partOfSpeech) {
         static MarkedWordResponse from(ArticleMarkedWord word) {
             return new MarkedWordResponse(word.id().value(), word.wordOrPhrase(),
-                    word.translation(), word.englishDefinition(), word.contextSentence(), word.createdAt());
+                    word.translation(), word.englishDefinition(), word.contextSentence(), word.createdAt(),
+                    word.definition(), word.phonetics(), word.synonyms(),
+                    word.exampleSentence(), word.partOfSpeech());
         }
     }
 

@@ -94,6 +94,21 @@ class MarkWordUseCaseTest {
     }
 
     @Test
+    void shouldReturnWordWithNullEnrichmentFieldsOnCreate() throws Exception {
+        UUID userId = UUID.randomUUID();
+        ArticleReading article = ArticleReadingMother.inProgress(userId);
+        articleReadingRepository.save(article);
+
+        ArticleMarkedWord result = useCase.execute(userId, article.id(), "spark debate", "Context.");
+
+        assertNull(result.definition());
+        assertNull(result.phonetics());
+        assertNull(result.synonyms());
+        assertNull(result.exampleSentence());
+        assertNull(result.partOfSpeech());
+    }
+
+    @Test
     void throwsArticleAiExceptionWhenAiFails() {
         UUID userId = UUID.randomUUID();
         ArticleReading article = ArticleReadingMother.inProgress(userId);
