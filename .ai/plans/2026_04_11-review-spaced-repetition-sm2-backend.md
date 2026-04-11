@@ -337,10 +337,10 @@ Frontend: `ReviewPage` quality rating buttons (Hard=2, Good=4, Easy=5), display 
 - No `@Autowired` on fields
 
 **Acceptance criteria**:
-- [ ] `/revisar` reports no violations
-- [ ] `./gradlew test` passes fully
-- [ ] Verify compilation
-- [ ] Verify tests pass
+- [x] `/revisar` reports no violations
+- [x] `./gradlew test` passes fully
+- [x] Verify compilation
+- [x] Verify tests pass
 - [ ] Human review
 - [ ] Commit: `fix(review): revisar fixes`
 
