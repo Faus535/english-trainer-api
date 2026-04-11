@@ -1,6 +1,7 @@
 package com.faus535.englishtrainer.article.infrastructure.persistence;
 
 import com.faus535.englishtrainer.article.domain.ArticleMarkedWord;
+import com.faus535.englishtrainer.article.domain.ArticleMarkedWordId;
 import com.faus535.englishtrainer.article.domain.ArticleMarkedWordRepository;
 import com.faus535.englishtrainer.article.domain.ArticleReadingId;
 import com.faus535.englishtrainer.article.domain.error.DuplicateMarkedWordException;
@@ -8,6 +9,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
@@ -34,5 +36,16 @@ class JpaArticleMarkedWordRepositoryAdapter implements ArticleMarkedWordReposito
                 .stream()
                 .map(ArticleMarkedWordEntity::toDomain)
                 .toList();
+    }
+
+    @Override
+    public Optional<ArticleMarkedWord> findById(ArticleMarkedWordId id) {
+        return jpaRepository.findById(id.value())
+                .map(ArticleMarkedWordEntity::toDomain);
+    }
+
+    @Override
+    public void update(ArticleMarkedWord word) {
+        jpaRepository.saveAndFlush(ArticleMarkedWordEntity.fromDomainForUpdate(word));
     }
 }
