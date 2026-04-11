@@ -52,7 +52,7 @@ class ArticleLifecycleIT extends IntegrationTestBase {
         article = ArticleReading.reconstitute(
                 articleId, userId, new ArticleTopic("Climate"),
                 ArticleLevel.B2, "EU Climate Debate", ArticleStatus.READY,
-                paragraphs, 0, Instant.now());
+                paragraphs, 0, 0, 0, Instant.now());
         articleReadingRepository.save(article);
     }
 

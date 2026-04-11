@@ -18,11 +18,14 @@ public final class ArticleReading extends AggregateRoot<ArticleReadingId> {
     private final ArticleStatus status;
     private final List<ArticleParagraph> paragraphs;
     private final int xpEarned;
+    private final int currentParagraphIndex;
+    private final int currentQuestionIndex;
     private final Instant createdAt;
 
     private ArticleReading(ArticleReadingId id, UUID userId, ArticleTopic topic, ArticleLevel level,
                             String title, ArticleStatus status, List<ArticleParagraph> paragraphs,
-                            int xpEarned, Instant createdAt) {
+                            int xpEarned, int currentParagraphIndex, int currentQuestionIndex,
+                            Instant createdAt) {
         this.id = id;
         this.userId = userId;
         this.topic = topic;
@@ -31,35 +34,43 @@ public final class ArticleReading extends AggregateRoot<ArticleReadingId> {
         this.status = status;
         this.paragraphs = paragraphs != null ? List.copyOf(paragraphs) : List.of();
         this.xpEarned = xpEarned;
+        this.currentParagraphIndex = currentParagraphIndex;
+        this.currentQuestionIndex = currentQuestionIndex;
         this.createdAt = createdAt;
     }
 
     public static ArticleReading create(UUID userId, ArticleTopic topic, ArticleLevel level) {
         return new ArticleReading(ArticleReadingId.generate(), userId, topic, level,
-                "", ArticleStatus.PENDING, List.of(), 0, Instant.now());
+                "", ArticleStatus.PENDING, List.of(), 0, 0, 0, Instant.now());
     }
 
     public static ArticleReading reconstitute(ArticleReadingId id, UUID userId, ArticleTopic topic,
                                                ArticleLevel level, String title, ArticleStatus status,
                                                List<ArticleParagraph> paragraphs, int xpEarned,
+                                               int currentParagraphIndex, int currentQuestionIndex,
                                                Instant createdAt) {
-        return new ArticleReading(id, userId, topic, level, title, status, paragraphs, xpEarned, createdAt);
+        return new ArticleReading(id, userId, topic, level, title, status, paragraphs,
+                xpEarned, currentParagraphIndex, currentQuestionIndex, createdAt);
     }
 
     public ArticleReading withTitleAndParagraphs(String title, List<ArticleParagraph> paragraphs) {
-        return new ArticleReading(id, userId, topic, level, title, status, paragraphs, xpEarned, createdAt);
+        return new ArticleReading(id, userId, topic, level, title, status, paragraphs,
+                xpEarned, currentParagraphIndex, currentQuestionIndex, createdAt);
     }
 
     public ArticleReading markProcessing() {
-        return new ArticleReading(id, userId, topic, level, title, ArticleStatus.PROCESSING, paragraphs, xpEarned, createdAt);
+        return new ArticleReading(id, userId, topic, level, title, ArticleStatus.PROCESSING, paragraphs,
+                xpEarned, currentParagraphIndex, currentQuestionIndex, createdAt);
     }
 
     public ArticleReading markReady(String title, List<ArticleParagraph> paragraphs) {
-        return new ArticleReading(id, userId, topic, level, title, ArticleStatus.READY, paragraphs, xpEarned, createdAt);
+        return new ArticleReading(id, userId, topic, level, title, ArticleStatus.READY, paragraphs,
+                xpEarned, currentParagraphIndex, currentQuestionIndex, createdAt);
     }
 
     public ArticleReading markFailed() {
-        return new ArticleReading(id, userId, topic, level, title, ArticleStatus.FAILED, paragraphs, xpEarned, createdAt);
+        return new ArticleReading(id, userId, topic, level, title, ArticleStatus.FAILED, paragraphs,
+                xpEarned, currentParagraphIndex, currentQuestionIndex, createdAt);
     }
 
     public ArticleReading complete(int xpEarned) throws ArticleAlreadyCompletedException {
@@ -67,9 +78,15 @@ public final class ArticleReading extends AggregateRoot<ArticleReadingId> {
             throw new ArticleAlreadyCompletedException(id);
         }
         ArticleReading completed = new ArticleReading(id, userId, topic, level, title,
-                ArticleStatus.COMPLETED, paragraphs, xpEarned, createdAt);
+                ArticleStatus.COMPLETED, paragraphs, xpEarned,
+                currentParagraphIndex, currentQuestionIndex, createdAt);
         completed.registerEvent(new ArticleReadingCompletedEvent(id.value(), userId, xpEarned));
         return completed;
+    }
+
+    public ArticleReading withProgress(int paragraphIndex, int questionIndex) {
+        return new ArticleReading(id, userId, topic, level, title, status, paragraphs,
+                xpEarned, paragraphIndex, questionIndex, createdAt);
     }
 
     public ArticleReadingId id() { return id; }
@@ -80,5 +97,7 @@ public final class ArticleReading extends AggregateRoot<ArticleReadingId> {
     public ArticleStatus status() { return status; }
     public List<ArticleParagraph> paragraphs() { return paragraphs; }
     public int xpEarned() { return xpEarned; }
+    public int currentParagraphIndex() { return currentParagraphIndex; }
+    public int currentQuestionIndex() { return currentQuestionIndex; }
     public Instant createdAt() { return createdAt; }
 }

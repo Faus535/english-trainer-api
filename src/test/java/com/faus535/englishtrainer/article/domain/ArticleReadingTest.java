@@ -50,6 +50,18 @@ class ArticleReadingTest {
     }
 
     @Test
+    void withProgressReturnsNewInstanceWithUpdatedIndexes() {
+        ArticleReading reading = ArticleReadingMother.inProgress();
+
+        ArticleReading updated = reading.withProgress(3, 2);
+
+        assertEquals(3, updated.currentParagraphIndex());
+        assertEquals(2, updated.currentQuestionIndex());
+        assertEquals(reading.id(), updated.id());
+        assertEquals(reading.status(), updated.status());
+    }
+
+    @Test
     void withTitleAndParagraphsReturnsNewInstanceWithUpdatedFields() {
         ArticleReading reading = ArticleReading.create(UUID.randomUUID(), new ArticleTopic("Tech"), ArticleLevel.B1);
         var paragraphs = java.util.List.of(

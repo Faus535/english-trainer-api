@@ -71,10 +71,10 @@ class GetArticleHistoryUseCaseTest {
 
         ArticleReading olderArticle = ArticleReading.reconstitute(
                 ArticleReadingId.generate(), userId, new ArticleTopic("Old topic"),
-                ArticleLevel.B1, "Old Article", ArticleStatus.IN_PROGRESS, List.of(), older);
+                ArticleLevel.B1, "Old Article", ArticleStatus.IN_PROGRESS, List.of(), 0, 0, 0, older);
         ArticleReading newerArticle = ArticleReading.reconstitute(
                 ArticleReadingId.generate(), userId, new ArticleTopic("New topic"),
-                ArticleLevel.B2, "New Article", ArticleStatus.IN_PROGRESS, List.of(), newer);
+                ArticleLevel.B2, "New Article", ArticleStatus.IN_PROGRESS, List.of(), 0, 0, 0, newer);
 
         readingRepository.save(olderArticle);
         readingRepository.save(newerArticle);

@@ -62,10 +62,10 @@ class ArticleReadingRepositoryIT extends IntegrationTestBase {
 
         ArticleReading olderArticle = ArticleReading.reconstitute(
                 ArticleReadingId.generate(), userId, new ArticleTopic("Old"),
-                ArticleLevel.B1, "Old Article", ArticleStatus.IN_PROGRESS, List.of(), 0, older);
+                ArticleLevel.B1, "Old Article", ArticleStatus.IN_PROGRESS, List.of(), 0, 0, 0, older);
         ArticleReading newerArticle = ArticleReading.reconstitute(
                 ArticleReadingId.generate(), userId, new ArticleTopic("New"),
-                ArticleLevel.B2, "New Article", ArticleStatus.IN_PROGRESS, List.of(), 0, newer);
+                ArticleLevel.B2, "New Article", ArticleStatus.IN_PROGRESS, List.of(), 0, 0, 0, newer);
 
         articleReadingRepository.save(olderArticle);
         articleReadingRepository.save(newerArticle);
@@ -102,7 +102,7 @@ class ArticleReadingRepositoryIT extends IntegrationTestBase {
         ArticleReading article = ArticleReading.reconstitute(
                 ArticleReadingId.generate(), userId, new ArticleTopic("Tech"),
                 ArticleLevel.B2, "Test Article", ArticleStatus.IN_PROGRESS,
-                List.of(), 0, Instant.now());
+                List.of(), 0, 0, 0, Instant.now());
         articleReadingRepository.save(article);
 
         ArticleReading completed = article.complete(41);
@@ -125,7 +125,7 @@ class ArticleReadingRepositoryIT extends IntegrationTestBase {
         ArticleReading article = ArticleReading.reconstitute(
                 articleId, userId, new ArticleTopic("Science"),
                 ArticleLevel.C1, "Science Article", ArticleStatus.READY,
-                paragraphs, 0, Instant.now());
+                paragraphs, 0, 0, 0, Instant.now());
 
         articleReadingRepository.save(article);
 

@@ -376,13 +376,13 @@
    - Update `ArticleReadingMother.reconstitute()` calls to include progress defaults
 
 **Acceptance criteria**:
-- [ ] Migration adds `current_paragraph_index` and `current_question_index` columns with default 0
-- [ ] `PATCH /api/article/{id}/progress` updates progress in DB
-- [ ] `GET /api/article/{id}` response includes `currentParagraphIndex` and `currentQuestionIndex`
-- [ ] `GET /api/article/{id}` response includes `topic` field
-- [ ] Progress update on completed article is silently ignored (not error)
-- [ ] Unit tests cover happy path, wrong owner, completed article
-- [ ] Compile + tests green
+- [x] Migration adds `current_paragraph_index` and `current_question_index` columns with default 0
+- [x] `PATCH /api/article/{id}/progress` updates progress in DB
+- [x] `GET /api/article/{id}` response includes `currentParagraphIndex` and `currentQuestionIndex`
+- [x] `GET /api/article/{id}` response includes `topic` field
+- [x] Progress update on completed article is silently ignored (not error)
+- [x] Unit tests cover happy path, wrong owner, completed article
+- [x] Compile + tests green
 
 ---
 
