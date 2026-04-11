@@ -12,13 +12,13 @@ public final class ArticleQuestionAnswerMother {
     private static final String TOO_SHORT_ANSWER = "The policy is too aggressive.";
 
     public static ArticleQuestionAnswer valid(ArticleQuestionId questionId) throws AnswerTooShortException {
-        return ArticleQuestionAnswer.create(questionId, VALID_ANSWER, true,
-                "Good grammar.", "Clear structure.", "Well argued.");
+        return ArticleQuestionAnswer.create(questionId, VALID_ANSWER, 20,
+                true, "Good grammar.", "Clear structure.", "Well argued.");
     }
 
     public static ArticleQuestionAnswer withGrading(ArticleQuestionId questionId) throws AnswerTooShortException {
-        return ArticleQuestionAnswer.create(questionId, VALID_ANSWER, false,
-                "Minor grammar issues.", "Could improve style.", "Needs more detail.");
+        return ArticleQuestionAnswer.create(questionId, VALID_ANSWER, 20,
+                false, "Minor grammar issues.", "Could improve style.", "Needs more detail.");
     }
 
     public static String tooShortAnswer() {

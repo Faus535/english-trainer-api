@@ -6,8 +6,6 @@ import java.time.Instant;
 
 public final class ArticleQuestionAnswer {
 
-    private static final int MIN_WORDS = 40;
-
     private final ArticleQuestionAnswerId id;
     private final ArticleQuestionId questionId;
     private final String userAnswer;
@@ -31,12 +29,12 @@ public final class ArticleQuestionAnswer {
     }
 
     public static ArticleQuestionAnswer create(ArticleQuestionId questionId, String userAnswer,
-                                                boolean isContentCorrect, String grammarFeedback,
+                                                int minWords, boolean isContentCorrect, String grammarFeedback,
                                                 String styleFeedback, String correctionSummary)
             throws AnswerTooShortException {
         int wordCount = wordCount(userAnswer);
-        if (wordCount < MIN_WORDS) {
-            throw new AnswerTooShortException(wordCount, MIN_WORDS);
+        if (wordCount < minWords) {
+            throw new AnswerTooShortException(wordCount, minWords);
         }
         return new ArticleQuestionAnswer(ArticleQuestionAnswerId.generate(), questionId, userAnswer,
                 isContentCorrect, grammarFeedback, styleFeedback, correctionSummary, Instant.now());

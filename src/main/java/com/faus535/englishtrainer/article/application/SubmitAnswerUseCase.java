@@ -52,7 +52,7 @@ public class SubmitAnswerUseCase {
                 aiPort.correctAnswer(question.questionText(), answer, articleText);
 
         ArticleQuestionAnswer questionAnswer = ArticleQuestionAnswer.create(
-                questionId, answer, correction.isContentCorrect(),
+                questionId, answer, article.level().minWords(), correction.isContentCorrect(),
                 correction.grammarFeedback(), correction.styleFeedback(), correction.correctionSummary());
 
         questionAnswerRepository.save(questionAnswer);

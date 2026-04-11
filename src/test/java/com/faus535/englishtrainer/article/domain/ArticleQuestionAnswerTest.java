@@ -19,26 +19,59 @@ class ArticleQuestionAnswerTest {
     }
 
     @Test
-    void exactly40WordsPassesValidation() throws AnswerTooShortException {
-        String answer = wordsOfLength(40);
-        ArticleQuestionAnswer result = ArticleQuestionAnswer.create(QUESTION_ID, answer, true,
-                "Good.", "Clear.", "Well done.");
+    void shouldPassValidationWhenB1LevelAndExactly20Words() throws AnswerTooShortException {
+        String answer = wordsOfLength(20);
+        ArticleQuestionAnswer result = ArticleQuestionAnswer.create(QUESTION_ID, answer,
+                ArticleLevel.B1.minWords(), true, "Good.", "Clear.", "Well done.");
         assertNotNull(result);
         assertEquals(answer, result.userAnswer());
     }
 
     @Test
-    void thirtyNineWordsThrowsAnswerTooShortException() {
-        String shortAnswer = wordsOfLength(39);
+    void shouldThrowWhenB1LevelAnd19Words() {
+        String shortAnswer = wordsOfLength(19);
         assertThrows(AnswerTooShortException.class, () ->
-                ArticleQuestionAnswer.create(QUESTION_ID, shortAnswer, true, "Good.", "Clear.", "Done."));
+                ArticleQuestionAnswer.create(QUESTION_ID, shortAnswer,
+                        ArticleLevel.B1.minWords(), true, "Good.", "Clear.", "Done."));
     }
 
     @Test
-    void moreThan40WordsPassesValidation() throws AnswerTooShortException {
+    void shouldPassValidationWhenB2LevelAndExactly30Words() throws AnswerTooShortException {
+        String answer = wordsOfLength(30);
+        ArticleQuestionAnswer result = ArticleQuestionAnswer.create(QUESTION_ID, answer,
+                ArticleLevel.B2.minWords(), true, "Good.", "Clear.", "Well done.");
+        assertNotNull(result);
+    }
+
+    @Test
+    void shouldThrowWhenB2LevelAnd29Words() {
+        String shortAnswer = wordsOfLength(29);
+        assertThrows(AnswerTooShortException.class, () ->
+                ArticleQuestionAnswer.create(QUESTION_ID, shortAnswer,
+                        ArticleLevel.B2.minWords(), true, "Good.", "Clear.", "Done."));
+    }
+
+    @Test
+    void shouldPassValidationWhenC1LevelAndExactly40Words() throws AnswerTooShortException {
+        String answer = wordsOfLength(40);
+        ArticleQuestionAnswer result = ArticleQuestionAnswer.create(QUESTION_ID, answer,
+                ArticleLevel.C1.minWords(), true, "Good.", "Clear.", "Well done.");
+        assertNotNull(result);
+    }
+
+    @Test
+    void shouldThrowWhenC1LevelAnd39Words() {
+        String shortAnswer = wordsOfLength(39);
+        assertThrows(AnswerTooShortException.class, () ->
+                ArticleQuestionAnswer.create(QUESTION_ID, shortAnswer,
+                        ArticleLevel.C1.minWords(), true, "Good.", "Clear.", "Done."));
+    }
+
+    @Test
+    void shouldPassValidationWhenMoreThanMinWords() throws AnswerTooShortException {
         String longAnswer = wordsOfLength(50);
-        ArticleQuestionAnswer result = ArticleQuestionAnswer.create(QUESTION_ID, longAnswer, true,
-                "Good.", "Clear.", "Well done.");
+        ArticleQuestionAnswer result = ArticleQuestionAnswer.create(QUESTION_ID, longAnswer,
+                ArticleLevel.B1.minWords(), true, "Good.", "Clear.", "Well done.");
         assertNotNull(result);
     }
 }
