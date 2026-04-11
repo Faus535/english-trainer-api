@@ -10,6 +10,7 @@ import com.faus535.englishtrainer.gamification.domain.UserAchievementRepository;
 import com.faus535.englishtrainer.immerse.domain.ImmerseSubmissionRepository;
 import com.faus535.englishtrainer.review.domain.ReviewItemRepository;
 import com.faus535.englishtrainer.shared.application.annotation.UseCase;
+import org.springframework.transaction.annotation.Transactional;
 import com.faus535.englishtrainer.user.domain.UserProfile;
 import com.faus535.englishtrainer.user.domain.UserProfileId;
 import com.faus535.englishtrainer.user.domain.UserProfileRepository;
@@ -50,6 +51,7 @@ public class GetHomeUseCase {
         this.achievementRepo = achievementRepo;
     }
 
+    @Transactional(readOnly = true)
     public HomeData execute(UUID userId) {
         UserProfileId profileId = new UserProfileId(userId);
 
