@@ -22,7 +22,8 @@ class GetImmerseExercisesController {
 
     GetImmerseExercisesController(GetImmerseExercisesUseCase useCase) { this.useCase = useCase; }
 
-    record ExerciseResponse(String id, String exerciseType, String question, List<String> options, int orderIndex) {}
+    record ExerciseResponse(String id, String exerciseType, String question, List<String> options, int orderIndex,
+                             String listenText, Integer blankPosition) {}
 
     @GetMapping("/api/immerse/content/{id}/exercises")
     ResponseEntity<List<ExerciseResponse>> handle(@PathVariable UUID id, Authentication authentication)
@@ -33,7 +34,7 @@ class GetImmerseExercisesController {
         UUID userId = UUID.fromString(details.get("profileId"));
         List<ExerciseResponse> exercises = useCase.execute(id, userId).stream()
                 .map(e -> new ExerciseResponse(e.id().value().toString(), e.exerciseType().name(),
-                        e.question(), e.options(), e.orderIndex()))
+                        e.question(), e.options(), e.orderIndex(), e.listenText(), e.blankPosition()))
                 .toList();
         return ResponseEntity.ok(exercises);
     }

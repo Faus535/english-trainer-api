@@ -29,6 +29,8 @@ public interface ImmerseAiPort {
             String type,
             String question,
             String correctAnswer,
-            List<String> options
+            List<String> options,
+            String listenText,
+            Integer blankPosition
     ) {}
 }

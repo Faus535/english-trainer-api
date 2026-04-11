@@ -1,5 +1,7 @@
 package com.faus535.englishtrainer.immerse.domain;
 
+import org.springframework.lang.Nullable;
+
 import java.util.List;
 
 public record ImmerseExercise(
@@ -9,7 +11,9 @@ public record ImmerseExercise(
         String question,
         String correctAnswer,
         List<String> options,
-        int orderIndex
+        int orderIndex,
+        @Nullable String listenText,
+        @Nullable Integer blankPosition
 ) {
 
     public ImmerseExercise {

@@ -5,5 +5,6 @@ public enum ExerciseType {
     MULTIPLE_CHOICE,
     TRUE_FALSE,
     SENTENCE_REORDER,
-    WORD_DEFINITION
+    WORD_DEFINITION,
+    LISTENING_CLOZE
 }

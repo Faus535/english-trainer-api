@@ -54,7 +54,7 @@ public class ProcessImmerseContentAsyncService {
                             ImmerseExerciseId.generate(), processed.id(),
                             ExerciseType.valueOf(ge.type()),
                             ge.question(), ge.correctAnswer(), ge.options(),
-                            orderIndex.getAndIncrement()))
+                            orderIndex.getAndIncrement(), ge.listenText(), ge.blankPosition()))
                     .toList();
 
             transactionTemplate.executeWithoutResult(status -> {

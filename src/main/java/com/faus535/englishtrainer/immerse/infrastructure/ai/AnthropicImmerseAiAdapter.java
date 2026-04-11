@@ -172,7 +172,9 @@ class AnthropicImmerseAiAdapter implements ImmerseAiPort {
                                 (String) em.get("type"),
                                 (String) em.get("question"),
                                 (String) em.get("correctAnswer"),
-                                options);
+                                options,
+                                (String) em.get("listen_text"),
+                                em.get("blank_position") instanceof Number n ? n.intValue() : null);
                     }).toList();
         }
 
@@ -295,7 +297,9 @@ class AnthropicImmerseAiAdapter implements ImmerseAiPort {
                                 (String) em.get("type"),
                                 (String) em.get("question"),
                                 (String) em.get("correctAnswer"),
-                                options);
+                                options,
+                                (String) em.get("listen_text"),
+                                em.get("blank_position") instanceof Number n ? n.intValue() : null);
                     }).toList();
         }
 

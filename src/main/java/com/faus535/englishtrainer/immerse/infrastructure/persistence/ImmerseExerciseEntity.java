@@ -36,6 +36,12 @@ class ImmerseExerciseEntity implements Persistable<UUID> {
     @Column(name = "order_index", nullable = false)
     private int orderIndex;
 
+    @Column(name = "listen_text", columnDefinition = "TEXT")
+    private String listenText;
+
+    @Column(name = "blank_position")
+    private Integer blankPosition;
+
     @Transient
     private boolean isNew = true;
 
@@ -50,6 +56,8 @@ class ImmerseExerciseEntity implements Persistable<UUID> {
         entity.correctAnswer = exercise.correctAnswer();
         entity.options = serializeOptions(exercise.options());
         entity.orderIndex = exercise.orderIndex();
+        entity.listenText = exercise.listenText();
+        entity.blankPosition = exercise.blankPosition();
         return entity;
     }
 
@@ -57,7 +65,7 @@ class ImmerseExerciseEntity implements Persistable<UUID> {
         return new ImmerseExercise(
                 new ImmerseExerciseId(id), new ImmerseContentId(contentId),
                 ExerciseType.valueOf(exerciseType), question, correctAnswer,
-                deserializeOptions(options), orderIndex);
+                deserializeOptions(options), orderIndex, listenText, blankPosition);
     }
 
     private static String serializeOptions(List<String> opts) {

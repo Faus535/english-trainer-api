@@ -21,9 +21,9 @@ public class StubImmerseAiPort implements ImmerseAiPort {
                 List.of(
                         new GeneratedExercise("MULTIPLE_CHOICE", "What does 'drought' mean?",
                                 "A long period without rain",
-                                List.of("A long period without rain", "A storm", "A flood")),
+                                List.of("A long period without rain", "A storm", "A flood"), null, null),
                         new GeneratedExercise("FILL_THE_GAP", "Carbon ___ are rising.",
-                                "emissions", List.of())
+                                "emissions", List.of(), null, null)
                 )
         );
     }
@@ -45,11 +45,11 @@ public class StubImmerseAiPort implements ImmerseAiPort {
                 List.of(
                         new GeneratedExercise("MULTIPLE_CHOICE", "What does 'rush' mean?",
                                 "To move quickly",
-                                List.of("To move quickly", "To sleep", "To eat")),
+                                List.of("To move quickly", "To sleep", "To eat"), null, null),
                         new GeneratedExercise("TRUE_FALSE", "City life is described as slow and boring.",
-                                "false", List.of("true", "false")),
+                                "false", List.of("true", "false"), null, null),
                         new GeneratedExercise("FILL_THE_GAP", "Life in a modern city is ___.",
-                                "fast-paced", List.of())
+                                "fast-paced", List.of(), null, null)
                 )
         );
     }

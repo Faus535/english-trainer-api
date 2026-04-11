@@ -42,7 +42,7 @@ public class SubmitImmerseContentUseCase {
                         ImmerseExerciseId.generate(), saved.id(),
                         ExerciseType.valueOf(ge.type()),
                         ge.question(), ge.correctAnswer(), ge.options(),
-                        orderIndex.getAndIncrement()))
+                        orderIndex.getAndIncrement(), ge.listenText(), ge.blankPosition()))
                 .toList();
 
         if (!exercises.isEmpty()) {
