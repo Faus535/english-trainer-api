@@ -308,12 +308,12 @@ New test methods in `GetReviewStatsUseCaseTest`:
 - Update existing tests: `stats.accuracyRate()` → `stats.retentionRate()`
 
 **Acceptance criteria**:
-- [ ] `./gradlew test --tests "*.review.*"` all green
-- [ ] `ReviewStats` has exactly 8 fields (no `accuracyRate`)
-- [ ] No `accuracyRate` reference anywhere in the codebase
-- [ ] `./gradlew test` full suite green
-- [ ] Verify compilation
-- [ ] Verify tests pass
+- [x] `./gradlew test --tests "*.review.*"` all green
+- [x] `ReviewStats` has exactly 8 fields (no `accuracyRate`)
+- [x] No `accuracyRate` reference anywhere in the codebase
+- [x] `./gradlew test` full suite green
+- [x] Verify compilation
+- [x] Verify tests pass
 - [ ] Human review
 - [ ] Commit: `feat(review): add retentionRate and averageInterval to ReviewStats`
 
