@@ -122,11 +122,11 @@ GET /api/immerse/content/{contentId}/exercises?type=LISTENING_CLOZE|REGULAR|ALL
 - `AnthropicImmerseAiAdapterTest.parse_listeningClozeExercise_mapsListenTextAndBlankPosition()` (if adapter has unit tests)
 
 **Acceptance criteria**:
-- [ ] AI response JSON with `listen_text` is parsed correctly
-- [ ] `GeneratedExercise` includes `listenText` when type is LISTENING_CLOZE
-- [ ] Regular exercises still parse correctly (no regression)
-- [ ] Verify compilation
-- [ ] Verify tests pass
+- [x] AI response JSON with `listen_text` is parsed correctly
+- [x] `GeneratedExercise` includes `listenText` when type is LISTENING_CLOZE
+- [x] Regular exercises still parse correctly (no regression)
+- [x] Verify compilation
+- [x] Verify tests pass
 - [ ] Human review
 - [ ] Commit
 

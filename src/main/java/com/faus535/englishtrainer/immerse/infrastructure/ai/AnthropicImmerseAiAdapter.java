@@ -41,11 +41,13 @@ class AnthropicImmerseAiAdapter implements ImmerseAiPort {
                                     ))),
                             "exercises", Map.of("type", "array", "items", Map.of(
                                     "type", "object",
-                                    "properties", Map.of(
-                                            "type", Map.of("type", "string", "description", "MULTIPLE_CHOICE|FILL_THE_GAP|TRUE_FALSE|WORD_DEFINITION"),
-                                            "question", Map.of("type", "string"),
-                                            "correctAnswer", Map.of("type", "string"),
-                                            "options", Map.of("type", "array", "items", Map.of("type", "string"))
+                                    "properties", Map.ofEntries(
+                                            Map.entry("type", Map.of("type", "string", "description", "MULTIPLE_CHOICE|FILL_THE_GAP|TRUE_FALSE|WORD_DEFINITION|LISTENING_CLOZE")),
+                                            Map.entry("question", Map.of("type", "string")),
+                                            Map.entry("correctAnswer", Map.of("type", "string")),
+                                            Map.entry("options", Map.of("type", "array", "items", Map.of("type", "string"))),
+                                            Map.entry("listen_text", Map.of("type", "string", "description", "Full sentence for TTS. Required for LISTENING_CLOZE type only.")),
+                                            Map.entry("blank_position", Map.of("type", "integer", "description", "0-based word index of the target word in listen_text. Required for LISTENING_CLOZE type only."))
                                     )))
                     ),
                     "required", List.of("processedText", "detectedLevel", "vocabulary", "exercises")
@@ -71,11 +73,13 @@ class AnthropicImmerseAiAdapter implements ImmerseAiPort {
                                     )))),
                             Map.entry("exercises", Map.of("type", "array", "items", Map.of(
                                     "type", "object",
-                                    "properties", Map.of(
-                                            "type", Map.of("type", "string", "description", "MULTIPLE_CHOICE|FILL_THE_GAP|TRUE_FALSE|WORD_DEFINITION"),
-                                            "question", Map.of("type", "string"),
-                                            "correctAnswer", Map.of("type", "string"),
-                                            "options", Map.of("type", "array", "items", Map.of("type", "string"))
+                                    "properties", Map.ofEntries(
+                                            Map.entry("type", Map.of("type", "string", "description", "MULTIPLE_CHOICE|FILL_THE_GAP|TRUE_FALSE|WORD_DEFINITION|LISTENING_CLOZE")),
+                                            Map.entry("question", Map.of("type", "string")),
+                                            Map.entry("correctAnswer", Map.of("type", "string")),
+                                            Map.entry("options", Map.of("type", "array", "items", Map.of("type", "string"))),
+                                            Map.entry("listen_text", Map.of("type", "string", "description", "Full sentence for TTS. Required for LISTENING_CLOZE type only.")),
+                                            Map.entry("blank_position", Map.of("type", "integer", "description", "0-based word index of the target word in listen_text. Required for LISTENING_CLOZE type only."))
                                     ))))
                     ),
                     "required", List.of("title", "text", "detectedLevel", "vocabulary", "exercises")
@@ -105,7 +109,7 @@ class AnthropicImmerseAiAdapter implements ImmerseAiPort {
                     "max_tokens", sizing.processingMaxTokens(),
                     "system", List.of(Map.of(
                             "type", "text",
-                            "text", "Process English text for learners. Extract vocabulary, annotate difficulty, generate exercises.",
+                            "text", "Process English text for learners. Extract vocabulary, annotate difficulty, generate exercises. For each vocabulary item, also generate one exercise of type LISTENING_CLOZE: provide listen_text as a complete natural sentence containing the word, and blank_position as the 0-based word index of the target word in the sentence.",
                             "cache_control", Map.of("type", "ephemeral")
                     )),
                     "tools", List.of(TOOL_PROCESS_CONTENT),
@@ -230,10 +234,11 @@ class AnthropicImmerseAiAdapter implements ImmerseAiPort {
     }
 
     private String buildGenerateSystemPrompt(ContentType contentType) {
+        String listeningClozeInstruction = " For each vocabulary item, also generate one exercise of type LISTENING_CLOZE: provide listen_text as a complete natural sentence containing the word, and blank_position as the 0-based word index of the target word in the sentence.";
         return switch (contentType) {
-            case TEXT -> "You create English learning content. Generate an engaging article/story at the requested CEFR level with varied vocabulary. Extract key vocabulary and generate exercises.";
-            case AUDIO -> "You create English learning content. Generate a realistic podcast transcript or dialogue with speaker labels (Host:, Guest:) at the requested CEFR level. Extract key vocabulary and generate exercises.";
-            case VIDEO -> "You create English learning content. Generate a documentary narration or video script with visual context [Scene: ...] at the requested CEFR level. Extract key vocabulary and generate exercises.";
+            case TEXT -> "You create English learning content. Generate an engaging article/story at the requested CEFR level with varied vocabulary. Extract key vocabulary and generate exercises." + listeningClozeInstruction;
+            case AUDIO -> "You create English learning content. Generate a realistic podcast transcript or dialogue with speaker labels (Host:, Guest:) at the requested CEFR level. Extract key vocabulary and generate exercises." + listeningClozeInstruction;
+            case VIDEO -> "You create English learning content. Generate a documentary narration or video script with visual context [Scene: ...] at the requested CEFR level. Extract key vocabulary and generate exercises." + listeningClozeInstruction;
         };
     }
 
