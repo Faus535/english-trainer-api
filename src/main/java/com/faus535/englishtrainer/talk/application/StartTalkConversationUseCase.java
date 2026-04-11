@@ -8,6 +8,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
+import com.faus535.englishtrainer.talk.domain.ConversationMode;
 
 @UseCase
 public class StartTalkConversationUseCase {
@@ -30,7 +31,7 @@ public class StartTalkConversationUseCase {
     }
 
     @Transactional
-    public TalkConversation execute(UUID userId, UUID scenarioId, String level)
+    public TalkConversation execute(UUID userId, UUID scenarioId, String level, ConversationMode mode)
             throws TalkMaxConversationsExceededException, TalkAiException {
 
         int activeCount = conversationRepository.countActiveByUserId(userId);
@@ -42,7 +43,7 @@ public class StartTalkConversationUseCase {
         TalkScenario scenario = scenarioRepository.findById(new TalkScenarioId(scenarioId))
                 .orElse(null);
 
-        TalkConversation conversation = TalkConversation.start(userId, scenarioId, talkLevel);
+        TalkConversation conversation = TalkConversation.start(userId, scenarioId, talkLevel, mode);
 
         TalkAiPort.TalkAiResponse greeting = talkAiPort.chat(talkLevel, scenario,
                 conversation.messages(), null);

@@ -1,6 +1,7 @@
 package com.faus535.englishtrainer.talk.application;
 
 import com.faus535.englishtrainer.talk.domain.*;
+import com.faus535.englishtrainer.talk.domain.ConversationMode;
 import com.faus535.englishtrainer.talk.domain.error.TalkAiException;
 import com.faus535.englishtrainer.talk.domain.error.TalkMaxConversationsExceededException;
 import com.faus535.englishtrainer.talk.domain.TalkScenarioMother;
@@ -38,7 +39,7 @@ class StartTalkConversationUseCaseTest {
         scenarioRepository.add(scenario);
         UUID userId = UUID.randomUUID();
 
-        TalkConversation result = useCase.execute(userId, scenario.id().value(), "a2");
+        TalkConversation result = useCase.execute(userId, scenario.id().value(), "a2", ConversationMode.FULL);
 
         assertEquals(TalkStatus.ACTIVE, result.status());
         assertEquals(1, result.messages().size());
@@ -51,9 +52,21 @@ class StartTalkConversationUseCaseTest {
         scenarioRepository.add(scenario);
         UUID userId = UUID.randomUUID();
 
-        useCase.execute(userId, scenario.id().value(), "a2");
+        useCase.execute(userId, scenario.id().value(), "a2", ConversationMode.FULL);
 
         assertThrows(TalkMaxConversationsExceededException.class,
-                () -> useCase.execute(userId, scenario.id().value(), "a2"));
+                () -> useCase.execute(userId, scenario.id().value(), "a2", ConversationMode.FULL));
+    }
+
+    @Test
+    void execute_startsConversationWithQuickMode() throws Exception {
+        TalkScenario scenario = TalkScenarioMother.coffeeShop();
+        scenarioRepository.add(scenario);
+        UUID userId = UUID.randomUUID();
+
+        TalkConversation result = useCase.execute(userId, scenario.id().value(), "b1", ConversationMode.QUICK);
+
+        assertEquals(ConversationMode.QUICK, result.mode());
+        assertEquals(TalkStatus.ACTIVE, result.status());
     }
 }

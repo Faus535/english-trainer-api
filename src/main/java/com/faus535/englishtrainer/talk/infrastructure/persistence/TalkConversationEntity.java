@@ -2,6 +2,7 @@ package com.faus535.englishtrainer.talk.infrastructure.persistence;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.faus535.englishtrainer.talk.domain.*;
+import com.faus535.englishtrainer.talk.domain.ConversationMode;
 import jakarta.persistence.*;
 import org.springframework.data.domain.Persistable;
 
@@ -34,6 +35,9 @@ class TalkConversationEntity implements Persistable<UUID> {
     @Column(nullable = false, length = 5)
     private String level;
 
+    @Column(nullable = false, length = 10)
+    private String mode;
+
     @Column(nullable = false, length = 20)
     private String status;
 
@@ -62,6 +66,7 @@ class TalkConversationEntity implements Persistable<UUID> {
         entity.userId = aggregate.userId();
         entity.scenarioId = aggregate.scenarioId();
         entity.level = aggregate.level().value();
+        entity.mode = aggregate.mode().name();
         entity.status = aggregate.status().value();
         entity.summary = aggregate.summary();
         entity.evaluationJson = serializeEvaluation(aggregate.evaluation());
@@ -79,7 +84,7 @@ class TalkConversationEntity implements Persistable<UUID> {
                 .toList();
         return TalkConversation.reconstitute(
                 new TalkConversationId(id), userId, scenarioId,
-                new TalkLevel(level), TalkStatus.fromString(status), summary,
+                new TalkLevel(level), ConversationMode.fromString(mode), TalkStatus.fromString(status), summary,
                 deserializeEvaluation(evaluationJson),
                 startedAt, endedAt, messages);
     }

@@ -12,8 +12,27 @@ public final class TalkConversationMother {
     public static TalkConversation active() {
         return TalkConversation.reconstitute(
                 TalkConversationId.generate(), DEFAULT_USER_ID, DEFAULT_SCENARIO_ID,
-                new TalkLevel("b1"), TalkStatus.ACTIVE, null, null,
+                new TalkLevel("b1"), ConversationMode.FULL, TalkStatus.ACTIVE, null, null,
                 Instant.now(), null, List.of());
+    }
+
+    public static TalkConversation quickMode() {
+        return TalkConversation.reconstitute(
+                TalkConversationId.generate(), DEFAULT_USER_ID, DEFAULT_SCENARIO_ID,
+                new TalkLevel("b1"), ConversationMode.QUICK, TalkStatus.ACTIVE, null, null,
+                Instant.now(), null, List.of());
+    }
+
+    public static TalkConversation quickModeWithUserMessages(int userMessageCount) {
+        List<TalkMessage> messages = new java.util.ArrayList<>();
+        for (int i = 0; i < userMessageCount; i++) {
+            messages.add(TalkMessage.userMessage("Quick message " + i));
+            messages.add(TalkMessage.assistantMessage("Response " + i, TalkCorrection.empty()));
+        }
+        return TalkConversation.reconstitute(
+                TalkConversationId.generate(), DEFAULT_USER_ID, DEFAULT_SCENARIO_ID,
+                new TalkLevel("b1"), ConversationMode.QUICK, TalkStatus.ACTIVE, null, null,
+                Instant.now(), null, messages);
     }
 
     public static TalkConversation withMessages(int count) {
@@ -27,14 +46,14 @@ public final class TalkConversationMother {
         }
         return TalkConversation.reconstitute(
                 TalkConversationId.generate(), DEFAULT_USER_ID, DEFAULT_SCENARIO_ID,
-                new TalkLevel("b1"), TalkStatus.ACTIVE, null, null,
+                new TalkLevel("b1"), ConversationMode.FULL, TalkStatus.ACTIVE, null, null,
                 Instant.now(), null, messages);
     }
 
     public static TalkConversation completed() {
         return TalkConversation.reconstitute(
                 TalkConversationId.generate(), DEFAULT_USER_ID, DEFAULT_SCENARIO_ID,
-                new TalkLevel("b1"), TalkStatus.COMPLETED, "Good session.",
+                new TalkLevel("b1"), ConversationMode.FULL, TalkStatus.COMPLETED, "Good session.",
                 new TalkEvaluation(80, 70, 75, 85, 78, "b1", List.of("Good grammar"), List.of("More vocabulary")),
                 Instant.now().minusSeconds(3600), Instant.now(), List.of());
     }
@@ -49,7 +68,7 @@ public final class TalkConversationMother {
         }
         return TalkConversation.reconstitute(
                 TalkConversationId.generate(), DEFAULT_USER_ID, DEFAULT_SCENARIO_ID,
-                new TalkLevel("b1"), TalkStatus.ACTIVE, null, null,
+                new TalkLevel("b1"), ConversationMode.FULL, TalkStatus.ACTIVE, null, null,
                 Instant.now(), null, messages);
     }
 }

@@ -1,6 +1,7 @@
 package com.faus535.englishtrainer.talk.infrastructure.controller;
 
 import com.faus535.englishtrainer.talk.application.StartTalkConversationUseCase;
+import com.faus535.englishtrainer.talk.domain.ConversationMode;
 import com.faus535.englishtrainer.talk.domain.TalkConversation;
 import com.faus535.englishtrainer.talk.domain.error.TalkAiException;
 import com.faus535.englishtrainer.talk.domain.error.TalkMaxConversationsExceededException;
@@ -29,7 +30,8 @@ class StartTalkConversationController {
 
     record StartTalkRequest(
             @NotNull UUID scenarioId,
-            @NotBlank @Pattern(regexp = "(?i)(a1|a2|b1|b2|c1|c2)") String level
+            @NotBlank @Pattern(regexp = "(?i)(a1|a2|b1|b2|c1|c2)") String level,
+            String mode
     ) {}
 
     @PostMapping("/api/talk/conversations")
@@ -40,7 +42,8 @@ class StartTalkConversationController {
         @SuppressWarnings("unchecked")
         Map<String, String> details = (Map<String, String>) authentication.getDetails();
         UUID userId = UUID.fromString(details.get("profileId"));
-        TalkConversation conversation = useCase.execute(userId, request.scenarioId(), request.level());
+        ConversationMode mode = ConversationMode.fromString(request.mode());
+        TalkConversation conversation = useCase.execute(userId, request.scenarioId(), request.level(), mode);
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(TalkConversationResponse.from(conversation));

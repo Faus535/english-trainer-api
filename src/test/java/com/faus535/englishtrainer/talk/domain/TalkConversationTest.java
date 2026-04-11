@@ -13,7 +13,7 @@ class TalkConversationTest {
     @Test
     void startCreatesActiveConversation() {
         TalkConversation conversation = TalkConversation.start(
-                UUID.randomUUID(), UUID.randomUUID(), new TalkLevel("b1"));
+                UUID.randomUUID(), UUID.randomUUID(), new TalkLevel("b1"), ConversationMode.FULL);
 
         assertEquals(TalkStatus.ACTIVE, conversation.status());
         assertNotNull(conversation.id());
@@ -93,6 +93,32 @@ class TalkConversationTest {
         TalkConversation conversation = TalkConversationMother.withMessages(30);
 
         assertTrue(conversation.isAtMaxTurns());
+    }
+
+    @Test
+    void isAtQuickLimit_returnsFalse_whenFullMode() {
+        TalkConversation conversation = TalkConversationMother.quickModeWithUserMessages(3);
+        TalkConversation fullMode = TalkConversation.reconstitute(
+                conversation.id(), conversation.userId(), conversation.scenarioId(),
+                conversation.level(), ConversationMode.FULL, conversation.status(),
+                conversation.summary(), conversation.evaluation(),
+                conversation.startedAt(), conversation.endedAt(), conversation.messages());
+
+        assertFalse(fullMode.isAtQuickLimit());
+    }
+
+    @Test
+    void isAtQuickLimit_returnsFalse_whenQuickModeUnder3UserMessages() {
+        TalkConversation conversation = TalkConversationMother.quickModeWithUserMessages(2);
+
+        assertFalse(conversation.isAtQuickLimit());
+    }
+
+    @Test
+    void isAtQuickLimit_returnsTrue_whenQuickModeWith3UserMessages() {
+        TalkConversation conversation = TalkConversationMother.quickModeWithUserMessages(3);
+
+        assertTrue(conversation.isAtQuickLimit());
     }
 
     @Test

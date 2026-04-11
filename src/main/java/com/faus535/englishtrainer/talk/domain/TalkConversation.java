@@ -14,11 +14,13 @@ import java.util.stream.IntStream;
 public final class TalkConversation extends AggregateRoot<TalkConversationId> {
 
     private static final int MAX_TURNS = 30;
+    private static final int QUICK_USER_MESSAGE_LIMIT = 3;
 
     private final TalkConversationId id;
     private final UUID userId;
     private final UUID scenarioId;
     private final TalkLevel level;
+    private final ConversationMode mode;
     private final TalkStatus status;
     private final String summary;
     private final TalkEvaluation evaluation;
@@ -27,12 +29,13 @@ public final class TalkConversation extends AggregateRoot<TalkConversationId> {
     private final List<TalkMessage> messages;
 
     private TalkConversation(TalkConversationId id, UUID userId, UUID scenarioId, TalkLevel level,
-                             TalkStatus status, String summary, TalkEvaluation evaluation,
+                             ConversationMode mode, TalkStatus status, String summary, TalkEvaluation evaluation,
                              Instant startedAt, Instant endedAt, List<TalkMessage> messages) {
         this.id = id;
         this.userId = userId;
         this.scenarioId = scenarioId;
         this.level = level;
+        this.mode = mode;
         this.status = status;
         this.summary = summary;
         this.evaluation = evaluation;
@@ -41,17 +44,17 @@ public final class TalkConversation extends AggregateRoot<TalkConversationId> {
         this.messages = Collections.unmodifiableList(new ArrayList<>(messages));
     }
 
-    public static TalkConversation start(UUID userId, UUID scenarioId, TalkLevel level) {
+    public static TalkConversation start(UUID userId, UUID scenarioId, TalkLevel level, ConversationMode mode) {
         return new TalkConversation(
-                TalkConversationId.generate(), userId, scenarioId, level,
+                TalkConversationId.generate(), userId, scenarioId, level, mode,
                 TalkStatus.ACTIVE, null, null, Instant.now(), null, List.of());
     }
 
     public static TalkConversation reconstitute(TalkConversationId id, UUID userId, UUID scenarioId,
-                                                 TalkLevel level, TalkStatus status, String summary,
-                                                 TalkEvaluation evaluation, Instant startedAt,
+                                                 TalkLevel level, ConversationMode mode, TalkStatus status,
+                                                 String summary, TalkEvaluation evaluation, Instant startedAt,
                                                  Instant endedAt, List<TalkMessage> messages) {
-        return new TalkConversation(id, userId, scenarioId, level, status, summary, evaluation,
+        return new TalkConversation(id, userId, scenarioId, level, mode, status, summary, evaluation,
                 startedAt, endedAt, messages);
     }
 
@@ -61,7 +64,7 @@ public final class TalkConversation extends AggregateRoot<TalkConversationId> {
         }
         List<TalkMessage> newMessages = new ArrayList<>(messages);
         newMessages.add(message);
-        return new TalkConversation(id, userId, scenarioId, level, status, summary, evaluation,
+        return new TalkConversation(id, userId, scenarioId, level, mode, status, summary, evaluation,
                 startedAt, endedAt, newMessages);
     }
 
@@ -90,10 +93,18 @@ public final class TalkConversation extends AggregateRoot<TalkConversationId> {
                 })
                 .toList();
 
-        TalkConversation ended = new TalkConversation(id, userId, scenarioId, level,
+        TalkConversation ended = new TalkConversation(id, userId, scenarioId, level, mode,
                 TalkStatus.COMPLETED, summary, evaluation, startedAt, Instant.now(), messages);
         ended.registerEvent(new TalkConversationCompletedEvent(id, userId, corrections, messages.size()));
         return ended;
+    }
+
+    public boolean isAtQuickLimit() {
+        return mode == ConversationMode.QUICK && userMessages().size() >= QUICK_USER_MESSAGE_LIMIT;
+    }
+
+    private List<TalkMessage> userMessages() {
+        return messages.stream().filter(m -> "user".equals(m.role())).toList();
     }
 
     public List<TalkMessage> recentMessages(int maxMessages) {
@@ -118,6 +129,7 @@ public final class TalkConversation extends AggregateRoot<TalkConversationId> {
     public UUID userId() { return userId; }
     public UUID scenarioId() { return scenarioId; }
     public TalkLevel level() { return level; }
+    public ConversationMode mode() { return mode; }
     public TalkStatus status() { return status; }
     public String summary() { return summary; }
     public TalkEvaluation evaluation() { return evaluation; }

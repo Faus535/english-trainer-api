@@ -110,11 +110,11 @@ POST /api/talk/conversations     (existing, new ?mode=QUICK param)
 - `StartTalkConversationUseCaseTest.execute_startsConversationWithQuickMode()`
 
 **Acceptance criteria**:
-- [ ] Migration `V12.0.0` runs without error
-- [ ] `TalkConversation.isAtQuickLimit()` returns true only in QUICK mode at 3 user messages
-- [ ] `POST /api/talk/conversations` accepts `{ "scenarioId": "...", "mode": "QUICK" }`
-- [ ] Verify compilation
-- [ ] Verify tests pass
+- [x] Migration `V12.0.0` runs without error
+- [x] `TalkConversation.isAtQuickLimit()` returns true only in QUICK mode at 3 user messages
+- [x] `POST /api/talk/conversations` accepts `{ "scenarioId": "...", "mode": "QUICK" }`
+- [x] Verify compilation
+- [x] Verify tests pass
 - [ ] Human review
 - [ ] Commit
 
