@@ -8,6 +8,7 @@ import com.faus535.englishtrainer.shared.application.annotation.UseCase;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
+import java.time.temporal.ChronoUnit;
 import java.util.UUID;
 
 @UseCase
@@ -34,6 +35,16 @@ public class GetReviewStatsUseCase {
         // A proper streak would require querying review_results grouped by day
         int streak = completedToday > 0 ? 1 : 0;
 
-        return new ReviewStats(totalItems, dueToday, completedToday, streak);
+        long totalMastered = itemRepository.countMasteredByUserId(userId);
+
+        Instant sevenDaysAgo = Instant.now().minus(7, ChronoUnit.DAYS);
+        long weeklyReviewed = resultRepository.countByUserIdAndReviewedAtAfter(userId, sevenDaysAgo);
+
+        Instant thirtyDaysAgo = Instant.now().minus(30, ChronoUnit.DAYS);
+        long totalLast30 = resultRepository.countByUserIdAndReviewedAtAfter(userId, thirtyDaysAgo);
+        long correctLast30 = resultRepository.countCorrectByUserIdSince(userId, thirtyDaysAgo);
+        double accuracyRate = totalLast30 > 0 ? (double) correctLast30 / totalLast30 : 0.0;
+
+        return new ReviewStats(totalItems, dueToday, completedToday, streak, totalMastered, weeklyReviewed, accuracyRate);
     }
 }

@@ -26,4 +26,9 @@ class JpaReviewResultRepositoryAdapter implements ReviewResultRepository {
     public int countByUserIdAndReviewedAtAfter(UUID userId, Instant after) {
         return jpaRepository.countByUserIdAndReviewedAtAfter(userId, after);
     }
+
+    @Override
+    public long countCorrectByUserIdSince(UUID userId, Instant since) {
+        return jpaRepository.countCorrectByUserIdSince(userId, since);
+    }
 }

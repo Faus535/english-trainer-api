@@ -59,4 +59,12 @@ public class InMemoryReviewItemRepository implements ReviewItemRepository {
                 .filter(item -> item.userId().equals(userId))
                 .toList();
     }
+
+    @Override
+    public long countMasteredByUserId(UUID userId) {
+        return store.values().stream()
+                .filter(item -> item.userId().equals(userId))
+                .filter(item -> item.intervalDays() >= 21)
+                .count();
+    }
 }

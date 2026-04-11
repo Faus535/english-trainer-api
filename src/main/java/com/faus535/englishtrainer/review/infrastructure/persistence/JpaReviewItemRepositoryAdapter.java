@@ -60,4 +60,9 @@ class JpaReviewItemRepositoryAdapter implements ReviewItemRepository {
     public int countDueByUserId(UUID userId, Instant now) {
         return jpaRepository.countDueByUserId(userId, now);
     }
+
+    @Override
+    public long countMasteredByUserId(UUID userId) {
+        return jpaRepository.countMasteredByUserId(userId);
+    }
 }

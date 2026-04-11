@@ -18,4 +18,6 @@ public interface ReviewItemRepository {
     int countByUserId(UUID userId);
 
     int countDueByUserId(UUID userId, Instant now);
+
+    long countMasteredByUserId(UUID userId);
 }

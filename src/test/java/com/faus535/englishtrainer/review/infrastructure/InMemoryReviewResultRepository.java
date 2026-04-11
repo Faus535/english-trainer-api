@@ -26,6 +26,15 @@ public class InMemoryReviewResultRepository implements ReviewResultRepository {
                 .count();
     }
 
+    @Override
+    public long countCorrectByUserIdSince(UUID userId, Instant since) {
+        return store.stream()
+                .filter(r -> r.userId().equals(userId))
+                .filter(r -> !r.reviewedAt().isBefore(since))
+                .filter(r -> r.quality() >= 3)
+                .count();
+    }
+
     public List<ReviewResult> findAll() {
         return List.copyOf(store);
     }

@@ -8,4 +8,6 @@ public interface ReviewResultRepository {
     ReviewResult save(ReviewResult result);
 
     int countByUserIdAndReviewedAtAfter(UUID userId, Instant after);
+
+    long countCorrectByUserIdSince(UUID userId, Instant since);
 }

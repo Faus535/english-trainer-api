@@ -19,4 +19,7 @@ interface JpaReviewItemRepository extends JpaRepository<ReviewItemEntity, UUID> 
 
     @Query("SELECT COUNT(r) FROM ReviewItemEntity r WHERE r.userId = :userId AND r.nextReviewAt <= :now")
     int countDueByUserId(UUID userId, Instant now);
+
+    @Query("SELECT COUNT(r) FROM ReviewItemEntity r WHERE r.userId = :userId AND r.intervalDays >= 21")
+    long countMasteredByUserId(UUID userId);
 }

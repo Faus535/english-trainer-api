@@ -182,11 +182,11 @@ No new endpoints — existing responses enriched:
 - `GetReviewStatsUseCaseTest.execute_returnsAccuracyRate()`
 
 **Acceptance criteria**:
-- [ ] `GET /api/review/stats` includes `totalMastered`, `weeklyReviewed`, `accuracyRate`
-- [ ] `accuracyRate` is between 0.0 and 1.0
-- [ ] Stats are user-scoped (no cross-user data)
-- [ ] Verify compilation
-- [ ] Verify tests pass
+- [x] `GET /api/review/stats` includes `totalMastered`, `weeklyReviewed`, `accuracyRate`
+- [x] `accuracyRate` is between 0.0 and 1.0
+- [x] Stats are user-scoped (no cross-user data)
+- [x] Verify compilation
+- [x] Verify tests pass
 - [ ] Human review
 - [ ] Commit
 
