@@ -2,7 +2,10 @@ package com.faus535.englishtrainer.talk.infrastructure.controller;
 
 import com.faus535.englishtrainer.talk.application.GetTalkConversationSummaryUseCase;
 import com.faus535.englishtrainer.talk.application.TalkConversationSummaryResult;
+import com.faus535.englishtrainer.talk.domain.GrammarNote;
 import com.faus535.englishtrainer.talk.domain.TalkEvaluation;
+import com.faus535.englishtrainer.talk.domain.VocabItem;
+import com.faus535.englishtrainer.talk.domain.error.TalkAiException;
 import com.faus535.englishtrainer.talk.domain.error.TalkConversationNotFoundException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,20 +25,22 @@ class GetTalkConversationSummaryController {
     }
 
     record FullSummaryResponse(String mode, String summary, TalkEvaluation evaluation,
-                                int turnCount, int errorCount) {}
+                                int turnCount, int errorCount,
+                                List<GrammarNote> grammarNotes, List<VocabItem> newVocabulary) {}
 
     record QuickSummaryResponse(String mode, boolean taskCompleted,
                                  List<String> top3Corrections, String encouragementNote) {}
 
     @GetMapping("/api/talk/conversations/{id}/summary")
-    ResponseEntity<?> handle(@PathVariable UUID id) throws TalkConversationNotFoundException {
+    ResponseEntity<?> handle(@PathVariable UUID id)
+            throws TalkConversationNotFoundException, TalkAiException {
 
         TalkConversationSummaryResult result = useCase.execute(id);
 
         return switch (result) {
             case TalkConversationSummaryResult.FullSummaryResult r ->
                     ResponseEntity.ok(new FullSummaryResponse("FULL", r.summary(), r.evaluation(),
-                            r.turnCount(), r.errorCount()));
+                            r.turnCount(), r.errorCount(), r.grammarNotes(), r.newVocabulary()));
             case TalkConversationSummaryResult.QuickSummaryResult r ->
                     ResponseEntity.ok(new QuickSummaryResponse("QUICK", r.taskCompleted(),
                             r.top3Corrections(), r.encouragementNote()));

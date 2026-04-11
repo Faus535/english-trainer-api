@@ -293,13 +293,13 @@ private static class CountingStubTalkAiPort extends StubTalkAiPort {
 ```
 
 **Acceptance criteria**:
-- [ ] `./gradlew test --tests "*.talk.*"` all green
-- [ ] `shouldAnalyzeAndPersistGrammarFeedbackWhenNotYetComputed` confirms AI called + result persisted
-- [ ] `shouldNotCallAiWhenGrammarFeedbackAlreadyPersisted` confirms no redundant AI call
-- [ ] `shouldReturnQuickSummaryWhenModeIsQuick` confirms QUICK path unchanged
-- [ ] `shouldThrowNotFoundWhenConversationDoesNotExist` passes
-- [ ] Verify compilation
-- [ ] Verify tests pass
+- [x] `./gradlew test --tests "*.talk.*"` all green
+- [x] `shouldAnalyzeAndPersistGrammarFeedbackWhenNotYetComputed` confirms AI called + result persisted
+- [x] `shouldNotCallAiWhenGrammarFeedbackAlreadyPersisted` confirms no redundant AI call
+- [x] `shouldReturnQuickSummaryWhenModeIsQuick` confirms QUICK path unchanged
+- [x] `shouldThrowNotFoundWhenConversationDoesNotExist` passes
+- [x] Verify compilation
+- [x] Verify tests pass
 - [ ] Human review
 - [ ] Commit: `feat(talk): add lazy grammar and vocabulary analysis to conversation summary`
 
