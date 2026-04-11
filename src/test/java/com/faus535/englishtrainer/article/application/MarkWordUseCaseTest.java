@@ -48,6 +48,7 @@ class MarkWordUseCaseTest {
         assertNotNull(result.id());
         assertEquals("spark debate", result.wordOrPhrase());
         assertEquals("traducción de prueba", result.translation());
+        assertEquals("brief English definition", result.englishDefinition());
         assertEquals(1, markedWordRepository.count());
 
         assertEquals(1, publishedEvents.size());

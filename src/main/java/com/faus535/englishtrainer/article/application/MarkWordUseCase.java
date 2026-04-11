@@ -42,7 +42,7 @@ public class MarkWordUseCase {
         ArticleAiPort.ArticleTranslationResult tr = aiPort.translateWord(wordOrPhrase, contextSentence);
 
         ArticleMarkedWord marked = ArticleMarkedWord.create(articleId, userId, wordOrPhrase,
-                tr.translation(), contextSentence);
+                tr.translation(), tr.englishDefinition(), contextSentence);
         markedWordRepository.save(marked);
 
         eventPublisher.publishEvent(new ArticleWordMarkedEvent(

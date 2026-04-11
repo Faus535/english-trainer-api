@@ -21,7 +21,7 @@ public class StubArticleAiPort implements ArticleAiPort {
 
     @Override
     public ArticleTranslationResult translateWord(String wordOrPhrase, String contextSentence) throws ArticleAiException {
-        return new ArticleTranslationResult("traducción de prueba");
+        return new ArticleTranslationResult("traducción de prueba", "brief English definition");
     }
 
     @Override

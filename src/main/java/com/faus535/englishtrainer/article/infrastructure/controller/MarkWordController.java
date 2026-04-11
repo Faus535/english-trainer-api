@@ -34,10 +34,10 @@ class MarkWordController {
     ) {}
 
     record MarkedWordResponse(UUID id, String wordOrPhrase, String translation,
-                               String contextSentence, Instant createdAt) {
+                               String englishDefinition, String contextSentence, Instant createdAt) {
         static MarkedWordResponse from(ArticleMarkedWord word) {
             return new MarkedWordResponse(word.id().value(), word.wordOrPhrase(),
-                    word.translation(), word.contextSentence(), word.createdAt());
+                    word.translation(), word.englishDefinition(), word.contextSentence(), word.createdAt());
         }
     }
 

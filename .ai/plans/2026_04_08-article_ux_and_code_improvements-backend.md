@@ -268,12 +268,12 @@
    - Update `MarkWordUseCaseTest` to verify `englishDefinition` is set
 
 **Acceptance criteria**:
-- [ ] Migration adds `english_definition` column (nullable for backwards compat)
-- [ ] `POST /api/article/{id}/words` response includes `englishDefinition` field
-- [ ] `GET /api/article/{id}/words` response includes `englishDefinition` field
-- [ ] AI prompt asks for English definition alongside translation
-- [ ] All existing tests updated and pass
-- [ ] Compile + tests green
+- [x] Migration adds `english_definition` column (nullable for backwards compat)
+- [x] `POST /api/article/{id}/words` response includes `englishDefinition` field
+- [x] `GET /api/article/{id}/words` response includes `englishDefinition` field
+- [x] AI prompt asks for English definition alongside translation
+- [x] All existing tests updated and pass
+- [x] Compile + tests green
 
 ---
 

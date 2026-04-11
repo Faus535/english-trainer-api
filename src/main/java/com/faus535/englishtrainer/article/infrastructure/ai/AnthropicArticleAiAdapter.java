@@ -46,13 +46,14 @@ class AnthropicArticleAiAdapter implements ArticleAiPort {
 
     private static final Map<String, Object> TOOL_TRANSLATE_WORD = Map.of(
             "name", "translate_word",
-            "description", "Translate an English word or phrase in context to Spanish",
+            "description", "Translate an English word or phrase in context to Spanish and provide a brief English definition",
             "input_schema", Map.of(
                     "type", "object",
-                    "properties", Map.of(
-                            "translation", Map.of("type", "string", "description", "Spanish translation with brief explanation")
+                    "properties", Map.ofEntries(
+                            Map.entry("translation", Map.of("type", "string", "description", "Spanish translation with brief explanation")),
+                            Map.entry("english_definition", Map.of("type", "string", "description", "Brief English definition of the word"))
                     ),
-                    "required", List.of("translation")
+                    "required", List.of("translation", "english_definition")
             )
     );
 
@@ -183,9 +184,8 @@ class AnthropicArticleAiAdapter implements ArticleAiPort {
     @SuppressWarnings("unchecked")
     public ArticleTranslationResult translateWord(String wordOrPhrase, String contextSentence) throws ArticleAiException {
         try {
-            String userMessage = ("Translate the English word/phrase \"%s\" to Spanish. " +
-                    "Context sentence: \"%s\". " +
-                    "Provide a concise translation appropriate to the context.")
+            String userMessage = ("Translate the English word/phrase \"%s\" to Spanish and provide a brief English definition. " +
+                    "Context sentence: \"%s\".")
                     .formatted(wordOrPhrase, contextSentence != null ? contextSentence : "");
 
             Map<String, Object> requestBody = Map.of(
@@ -209,7 +209,9 @@ class AnthropicArticleAiAdapter implements ArticleAiPort {
             for (Map<String, Object> block : content) {
                 if ("tool_use".equals(block.get("type"))) {
                     Map<String, Object> input = (Map<String, Object>) block.get("input");
-                    return new ArticleTranslationResult((String) input.get("translation"));
+                    return new ArticleTranslationResult(
+                            (String) input.get("translation"),
+                            (String) input.get("english_definition"));
                 }
             }
             throw new ArticleAiException("No tool_use block in Claude response");

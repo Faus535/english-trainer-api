@@ -20,7 +20,7 @@ public interface ArticleAiPort {
 
     record ArticleParagraphData(String content, int orderIndex, String speaker) {}
 
-    record ArticleTranslationResult(String translation) {}
+    record ArticleTranslationResult(String translation, String englishDefinition) {}
 
     record ArticleQuestionsResult(List<ArticleQuestionData> questions) {}
 

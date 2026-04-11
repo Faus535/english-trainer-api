@@ -31,6 +31,9 @@ class ArticleMarkedWordEntity implements Persistable<UUID> {
     @Column(columnDefinition = "TEXT", nullable = false)
     private String translation;
 
+    @Column(name = "english_definition", columnDefinition = "TEXT")
+    private String englishDefinition;
+
     @Column(name = "context_sentence", columnDefinition = "TEXT")
     private String contextSentence;
 
@@ -47,6 +50,7 @@ class ArticleMarkedWordEntity implements Persistable<UUID> {
         entity.userId = word.userId();
         entity.wordOrPhrase = word.wordOrPhrase();
         entity.translation = word.translation();
+        entity.englishDefinition = word.englishDefinition();
         entity.contextSentence = word.contextSentence();
         entity.createdAt = word.createdAt();
         return entity;
@@ -56,7 +60,7 @@ class ArticleMarkedWordEntity implements Persistable<UUID> {
         return ArticleMarkedWord.reconstitute(
                 new ArticleMarkedWordId(id),
                 new ArticleReadingId(articleReadingId),
-                userId, wordOrPhrase, translation, contextSentence, createdAt);
+                userId, wordOrPhrase, translation, englishDefinition, contextSentence, createdAt);
     }
 
     @Override
