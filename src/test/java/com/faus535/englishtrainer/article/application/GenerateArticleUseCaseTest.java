@@ -31,7 +31,7 @@ class GenerateArticleUseCaseTest {
 
     private UUID createUser() {
         UserProfileId profileId = UserProfileId.generate();
-        userProfileRepository.save(UserProfile.reconstitute(profileId, null, 0,
+        userProfileRepository.save(UserProfile.reconstitute(profileId, null, 0, null,
                 java.time.Instant.now(), java.time.Instant.now()));
         return profileId.value();
     }

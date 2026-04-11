@@ -89,7 +89,7 @@ class GoogleLoginUseCaseTest {
         AuthUser existingUser = AuthUserMother.googleUserWithEmail("existing@google.com");
         authUserRepository.save(existingUser);
         var profile = com.faus535.englishtrainer.user.domain.UserProfile.reconstitute(
-                existingUser.userProfileId(), null, 100, java.time.Instant.now(), java.time.Instant.now());
+                existingUser.userProfileId(), null, 100, null, java.time.Instant.now(), java.time.Instant.now());
         userProfileRepository.save(profile);
 
         googleAuthPort.willReturn(new GoogleVerifiedUser("existing@google.com", "Existing User", true));

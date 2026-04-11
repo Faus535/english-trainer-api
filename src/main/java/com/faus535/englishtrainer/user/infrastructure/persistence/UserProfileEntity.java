@@ -2,6 +2,7 @@ package com.faus535.englishtrainer.user.infrastructure.persistence;
 
 import com.faus535.englishtrainer.user.domain.UserProfile;
 import com.faus535.englishtrainer.user.domain.UserProfileId;
+import com.faus535.englishtrainer.user.domain.vo.EnglishLevel;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -35,6 +36,9 @@ class UserProfileEntity implements Persistable<UUID> {
     @Column(name = "updated_at", nullable = false)
     private Instant updatedAt;
 
+    @Column(name = "english_level")
+    private String englishLevel;
+
     protected UserProfileEntity() {}
 
     static UserProfileEntity fromAggregate(UserProfile aggregate) {
@@ -45,14 +49,17 @@ class UserProfileEntity implements Persistable<UUID> {
         entity.xp = aggregate.xp();
         entity.createdAt = aggregate.createdAt();
         entity.updatedAt = aggregate.updatedAt();
+        entity.englishLevel = aggregate.englishLevel() != null ? aggregate.englishLevel().name() : null;
         return entity;
     }
 
     UserProfile toAggregate() {
+        EnglishLevel level = englishLevel != null ? EnglishLevel.valueOf(englishLevel) : null;
         return UserProfile.reconstitute(
                 new UserProfileId(id),
                 version,
                 xp,
+                level,
                 createdAt,
                 updatedAt
         );

@@ -44,7 +44,7 @@ public class GoogleLoginUseCase {
                 userProfileRepository.findById(user.userProfileId())
                         .orElseGet(() -> {
                             UserProfile repair = UserProfile.reconstitute(
-                                    user.userProfileId(), null, 0, Instant.now(), Instant.now());
+                                    user.userProfileId(), null, 0, null, Instant.now(), Instant.now());
                             return userProfileRepository.save(repair);
                         });
             }

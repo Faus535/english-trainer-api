@@ -40,7 +40,7 @@ class GenerateImmerseContentUseCaseTest {
     private UUID createProfileAndReturnId() {
         UserProfileId profileId = UserProfileId.generate();
         Instant now = Instant.now();
-        userProfileRepository.save(UserProfile.reconstitute(profileId, null, 0, now, now));
+        userProfileRepository.save(UserProfile.reconstitute(profileId, null, 0, null, now, now));
         return profileId.value();
     }
 

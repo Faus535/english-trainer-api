@@ -2,6 +2,7 @@ package com.faus535.englishtrainer.user.domain;
 
 import com.faus535.englishtrainer.user.domain.error.InvalidXpAmountException;
 import com.faus535.englishtrainer.user.domain.event.UserProfileCreatedEvent;
+import com.faus535.englishtrainer.user.domain.vo.EnglishLevel;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -33,6 +34,16 @@ final class UserProfileTest {
         UserProfile profile = UserProfileMother.create();
 
         assertThrows(InvalidXpAmountException.class, () -> profile.addXp(-10));
+    }
+
+    @Test
+    void updateEnglishLevel_storesNewLevel() {
+        UserProfile profile = UserProfileMother.create();
+
+        UserProfile updated = profile.updateEnglishLevel(EnglishLevel.B1);
+
+        assertEquals(EnglishLevel.B1, updated.englishLevel());
+        assertEquals(profile.id(), updated.id());
     }
 
     @Test

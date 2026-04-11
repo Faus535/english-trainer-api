@@ -38,7 +38,7 @@ class DeleteAccountUseCaseTest {
         UserProfileId profileId = UserProfileId.generate();
         AuthUser user = AuthUser.create("test@example.com", passwordEncoder.encode(password), profileId);
         authUserRepository.save(user);
-        userProfileRepository.save(UserProfile.reconstitute(profileId, null, 0, Instant.now(), Instant.now()));
+        userProfileRepository.save(UserProfile.reconstitute(profileId, null, 0, null, Instant.now(), Instant.now()));
 
         useCase.execute(user.id().value().toString(), password);
 
@@ -51,7 +51,7 @@ class DeleteAccountUseCaseTest {
         AuthUser googleUser = AuthUserMother.googleUser();
         authUserRepository.save(googleUser);
         userProfileRepository.save(UserProfile.reconstitute(
-                googleUser.userProfileId(), null, 0, Instant.now(), Instant.now()));
+                googleUser.userProfileId(), null, 0, null, Instant.now(), Instant.now()));
 
         useCase.execute(googleUser.id().value().toString(), null);
 
