@@ -4,6 +4,7 @@ import com.faus535.englishtrainer.article.domain.ArticleReading;
 import com.faus535.englishtrainer.article.domain.ArticleReadingId;
 import com.faus535.englishtrainer.article.domain.ArticleReadingRepository;
 
+import java.time.Instant;
 import java.util.*;
 
 public class InMemoryArticleReadingRepository implements ArticleReadingRepository {
@@ -26,6 +27,12 @@ public class InMemoryArticleReadingRepository implements ArticleReadingRepositor
                 .filter(r -> r.userId().equals(userId))
                 .sorted(Comparator.comparing(ArticleReading::createdAt).reversed())
                 .toList();
+    }
+
+    @Override
+    public boolean existsByUserIdAndCreatedAtAfter(UUID userId, Instant since) {
+        return store.values().stream()
+                .anyMatch(r -> r.userId().equals(userId) && r.createdAt().isAfter(since));
     }
 
     @Override

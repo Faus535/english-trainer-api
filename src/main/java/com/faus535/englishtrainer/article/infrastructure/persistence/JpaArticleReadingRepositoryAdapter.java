@@ -5,6 +5,7 @@ import com.faus535.englishtrainer.article.domain.ArticleReadingId;
 import com.faus535.englishtrainer.article.domain.ArticleReadingRepository;
 import org.springframework.stereotype.Repository;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -40,6 +41,11 @@ class JpaArticleReadingRepositoryAdapter implements ArticleReadingRepository {
         return jpaRepository.findByUserIdOrderByCreatedAtDesc(userId).stream()
                 .map(ArticleReadingEntity::toDomain)
                 .toList();
+    }
+
+    @Override
+    public boolean existsByUserIdAndCreatedAtAfter(UUID userId, Instant since) {
+        return jpaRepository.existsByUserIdAndCreatedAtAfter(userId, since);
     }
 
     @Override

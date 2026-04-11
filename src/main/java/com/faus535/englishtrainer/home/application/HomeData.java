@@ -1,13 +1,18 @@
 package com.faus535.englishtrainer.home.application;
 
+import java.util.List;
+
 public record HomeData(
-        String suggestedAction,
-        TalkSummary talk,
-        ImmerseSummary immerse,
-        ReviewSummary review
+        long dueReviewCount,
+        int streakDays,
+        boolean[] weeklyActivity,
+        SuggestedModule suggestedModule,
+        long recentXpThisWeek,
+        List<RecentAchievement> recentAchievements,
+        String englishLevel
 ) {
 
-    public record TalkSummary(boolean hasActiveConversation, int totalCompleted, Integer lastScore) {}
-    public record ImmerseSummary(int recentContentCount, String lastContentTitle) {}
-    public record ReviewSummary(int dueToday, int streak) {}
+    public enum SuggestedModule { REVIEW, ARTICLE, IMMERSE, TALK }
+
+    public record RecentAchievement(String title, String icon, int xpReward) {}
 }
