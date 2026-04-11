@@ -53,4 +53,10 @@ public class InMemoryReviewItemRepository implements ReviewItemRepository {
                 .filter(item -> item.isDue(now))
                 .count();
     }
+
+    public List<ReviewItem> findAll(UUID userId) {
+        return store.values().stream()
+                .filter(item -> item.userId().equals(userId))
+                .toList();
+    }
 }

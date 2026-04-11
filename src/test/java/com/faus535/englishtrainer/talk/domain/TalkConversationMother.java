@@ -44,7 +44,7 @@ public final class TalkConversationMother {
         for (int i = 0; i < count; i++) {
             messages.add(TalkMessage.userMessage("Test message " + i));
             TalkCorrection correction = new TalkCorrection(
-                    List.of("Fix grammar " + i), List.of(), List.of(), "Good try!");
+                    List.of("Fix grammar " + i), List.of(), List.of(), "Good try!", null);
             messages.add(TalkMessage.assistantMessage("Response " + i, correction));
         }
         return TalkConversation.reconstitute(

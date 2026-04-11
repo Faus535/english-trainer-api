@@ -47,7 +47,7 @@ class SendTalkMessageUseCaseTest {
         TalkConversation conversation = TalkConversationMother.active();
         conversationRepository.save(conversation);
         aiPort.setCorrectionToReturn(new TalkCorrection(
-                List.of("'I goed' → 'I went'"), List.of(), List.of(), "Nice try!"));
+                List.of("'I goed' → 'I went'"), List.of(), List.of(), "Nice try!", null));
 
         var result = useCase.execute(conversation.id().value(), "I goed to school", null);
 

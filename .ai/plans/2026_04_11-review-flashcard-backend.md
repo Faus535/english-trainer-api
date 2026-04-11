@@ -144,12 +144,12 @@ No new endpoints — existing responses enriched:
 - `TalkConversationTest.end_pairsCorrectionsWithPrecedingUserMessages()`
 
 **Acceptance criteria**:
-- [ ] Marking a word in article creates review item with context sentence
-- [ ] Completing immerse creates review items with context from exercise
-- [ ] Completing talk creates review items with `originalUserMessage` as context
-- [ ] TalkCorrection records include `originalUserMessage`
-- [ ] Verify compilation
-- [ ] Verify tests pass
+- [x] Marking a word in article creates review item with context sentence
+- [x] Completing immerse creates review items with context from exercise
+- [x] Completing talk creates review items with `originalUserMessage` as context
+- [x] TalkCorrection records include `originalUserMessage`
+- [x] Verify compilation
+- [x] Verify tests pass
 - [ ] Human review
 - [ ] Commit
 

@@ -22,7 +22,7 @@ class TalkCompletedReviewListenerTest {
 
         UUID userId = UUID.fromString("00000000-0000-0000-0000-000000000001");
         TalkCorrection correction = new TalkCorrection(
-                List.of("Grammar fix"), List.of(), List.of(), "Good!");
+                List.of("Grammar fix"), List.of(), List.of(), "Good!", null);
         TalkConversationCompletedEvent event = new TalkConversationCompletedEvent(
                 TalkConversationId.generate(), userId, List.of(correction), 8);
 

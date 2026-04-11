@@ -51,4 +51,22 @@ class CreateReviewItemFromArticleUseCaseTest {
 
         assertEquals(1, reviewItemRepository.countByUserId(userId));
     }
+
+    @Test
+    void execute_setsContextSentenceFromEvent() {
+        UUID userId = UUID.randomUUID();
+        UUID markedWordId = UUID.randomUUID();
+        ArticleWordMarkedEvent event = new ArticleWordMarkedEvent(
+                UUID.randomUUID(), userId, markedWordId,
+                "ephemeral", "efímero", "The ephemeral beauty of cherry blossoms.");
+
+        useCase.execute(event);
+
+        var item = reviewItemRepository.findByUserIdSourceTypeAndSourceId(
+                userId, ReviewSourceType.ARTICLE, markedWordId);
+        assertTrue(item.isPresent());
+        assertEquals("The ephemeral beauty of cherry blossoms.", item.get().contextSentence());
+        assertEquals("ephemeral", item.get().targetWord());
+        assertEquals("efímero", item.get().targetTranslation());
+    }
 }

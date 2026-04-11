@@ -6,7 +6,8 @@ public record TalkCorrection(
         List<String> grammarFixes,
         List<String> vocabularySuggestions,
         List<String> pronunciationTips,
-        String encouragement
+        String encouragement,
+        String originalUserMessage
 ) {
 
     public TalkCorrection {
@@ -16,7 +17,7 @@ public record TalkCorrection(
     }
 
     public static TalkCorrection empty() {
-        return new TalkCorrection(List.of(), List.of(), List.of(), null);
+        return new TalkCorrection(List.of(), List.of(), List.of(), null, null);
     }
 
     public boolean hasCorrections() {

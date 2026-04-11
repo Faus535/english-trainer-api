@@ -94,4 +94,17 @@ class TalkConversationTest {
 
         assertTrue(conversation.isAtMaxTurns());
     }
+
+    @Test
+    void end_pairsCorrectionsWithPrecedingUserMessages() throws TalkConversationAlreadyEndedException {
+        TalkConversation conversation = TalkConversationMother.withCorrections(2);
+
+        TalkConversation ended = conversation.end("Good session", TalkEvaluation.empty());
+
+        var event = (com.faus535.englishtrainer.talk.domain.event.TalkConversationCompletedEvent)
+                ended.pullDomainEvents().get(0);
+        assertEquals(2, event.corrections().size());
+        assertEquals("Test message 0", event.corrections().get(0).originalUserMessage());
+        assertEquals("Test message 1", event.corrections().get(1).originalUserMessage());
+    }
 }

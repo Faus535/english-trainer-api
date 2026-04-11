@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.IntStream;
 
 public final class TalkConversation extends AggregateRoot<TalkConversationId> {
 
@@ -70,9 +71,23 @@ public final class TalkConversation extends AggregateRoot<TalkConversationId> {
             throw new TalkConversationAlreadyEndedException(id);
         }
 
-        List<TalkCorrection> corrections = messages.stream()
-                .map(TalkMessage::correction)
-                .filter(c -> c != null && c.hasCorrections())
+        List<TalkCorrection> corrections = IntStream.range(0, messages.size())
+                .filter(i -> {
+                    TalkCorrection c = messages.get(i).correction();
+                    return c != null && c.hasCorrections();
+                })
+                .mapToObj(i -> {
+                    TalkCorrection c = messages.get(i).correction();
+                    String originalUserMessage = null;
+                    for (int j = i - 1; j >= 0; j--) {
+                        if ("user".equals(messages.get(j).role())) {
+                            originalUserMessage = messages.get(j).content();
+                            break;
+                        }
+                    }
+                    return new TalkCorrection(c.grammarFixes(), c.vocabularySuggestions(),
+                            c.pronunciationTips(), c.encouragement(), originalUserMessage);
+                })
                 .toList();
 
         TalkConversation ended = new TalkConversation(id, userId, scenarioId, level,

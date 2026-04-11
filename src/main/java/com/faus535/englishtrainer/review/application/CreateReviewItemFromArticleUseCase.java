@@ -24,7 +24,8 @@ public class CreateReviewItemFromArticleUseCase {
                         existing -> {},
                         () -> repository.save(ReviewItem.create(
                                 event.userId(), ReviewSourceType.ARTICLE,
-                                event.markedWordId(), event.wordOrPhrase(), event.translation()))
+                                event.markedWordId(), event.wordOrPhrase(), event.translation(),
+                                event.contextSentence(), null, event.wordOrPhrase(), event.translation()))
                 );
     }
 }

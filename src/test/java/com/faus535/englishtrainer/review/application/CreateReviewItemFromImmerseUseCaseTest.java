@@ -46,4 +46,18 @@ class CreateReviewItemFromImmerseUseCaseTest {
 
         assertEquals(1, repository.countByUserId(USER_ID));
     }
+
+    @Test
+    void execute_setsContextSentenceFromQuestion() {
+        ImmerseExerciseId exerciseId = ImmerseExerciseId.generate();
+        ImmerseExerciseAnsweredEvent event = new ImmerseExerciseAnsweredEvent(
+                USER_ID, exerciseId,
+                "What does 'drought' mean?", "A long period without rain", "A type of storm");
+
+        useCase.execute(event);
+
+        var item = repository.findAll(USER_ID).get(0);
+        assertEquals("What does 'drought' mean?", item.contextSentence());
+        assertEquals("A long period without rain", item.targetWord());
+    }
 }

@@ -30,7 +30,7 @@ class CreateReviewItemFromTalkUseCaseTest {
     void createsItemsFromCorrections() {
         TalkCorrection correction = new TalkCorrection(
                 List.of("'I want to order' -> 'I'd like to order'"),
-                List.of("latte"), List.of(), "Good try!");
+                List.of("latte"), List.of(), "Good try!", null);
         TalkConversationCompletedEvent event = new TalkConversationCompletedEvent(
                 TalkConversationId.generate(), USER_ID, List.of(correction), 10);
 
@@ -52,7 +52,7 @@ class CreateReviewItemFromTalkUseCaseTest {
     @Test
     void skipsDuplicateCorrections() {
         TalkCorrection correction = new TalkCorrection(
-                List.of("Fix 1"), List.of(), List.of(), "Good!");
+                List.of("Fix 1"), List.of(), List.of(), "Good!", null);
         TalkConversationCompletedEvent event1 = new TalkConversationCompletedEvent(
                 TalkConversationId.generate(), USER_ID, List.of(correction), 5);
         TalkConversationCompletedEvent event2 = new TalkConversationCompletedEvent(
@@ -63,5 +63,20 @@ class CreateReviewItemFromTalkUseCaseTest {
 
         // Should still be 1 because same correction content generates same sourceId
         assertEquals(1, repository.countByUserId(USER_ID));
+    }
+
+    @Test
+    void execute_setsContextFromCorrectionAndUserMessage() {
+        TalkCorrection correction = new TalkCorrection(
+                List.of("'I have 20 years' -> 'I am 20 years old'"),
+                List.of(), List.of(), "Good!", "I have 20 years old");
+        TalkConversationCompletedEvent event = new TalkConversationCompletedEvent(
+                TalkConversationId.generate(), USER_ID, List.of(correction), 4);
+
+        useCase.execute(event);
+
+        var item = repository.findAll(USER_ID).get(0);
+        assertEquals("I have 20 years old", item.contextSentence());
+        assertEquals("'I have 20 years' -> 'I am 20 years old'", item.targetWord());
     }
 }

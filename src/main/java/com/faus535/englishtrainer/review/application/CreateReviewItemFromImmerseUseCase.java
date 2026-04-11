@@ -24,7 +24,8 @@ public class CreateReviewItemFromImmerseUseCase {
                         existing -> {},
                         () -> repository.save(ReviewItem.create(
                                 event.userId(), ReviewSourceType.IMMERSE_VOCAB,
-                                event.exerciseId().value(), event.question(), event.correctAnswer()))
+                                event.exerciseId().value(), event.question(), event.correctAnswer(),
+                                event.question(), null, event.correctAnswer(), null))
                 );
     }
 }

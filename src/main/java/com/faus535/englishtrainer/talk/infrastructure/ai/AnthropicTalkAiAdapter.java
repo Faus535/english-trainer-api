@@ -232,7 +232,7 @@ class AnthropicTalkAiAdapter implements TalkAiPort {
                 List<String> vocab = toStringList(map.getOrDefault("v", map.get("vocabularySuggestions")));
                 List<String> pronunciation = toStringList(map.getOrDefault("p", map.get("pronunciationTips")));
                 String encouragement = (String) map.getOrDefault("e", map.get("encouragement"));
-                TalkCorrection correction = new TalkCorrection(grammar, vocab, pronunciation, encouragement);
+                TalkCorrection correction = new TalkCorrection(grammar, vocab, pronunciation, encouragement, null);
                 return new TalkAiResponse(content, correction);
             } catch (Exception e) {
                 log.warn("Failed to parse feedback JSON: {}", feedbackJson, e);
