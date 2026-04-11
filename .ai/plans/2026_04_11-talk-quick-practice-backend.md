@@ -244,11 +244,11 @@ Daily selection: `int offset = LocalDate.now().getDayOfYear() % (ALL.size() - 3 
 - `ListQuickChallengesUseCaseTest.execute_returnsDifferentChallengesForDifferentDays()`
 
 **Acceptance criteria**:
-- [ ] `GET /api/talk/quick-challenges` returns exactly 3 challenges
-- [ ] Same date always returns same 3 challenges (deterministic)
-- [ ] Each challenge has title, description, difficulty, category
-- [ ] Verify compilation
-- [ ] Verify tests pass
+- [x] `GET /api/talk/quick-challenges` returns exactly 3 challenges
+- [x] Same date always returns same 3 challenges (deterministic)
+- [x] Each challenge has title, description, difficulty, category
+- [x] Verify compilation
+- [x] Verify tests pass
 - [ ] Human review
 - [ ] Commit
 

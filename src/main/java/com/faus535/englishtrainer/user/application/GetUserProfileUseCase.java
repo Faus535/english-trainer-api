@@ -13,7 +13,7 @@ public class GetUserProfileUseCase {
 
     private final UserProfileRepository repository;
 
-    GetUserProfileUseCase(UserProfileRepository repository) {
+    public GetUserProfileUseCase(UserProfileRepository repository) {
         this.repository = repository;
     }
 
