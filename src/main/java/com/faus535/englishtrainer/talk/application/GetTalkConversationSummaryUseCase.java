@@ -18,7 +18,7 @@ public class GetTalkConversationSummaryUseCase {
     private final TalkConversationRepository repository;
     private final TalkAiPort talkAiPort;
 
-    public GetTalkConversationSummaryUseCase(TalkConversationRepository repository, TalkAiPort talkAiPort) {
+    GetTalkConversationSummaryUseCase(TalkConversationRepository repository, TalkAiPort talkAiPort) {
         this.repository = repository;
         this.talkAiPort = talkAiPort;
     }

@@ -319,9 +319,9 @@ private static class CountingStubTalkAiPort extends StubTalkAiPort {
 - Getters without `get` prefix
 
 **Acceptance criteria**:
-- [ ] `/revisar` reports no violations
-- [ ] `./gradlew test` full suite passes
-- [ ] Verify compilation
+- [x] `/revisar` reports no violations
+- [x] `./gradlew test` full suite passes
+- [x] Verify compilation
 - [ ] Human review
 - [ ] Commit: `fix(talk): revisar fixes`
 
