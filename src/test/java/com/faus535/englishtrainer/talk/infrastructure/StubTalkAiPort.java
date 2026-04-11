@@ -37,4 +37,9 @@ public class StubTalkAiPort implements TalkAiPort {
     public TalkEvaluation evaluate(TalkLevel level, List<TalkMessage> messages) throws TalkAiException {
         return evaluationToReturn;
     }
+
+    @Override
+    public QuickSummary quickSummarize(List<TalkMessage> messages) throws TalkAiException {
+        return new QuickSummary(true, List.of("I goed → I went"), "Great effort!");
+    }
 }

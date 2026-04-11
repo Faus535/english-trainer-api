@@ -13,5 +13,9 @@ public interface TalkAiPort {
 
     TalkEvaluation evaluate(TalkLevel level, List<TalkMessage> messages) throws TalkAiException;
 
+    QuickSummary quickSummarize(List<TalkMessage> messages) throws TalkAiException;
+
     record TalkAiResponse(String content, TalkCorrection correction) {}
+
+    record QuickSummary(boolean taskCompleted, List<String> top3Corrections, String encouragementNote) {}
 }

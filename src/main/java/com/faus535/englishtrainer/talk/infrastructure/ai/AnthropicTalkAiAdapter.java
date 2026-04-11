@@ -97,6 +97,32 @@ class AnthropicTalkAiAdapter implements TalkAiPort {
     }
 
     @Override
+    public QuickSummary quickSummarize(List<TalkMessage> messages) throws TalkAiException {
+        try {
+            StringBuilder conversationText = new StringBuilder();
+            for (TalkMessage msg : messages) {
+                conversationText.append(msg.role()).append(": ").append(msg.content()).append("\n");
+            }
+
+            String systemPrompt = """
+                    You are an English language coach. Given a short conversation, evaluate it and respond ONLY with valid JSON (no markdown, no explanation):
+                    {"taskCompleted": true/false, "top3Corrections": ["original → corrected"], "encouragementNote": "..."}
+                    """;
+
+            List<Map<String, String>> apiMessages = List.of(
+                    Map.of("role", "user", "content", "Conversation:\n" + conversationText));
+
+            String raw = callClaude(systemPrompt, apiMessages, 200);
+            return MAPPER.readValue(raw.trim(), QuickSummary.class);
+        } catch (TalkAiException e) {
+            throw e;
+        } catch (Exception e) {
+            log.warn("Failed to parse quick summary, returning default: {}", e.getMessage());
+            return new QuickSummary(true, List.of(), "Well done! Keep practicing.");
+        }
+    }
+
+    @Override
     public TalkEvaluation evaluate(TalkLevel level, List<TalkMessage> messages) throws TalkAiException {
         try {
             StringBuilder conversationText = new StringBuilder("Conversation (level: ")

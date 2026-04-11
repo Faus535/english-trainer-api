@@ -1,5 +1,6 @@
 package com.faus535.englishtrainer.talk.application;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.faus535.englishtrainer.talk.domain.*;
 import com.faus535.englishtrainer.talk.domain.error.TalkAiException;
 import com.faus535.englishtrainer.talk.domain.error.TalkConversationAlreadyEndedException;
@@ -15,6 +16,7 @@ import java.util.regex.Pattern;
 public class SendTalkMessageUseCase {
 
     private static final int MAX_CONTEXT_MESSAGES = 8;
+    private static final ObjectMapper MAPPER = new ObjectMapper();
     private static final Pattern FAREWELL_PATTERN = Pattern.compile(
             "\\b(bye|goodbye|good bye|see you|thanks for|thank you|that'?s all|gotta go|have to go|i'?m done|end chat)\\b",
             Pattern.CASE_INSENSITIVE
@@ -55,15 +57,36 @@ public class SendTalkMessageUseCase {
         TalkMessage assistantMessage = TalkMessage.assistantMessage(response.content(), response.correction());
         conversation = conversation.addMessage(assistantMessage);
 
+        if (conversation.isAtQuickLimit()) {
+            conversation = autoEndQuick(conversation);
+            repository.save(conversation);
+            return new SendTalkMessageResult(response.content(), response.correction(), true, true);
+        }
+
         repository.save(conversation);
 
         boolean suggestEnd = detectFarewell(content) || conversation.isAtMaxTurns();
-        return new SendTalkMessageResult(response.content(), response.correction(), suggestEnd);
+        return new SendTalkMessageResult(response.content(), response.correction(), suggestEnd, false);
+    }
+
+    private TalkConversation autoEndQuick(TalkConversation conversation) throws TalkAiException, TalkConversationAlreadyEndedException {
+        TalkAiPort.QuickSummary quickSummary = talkAiPort.quickSummarize(conversation.messages());
+        String summaryJson = serializeQuickSummary(quickSummary);
+        return conversation.end(summaryJson, null);
+    }
+
+    private String serializeQuickSummary(TalkAiPort.QuickSummary quickSummary) {
+        try {
+            return MAPPER.writeValueAsString(quickSummary);
+        } catch (Exception e) {
+            return "{}";
+        }
     }
 
     private boolean detectFarewell(String content) {
         return FAREWELL_PATTERN.matcher(content).find();
     }
 
-    public record SendTalkMessageResult(String content, TalkCorrection correction, boolean suggestEnd) {}
+    public record SendTalkMessageResult(String content, TalkCorrection correction,
+                                         boolean suggestEnd, boolean autoEnded) {}
 }

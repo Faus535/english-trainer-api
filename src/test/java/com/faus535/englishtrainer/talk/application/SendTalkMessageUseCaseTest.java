@@ -73,4 +73,19 @@ class SendTalkMessageUseCaseTest {
         assertThrows(TalkConversationAlreadyEndedException.class,
                 () -> useCase.execute(conversation.id().value(), "Hello", null));
     }
+
+    @Test
+    void execute_autoEndsAndGeneratesQuickSummary_whenQuickLimitReached() throws Exception {
+        TalkConversation conversation = TalkConversationMother.quickModeWithUserMessages(2);
+        conversationRepository.save(conversation);
+
+        var result = useCase.execute(conversation.id().value(), "Thank you!", null);
+
+        assertTrue(result.autoEnded());
+        assertTrue(result.suggestEnd());
+
+        TalkConversation updated = conversationRepository.findById(conversation.id()).orElseThrow();
+        assertEquals(TalkStatus.COMPLETED, updated.status());
+        assertNotNull(updated.summary());
+    }
 }

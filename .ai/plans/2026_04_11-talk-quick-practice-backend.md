@@ -176,11 +176,11 @@ public record QuickSummaryResult(boolean taskCompleted, List<String> top3Correct
 - `GetTalkConversationSummaryUseCaseTest.execute_returnsFullSummaryResult_whenModeIsFull()`
 
 **Acceptance criteria**:
-- [ ] After 3rd user message in QUICK mode, conversation is auto-ended with quick summary
-- [ ] `GET /api/talk/conversations/{id}/summary` returns `QuickSummaryResult` for QUICK conversations
-- [ ] Quick summary JSON persisted in `summary` column
-- [ ] Verify compilation
-- [ ] Verify tests pass
+- [x] After 3rd user message in QUICK mode, conversation is auto-ended with quick summary
+- [x] `GET /api/talk/conversations/{id}/summary` returns `QuickSummaryResult` for QUICK conversations
+- [x] Quick summary JSON persisted in `summary` column
+- [x] Verify compilation
+- [x] Verify tests pass
 - [ ] Human review
 - [ ] Commit
 
