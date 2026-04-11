@@ -13,7 +13,8 @@ public final class ReviewItemMother {
                 ReviewItemId.generate(), DEFAULT_USER_ID, ReviewSourceType.TALK_ERROR,
                 UUID.randomUUID(), "I want to order a coffee",
                 "I'd like to order a coffee (use polite form)",
-                Instant.now().minus(1, ChronoUnit.HOURS), 1, 2.5, 0, Instant.now().minus(1, ChronoUnit.DAYS));
+                Instant.now().minus(1, ChronoUnit.HOURS), 1, 2.5, 0, Instant.now().minus(1, ChronoUnit.DAYS),
+                null, null, null, null);
     }
 
     public static ReviewItem notDue() {
@@ -21,7 +22,8 @@ public final class ReviewItemMother {
                 ReviewItemId.generate(), DEFAULT_USER_ID, ReviewSourceType.TALK_ERROR,
                 UUID.randomUUID(), "She go to school",
                 "She goes to school (third person -s)",
-                Instant.now().plus(3, ChronoUnit.DAYS), 6, 2.5, 1, Instant.now().minus(3, ChronoUnit.DAYS));
+                Instant.now().plus(3, ChronoUnit.DAYS), 6, 2.5, 1, Instant.now().minus(3, ChronoUnit.DAYS),
+                null, null, null, null);
     }
 
     public static ReviewItem fromTalkError() {
@@ -41,7 +43,8 @@ public final class ReviewItemMother {
                 ReviewItemId.generate(), DEFAULT_USER_ID, ReviewSourceType.TALK_ERROR,
                 UUID.randomUUID(), "Test front", "Test back",
                 Instant.now().minus(1, ChronoUnit.HOURS), 6, easeFactor, 2,
-                Instant.now().minus(7, ChronoUnit.DAYS));
+                Instant.now().minus(7, ChronoUnit.DAYS),
+                null, null, null, null);
     }
 
     public static ReviewItem withConsecutiveCorrect(int count) {
@@ -49,11 +52,19 @@ public final class ReviewItemMother {
                 ReviewItemId.generate(), DEFAULT_USER_ID, ReviewSourceType.TALK_ERROR,
                 UUID.randomUUID(), "Test front", "Test back",
                 Instant.now().minus(1, ChronoUnit.HOURS), 6, 2.5, count,
-                Instant.now().minus(7, ChronoUnit.DAYS));
+                Instant.now().minus(7, ChronoUnit.DAYS),
+                null, null, null, null);
     }
 
     public static ReviewItem withUserId(UUID userId) {
         return ReviewItem.create(userId, ReviewSourceType.TALK_ERROR,
                 UUID.randomUUID(), "Test front", "Test back");
+    }
+
+    public static ReviewItem withContext(String contextSentence, String contextTranslation,
+                                          String targetWord, String targetTranslation) {
+        return ReviewItem.create(DEFAULT_USER_ID, ReviewSourceType.ARTICLE,
+                UUID.randomUUID(), targetWord, targetTranslation,
+                contextSentence, contextTranslation, targetWord, targetTranslation);
     }
 }

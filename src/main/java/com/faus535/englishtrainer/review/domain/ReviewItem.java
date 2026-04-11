@@ -20,10 +20,15 @@ public final class ReviewItem extends AggregateRoot<ReviewItemId> {
     private final double easeFactor;
     private final int consecutiveCorrect;
     private final Instant createdAt;
+    private final String contextSentence;
+    private final String contextTranslation;
+    private final String targetWord;
+    private final String targetTranslation;
 
     private ReviewItem(ReviewItemId id, UUID userId, ReviewSourceType sourceType, UUID sourceId,
                        String frontContent, String backContent, Instant nextReviewAt,
-                       int intervalDays, double easeFactor, int consecutiveCorrect, Instant createdAt) {
+                       int intervalDays, double easeFactor, int consecutiveCorrect, Instant createdAt,
+                       String contextSentence, String contextTranslation, String targetWord, String targetTranslation) {
         this.id = id;
         this.userId = userId;
         this.sourceType = sourceType;
@@ -35,6 +40,10 @@ public final class ReviewItem extends AggregateRoot<ReviewItemId> {
         this.easeFactor = easeFactor;
         this.consecutiveCorrect = consecutiveCorrect;
         this.createdAt = createdAt;
+        this.contextSentence = contextSentence;
+        this.contextTranslation = contextTranslation;
+        this.targetWord = targetWord;
+        this.targetTranslation = targetTranslation;
     }
 
     public static ReviewItem create(UUID userId, ReviewSourceType sourceType, UUID sourceId,
@@ -42,15 +51,29 @@ public final class ReviewItem extends AggregateRoot<ReviewItemId> {
         return new ReviewItem(
                 ReviewItemId.generate(), userId, sourceType, sourceId,
                 frontContent, backContent, Instant.now(),
-                1, 2.5, 0, Instant.now());
+                1, 2.5, 0, Instant.now(), null, null, null, null);
+    }
+
+    public static ReviewItem create(UUID userId, ReviewSourceType sourceType, UUID sourceId,
+                                     String frontContent, String backContent,
+                                     String contextSentence, String contextTranslation,
+                                     String targetWord, String targetTranslation) {
+        return new ReviewItem(
+                ReviewItemId.generate(), userId, sourceType, sourceId,
+                frontContent, backContent, Instant.now(),
+                1, 2.5, 0, Instant.now(),
+                contextSentence, contextTranslation, targetWord, targetTranslation);
     }
 
     public static ReviewItem reconstitute(ReviewItemId id, UUID userId, ReviewSourceType sourceType,
                                            UUID sourceId, String frontContent, String backContent,
                                            Instant nextReviewAt, int intervalDays, double easeFactor,
-                                           int consecutiveCorrect, Instant createdAt) {
+                                           int consecutiveCorrect, Instant createdAt,
+                                           String contextSentence, String contextTranslation,
+                                           String targetWord, String targetTranslation) {
         return new ReviewItem(id, userId, sourceType, sourceId, frontContent, backContent,
-                nextReviewAt, intervalDays, easeFactor, consecutiveCorrect, createdAt);
+                nextReviewAt, intervalDays, easeFactor, consecutiveCorrect, createdAt,
+                contextSentence, contextTranslation, targetWord, targetTranslation);
     }
 
     public ReviewItem review(int quality) {
@@ -80,7 +103,8 @@ public final class ReviewItem extends AggregateRoot<ReviewItemId> {
 
         ReviewItem updated = new ReviewItem(id, userId, sourceType, sourceId,
                 frontContent, backContent, newNextReviewAt, newIntervalDays,
-                newEaseFactor, newConsecutiveCorrect, createdAt);
+                newEaseFactor, newConsecutiveCorrect, createdAt,
+                contextSentence, contextTranslation, targetWord, targetTranslation);
         updated.registerEvent(new ReviewCompletedEvent(id, userId, graduated));
         return updated;
     }
@@ -100,4 +124,8 @@ public final class ReviewItem extends AggregateRoot<ReviewItemId> {
     public double easeFactor() { return easeFactor; }
     public int consecutiveCorrect() { return consecutiveCorrect; }
     public Instant createdAt() { return createdAt; }
+    public String contextSentence() { return contextSentence; }
+    public String contextTranslation() { return contextTranslation; }
+    public String targetWord() { return targetWord; }
+    public String targetTranslation() { return targetTranslation; }
 }

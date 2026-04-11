@@ -51,6 +51,18 @@ class ReviewItemEntity implements Persistable<UUID> {
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
 
+    @Column(name = "context_sentence", columnDefinition = "TEXT")
+    private String contextSentence;
+
+    @Column(name = "context_translation", columnDefinition = "TEXT")
+    private String contextTranslation;
+
+    @Column(name = "target_word", columnDefinition = "TEXT")
+    private String targetWord;
+
+    @Column(name = "target_translation", columnDefinition = "TEXT")
+    private String targetTranslation;
+
     protected ReviewItemEntity() {}
 
     static ReviewItemEntity fromDomain(ReviewItem item) {
@@ -67,6 +79,10 @@ class ReviewItemEntity implements Persistable<UUID> {
         entity.easeFactor = BigDecimal.valueOf(item.easeFactor());
         entity.consecutiveCorrect = item.consecutiveCorrect();
         entity.createdAt = item.createdAt();
+        entity.contextSentence = item.contextSentence();
+        entity.contextTranslation = item.contextTranslation();
+        entity.targetWord = item.targetWord();
+        entity.targetTranslation = item.targetTranslation();
         return entity;
     }
 
@@ -74,7 +90,8 @@ class ReviewItemEntity implements Persistable<UUID> {
         return ReviewItem.reconstitute(
                 new ReviewItemId(id), userId, ReviewSourceType.fromString(sourceType),
                 sourceId, frontContent, backContent, nextReviewAt,
-                intervalDays, easeFactor.doubleValue(), consecutiveCorrect, createdAt);
+                intervalDays, easeFactor.doubleValue(), consecutiveCorrect, createdAt,
+                contextSentence, contextTranslation, targetWord, targetTranslation);
     }
 
     void updateFrom(ReviewItem item) {

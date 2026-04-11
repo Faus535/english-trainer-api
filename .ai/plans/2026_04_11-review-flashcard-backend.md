@@ -101,11 +101,11 @@ No new endpoints — existing responses enriched:
 - `ReviewItemTest.reviewItem_withoutContext_hasNullFields()`
 
 **Acceptance criteria**:
-- [ ] Migration `V11.9.0` runs without error
-- [ ] `ReviewItem` record accepts null context fields
-- [ ] `GET /api/review/queue` response includes `contextSentence` (null for old items)
-- [ ] Verify compilation
-- [ ] Verify tests pass
+- [x] Migration `V11.9.0` runs without error
+- [x] `ReviewItem` record accepts null context fields
+- [x] `GET /api/review/queue` response includes `contextSentence` (null for old items)
+- [x] Verify compilation
+- [x] Verify tests pass
 - [ ] Human review
 - [ ] Commit
 

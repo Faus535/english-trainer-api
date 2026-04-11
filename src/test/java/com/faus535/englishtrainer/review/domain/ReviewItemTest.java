@@ -128,4 +128,29 @@ class ReviewItemTest {
 
         assertFalse(item.isDue(java.time.Instant.now()));
     }
+
+    @Test
+    void reviewItem_withContext_storesAllFields() {
+        ReviewItem item = ReviewItemMother.withContext(
+                "The ephemeral beauty of cherry blossoms delights tourists.",
+                "La belleza efímera de los cerezos deleita a los turistas.",
+                "ephemeral",
+                "efímero");
+
+        assertEquals("The ephemeral beauty of cherry blossoms delights tourists.", item.contextSentence());
+        assertEquals("La belleza efímera de los cerezos deleita a los turistas.", item.contextTranslation());
+        assertEquals("ephemeral", item.targetWord());
+        assertEquals("efímero", item.targetTranslation());
+    }
+
+    @Test
+    void reviewItem_withoutContext_hasNullFields() {
+        ReviewItem item = ReviewItem.create(UUID.randomUUID(), ReviewSourceType.TALK_ERROR,
+                UUID.randomUUID(), "front", "back");
+
+        assertNull(item.contextSentence());
+        assertNull(item.contextTranslation());
+        assertNull(item.targetWord());
+        assertNull(item.targetTranslation());
+    }
 }
