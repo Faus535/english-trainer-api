@@ -21,7 +21,7 @@ public class GetImmerseExercisesUseCase {
         this.exerciseRepository = exerciseRepository;
     }
 
-    public List<ImmerseExercise> execute(UUID contentId, UUID userId)
+    public List<ImmerseExercise> execute(UUID contentId, UUID userId, ExerciseTypeFilter filter)
             throws ImmerseContentNotFoundException, ImmerseContentNotProcessedException,
                    ImmerseContentAccessDeniedException {
 
@@ -37,6 +37,6 @@ public class GetImmerseExercisesUseCase {
             throw new ImmerseContentNotProcessedException(id);
         }
 
-        return exerciseRepository.findByContentId(id);
+        return exerciseRepository.findByContentIdAndTypeFilter(id, filter);
     }
 }

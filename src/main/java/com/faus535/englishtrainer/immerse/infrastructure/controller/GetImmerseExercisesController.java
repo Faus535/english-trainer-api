@@ -1,6 +1,7 @@
 package com.faus535.englishtrainer.immerse.infrastructure.controller;
 
 import com.faus535.englishtrainer.immerse.application.GetImmerseExercisesUseCase;
+import com.faus535.englishtrainer.immerse.domain.ExerciseTypeFilter;
 import com.faus535.englishtrainer.immerse.domain.ImmerseExercise;
 import com.faus535.englishtrainer.immerse.domain.error.ImmerseContentAccessDeniedException;
 import com.faus535.englishtrainer.immerse.domain.error.ImmerseContentNotFoundException;
@@ -9,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -26,13 +28,16 @@ class GetImmerseExercisesController {
                              String listenText, Integer blankPosition) {}
 
     @GetMapping("/api/immerse/content/{id}/exercises")
-    ResponseEntity<List<ExerciseResponse>> handle(@PathVariable UUID id, Authentication authentication)
+    ResponseEntity<List<ExerciseResponse>> handle(
+            @PathVariable UUID id,
+            @RequestParam(defaultValue = "ALL") ExerciseTypeFilter type,
+            Authentication authentication)
             throws ImmerseContentNotFoundException, ImmerseContentNotProcessedException,
                    ImmerseContentAccessDeniedException {
         @SuppressWarnings("unchecked")
         Map<String, String> details = (Map<String, String>) authentication.getDetails();
         UUID userId = UUID.fromString(details.get("profileId"));
-        List<ExerciseResponse> exercises = useCase.execute(id, userId).stream()
+        List<ExerciseResponse> exercises = useCase.execute(id, userId, type).stream()
                 .map(e -> new ExerciseResponse(e.id().value().toString(), e.exerciseType().name(),
                         e.question(), e.options(), e.orderIndex(), e.listenText(), e.blankPosition()))
                 .toList();

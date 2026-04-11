@@ -9,5 +9,7 @@ public interface ImmerseExerciseRepository {
 
     List<ImmerseExercise> findByContentId(ImmerseContentId contentId);
 
+    List<ImmerseExercise> findByContentIdAndTypeFilter(ImmerseContentId contentId, ExerciseTypeFilter filter);
+
     Optional<ImmerseExercise> findById(ImmerseExerciseId id);
 }

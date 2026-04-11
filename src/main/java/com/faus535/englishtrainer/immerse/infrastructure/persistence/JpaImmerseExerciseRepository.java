@@ -8,4 +8,8 @@ import java.util.UUID;
 interface JpaImmerseExerciseRepository extends JpaRepository<ImmerseExerciseEntity, UUID> {
 
     List<ImmerseExerciseEntity> findByContentIdOrderByOrderIndexAsc(UUID contentId);
+
+    List<ImmerseExerciseEntity> findByContentIdAndExerciseTypeOrderByOrderIndexAsc(UUID contentId, String exerciseType);
+
+    List<ImmerseExerciseEntity> findByContentIdAndExerciseTypeNotOrderByOrderIndexAsc(UUID contentId, String exerciseType);
 }

@@ -31,6 +31,19 @@ class JpaImmerseExerciseRepositoryAdapter implements ImmerseExerciseRepository {
     }
 
     @Override
+    public List<ImmerseExercise> findByContentIdAndTypeFilter(ImmerseContentId contentId, ExerciseTypeFilter filter) {
+        return switch (filter) {
+            case ALL -> findByContentId(contentId);
+            case LISTENING_CLOZE -> jpaRepository
+                    .findByContentIdAndExerciseTypeOrderByOrderIndexAsc(contentId.value(), ExerciseType.LISTENING_CLOZE.name())
+                    .stream().map(ImmerseExerciseEntity::toDomain).toList();
+            case REGULAR -> jpaRepository
+                    .findByContentIdAndExerciseTypeNotOrderByOrderIndexAsc(contentId.value(), ExerciseType.LISTENING_CLOZE.name())
+                    .stream().map(ImmerseExerciseEntity::toDomain).toList();
+        };
+    }
+
+    @Override
     public Optional<ImmerseExercise> findById(ImmerseExerciseId id) {
         return jpaRepository.findById(id.value()).map(ImmerseExerciseEntity::toDomain);
     }

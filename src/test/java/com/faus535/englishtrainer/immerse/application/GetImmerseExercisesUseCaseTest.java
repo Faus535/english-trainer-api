@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class GetImmerseExercisesUseCaseTest {
 
@@ -40,7 +41,7 @@ class GetImmerseExercisesUseCaseTest {
         );
         exerciseRepository.saveAll(exercises);
 
-        List<ImmerseExercise> result = useCase.execute(content.id().value(), DEFAULT_USER_ID);
+        List<ImmerseExercise> result = useCase.execute(content.id().value(), DEFAULT_USER_ID, ExerciseTypeFilter.ALL);
 
         assertEquals(2, result.size());
     }
@@ -52,7 +53,7 @@ class GetImmerseExercisesUseCaseTest {
 
         UUID wrongUserId = UUID.randomUUID();
         assertThrows(ImmerseContentAccessDeniedException.class,
-                () -> useCase.execute(content.id().value(), wrongUserId));
+                () -> useCase.execute(content.id().value(), wrongUserId, ExerciseTypeFilter.ALL));
     }
 
     @Test
@@ -61,13 +62,60 @@ class GetImmerseExercisesUseCaseTest {
         contentRepository.save(content);
 
         assertThrows(ImmerseContentNotProcessedException.class,
-                () -> useCase.execute(content.id().value(), DEFAULT_USER_ID));
+                () -> useCase.execute(content.id().value(), DEFAULT_USER_ID, ExerciseTypeFilter.ALL));
     }
 
     @Test
     void shouldThrowImmerseContentNotFoundExceptionWhenMissing() {
         UUID randomId = UUID.randomUUID();
         assertThrows(ImmerseContentNotFoundException.class,
-                () -> useCase.execute(randomId, DEFAULT_USER_ID));
+                () -> useCase.execute(randomId, DEFAULT_USER_ID, ExerciseTypeFilter.ALL));
+    }
+
+    @Test
+    void execute_returnsAllExercises_whenFilterIsAll() throws Exception {
+        ImmerseContent content = ImmerseContentMother.processed();
+        contentRepository.save(content);
+
+        exerciseRepository.saveAll(List.of(
+                ImmerseExerciseMother.multipleChoice(content.id()),
+                ImmerseExerciseMother.listeningCloze(content.id())
+        ));
+
+        List<ImmerseExercise> result = useCase.execute(content.id().value(), DEFAULT_USER_ID, ExerciseTypeFilter.ALL);
+
+        assertEquals(2, result.size());
+    }
+
+    @Test
+    void execute_returnsOnlyListeningCloze_whenFilterIsListeningCloze() throws Exception {
+        ImmerseContent content = ImmerseContentMother.processed();
+        contentRepository.save(content);
+
+        exerciseRepository.saveAll(List.of(
+                ImmerseExerciseMother.multipleChoice(content.id()),
+                ImmerseExerciseMother.listeningCloze(content.id())
+        ));
+
+        List<ImmerseExercise> result = useCase.execute(content.id().value(), DEFAULT_USER_ID, ExerciseTypeFilter.LISTENING_CLOZE);
+
+        assertEquals(1, result.size());
+        assertEquals(ExerciseType.LISTENING_CLOZE, result.get(0).exerciseType());
+    }
+
+    @Test
+    void execute_returnsOnlyRegular_whenFilterIsRegular() throws Exception {
+        ImmerseContent content = ImmerseContentMother.processed();
+        contentRepository.save(content);
+
+        exerciseRepository.saveAll(List.of(
+                ImmerseExerciseMother.multipleChoice(content.id()),
+                ImmerseExerciseMother.listeningCloze(content.id())
+        ));
+
+        List<ImmerseExercise> result = useCase.execute(content.id().value(), DEFAULT_USER_ID, ExerciseTypeFilter.REGULAR);
+
+        assertEquals(1, result.size());
+        assertNotEquals(ExerciseType.LISTENING_CLOZE, result.get(0).exerciseType());
     }
 }

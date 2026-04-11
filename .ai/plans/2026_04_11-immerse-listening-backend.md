@@ -158,11 +158,11 @@ GET /api/immerse/content/{contentId}/exercises?type=LISTENING_CLOZE|REGULAR|ALL
 - `GetImmerseExercisesUseCaseTest.execute_returnsOnlyRegular_whenFilterIsRegular()`
 
 **Acceptance criteria**:
-- [ ] `GET /api/immerse/content/{id}/exercises` (no param) returns all exercises
-- [ ] `GET .../exercises?type=LISTENING_CLOZE` returns only LISTENING_CLOZE
-- [ ] `GET .../exercises?type=REGULAR` returns no LISTENING_CLOZE
-- [ ] Verify compilation
-- [ ] Verify tests pass
+- [x] `GET /api/immerse/content/{id}/exercises` (no param) returns all exercises
+- [x] `GET .../exercises?type=LISTENING_CLOZE` returns only LISTENING_CLOZE
+- [x] `GET .../exercises?type=REGULAR` returns no LISTENING_CLOZE
+- [x] Verify compilation
+- [x] Verify tests pass
 - [ ] Human review
 - [ ] Commit
 
