@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -102,6 +103,7 @@ class TalkConversationTest {
                 conversation.id(), conversation.userId(), conversation.scenarioId(),
                 conversation.level(), ConversationMode.FULL, conversation.status(),
                 conversation.summary(), conversation.evaluation(),
+                null, null,
                 conversation.startedAt(), conversation.endedAt(), conversation.messages());
 
         assertFalse(fullMode.isAtQuickLimit());
@@ -119,6 +121,56 @@ class TalkConversationTest {
         TalkConversation conversation = TalkConversationMother.quickModeWithUserMessages(3);
 
         assertTrue(conversation.isAtQuickLimit());
+    }
+
+    @Test
+    void startConversation_hasNoGrammarFeedback() {
+        TalkConversation conversation = TalkConversation.start(
+                UUID.randomUUID(), UUID.randomUUID(), new TalkLevel("b1"), ConversationMode.FULL);
+
+        assertFalse(conversation.hasGrammarFeedback());
+        assertNull(conversation.grammarNotes());
+        assertNull(conversation.newVocabulary());
+    }
+
+    @Test
+    void withGrammarFeedback_returnsNewInstanceWithFeedback() {
+        TalkConversation conversation = TalkConversationMother.completed();
+        List<GrammarNote> notes = List.of(
+                new GrammarNote("I goed", "I went", "Irregular verb"));
+        List<VocabItem> vocab = List.of(
+                new VocabItem("negotiate", "To reach an agreement", "They negotiated."));
+
+        TalkConversation updated = conversation.withGrammarFeedback(notes, vocab);
+
+        assertTrue(updated.hasGrammarFeedback());
+        assertEquals(1, updated.grammarNotes().size());
+        assertEquals("I goed", updated.grammarNotes().getFirst().originalText());
+        assertEquals(1, updated.newVocabulary().size());
+        assertEquals("negotiate", updated.newVocabulary().getFirst().word());
+    }
+
+    @Test
+    void withGrammarFeedback_returnsUnmodifiableLists() {
+        TalkConversation conversation = TalkConversationMother.completed();
+        List<GrammarNote> notes = List.of(new GrammarNote("I goed", "I went", "Irregular"));
+        List<VocabItem> vocab = List.of(new VocabItem("negotiate", "To agree", "They negotiated."));
+
+        TalkConversation updated = conversation.withGrammarFeedback(notes, vocab);
+
+        assertThrows(UnsupportedOperationException.class,
+                () -> updated.grammarNotes().add(new GrammarNote("x", "y", "z")));
+        assertThrows(UnsupportedOperationException.class,
+                () -> updated.newVocabulary().add(new VocabItem("a", "b", "c")));
+    }
+
+    @Test
+    void completedWithGrammarFeedback_hasGrammarFeedback() {
+        TalkConversation conversation = TalkConversationMother.completedWithGrammarFeedback();
+
+        assertTrue(conversation.hasGrammarFeedback());
+        assertFalse(conversation.grammarNotes().isEmpty());
+        assertFalse(conversation.newVocabulary().isEmpty());
     }
 
     @Test

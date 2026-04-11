@@ -48,7 +48,8 @@ class GetTalkConversationSummaryUseCaseTest {
         TalkConversation conversation = TalkConversation.reconstitute(
                 TalkConversationId.generate(), UUID.randomUUID(), UUID.randomUUID(),
                 new TalkLevel("b1"), ConversationMode.QUICK, TalkStatus.COMPLETED,
-                summaryJson, null, Instant.now().minusSeconds(300), Instant.now(), List.of());
+                summaryJson, null, null, null,
+                Instant.now().minusSeconds(300), Instant.now(), List.of());
         repository.save(conversation);
 
         TalkConversationSummaryResult result = useCase.execute(conversation.id().value());

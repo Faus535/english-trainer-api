@@ -1,5 +1,6 @@
 package com.faus535.englishtrainer.talk.infrastructure.persistence;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.faus535.englishtrainer.talk.domain.*;
 import com.faus535.englishtrainer.talk.domain.ConversationMode;
@@ -47,6 +48,12 @@ class TalkConversationEntity implements Persistable<UUID> {
     @Column(name = "evaluation_json", columnDefinition = "TEXT")
     private String evaluationJson;
 
+    @Column(name = "grammar_notes", columnDefinition = "TEXT")
+    private String grammarNotesJson;
+
+    @Column(name = "vocabulary_used", columnDefinition = "TEXT")
+    private String vocabularyUsedJson;
+
     @Column(name = "started_at", nullable = false)
     private Instant startedAt;
 
@@ -70,6 +77,8 @@ class TalkConversationEntity implements Persistable<UUID> {
         entity.status = aggregate.status().value();
         entity.summary = aggregate.summary();
         entity.evaluationJson = serializeEvaluation(aggregate.evaluation());
+        entity.grammarNotesJson = serializeList(aggregate.grammarNotes(), GrammarNote.class);
+        entity.vocabularyUsedJson = serializeList(aggregate.newVocabulary(), VocabItem.class);
         entity.startedAt = aggregate.startedAt();
         entity.endedAt = aggregate.endedAt();
         entity.messageEntities = aggregate.messages().stream()
@@ -86,6 +95,8 @@ class TalkConversationEntity implements Persistable<UUID> {
                 new TalkConversationId(id), userId, scenarioId,
                 new TalkLevel(level), ConversationMode.fromString(mode), TalkStatus.fromString(status), summary,
                 deserializeEvaluation(evaluationJson),
+                deserializeList(grammarNotesJson, GrammarNote.class),
+                deserializeList(vocabularyUsedJson, VocabItem.class),
                 startedAt, endedAt, messages);
     }
 
@@ -94,6 +105,8 @@ class TalkConversationEntity implements Persistable<UUID> {
         this.summary = aggregate.summary();
         this.endedAt = aggregate.endedAt();
         this.evaluationJson = serializeEvaluation(aggregate.evaluation());
+        this.grammarNotesJson = serializeList(aggregate.grammarNotes(), GrammarNote.class);
+        this.vocabularyUsedJson = serializeList(aggregate.newVocabulary(), VocabItem.class);
 
         List<UUID> existingIds = messageEntities.stream()
                 .map(TalkMessageEntity::getId)
@@ -103,6 +116,24 @@ class TalkConversationEntity implements Persistable<UUID> {
             if (!existingIds.contains(msg.id().value())) {
                 messageEntities.add(TalkMessageEntity.fromMessage(msg, this));
             }
+        }
+    }
+
+    private static <T> String serializeList(List<T> list, Class<T> type) {
+        if (list == null) return null;
+        try {
+            return MAPPER.writeValueAsString(list);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    private static <T> List<T> deserializeList(String json, Class<T> type) {
+        if (json == null || json.isBlank()) return null;
+        try {
+            return MAPPER.readValue(json, MAPPER.getTypeFactory().constructCollectionType(List.class, type));
+        } catch (Exception e) {
+            return null;
         }
     }
 

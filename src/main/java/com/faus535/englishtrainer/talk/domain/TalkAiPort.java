@@ -15,7 +15,11 @@ public interface TalkAiPort {
 
     QuickSummary quickSummarize(List<TalkMessage> messages) throws TalkAiException;
 
+    GrammarFeedback analyzeGrammarAndVocabulary(List<TalkMessage> userMessages) throws TalkAiException;
+
     record TalkAiResponse(String content, TalkCorrection correction) {}
 
     record QuickSummary(boolean taskCompleted, List<String> top3Corrections, String encouragementNote) {}
+
+    record GrammarFeedback(List<GrammarNote> grammarNotes, List<VocabItem> newVocabulary) {}
 }

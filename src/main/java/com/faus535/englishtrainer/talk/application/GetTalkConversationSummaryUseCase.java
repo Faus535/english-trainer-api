@@ -32,7 +32,9 @@ public class GetTalkConversationSummaryUseCase {
                 conversation.summary(),
                 conversation.evaluation(),
                 conversation.messages().size(),
-                conversation.errorCount()
+                conversation.errorCount(),
+                conversation.grammarNotes() != null ? conversation.grammarNotes() : List.of(),
+                conversation.newVocabulary() != null ? conversation.newVocabulary() : List.of()
         );
     }
 

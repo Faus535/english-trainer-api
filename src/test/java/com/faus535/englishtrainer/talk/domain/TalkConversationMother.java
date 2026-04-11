@@ -13,14 +13,14 @@ public final class TalkConversationMother {
         return TalkConversation.reconstitute(
                 TalkConversationId.generate(), DEFAULT_USER_ID, DEFAULT_SCENARIO_ID,
                 new TalkLevel("b1"), ConversationMode.FULL, TalkStatus.ACTIVE, null, null,
-                Instant.now(), null, List.of());
+                null, null, Instant.now(), null, List.of());
     }
 
     public static TalkConversation quickMode() {
         return TalkConversation.reconstitute(
                 TalkConversationId.generate(), DEFAULT_USER_ID, DEFAULT_SCENARIO_ID,
                 new TalkLevel("b1"), ConversationMode.QUICK, TalkStatus.ACTIVE, null, null,
-                Instant.now(), null, List.of());
+                null, null, Instant.now(), null, List.of());
     }
 
     public static TalkConversation quickModeWithUserMessages(int userMessageCount) {
@@ -32,7 +32,7 @@ public final class TalkConversationMother {
         return TalkConversation.reconstitute(
                 TalkConversationId.generate(), DEFAULT_USER_ID, DEFAULT_SCENARIO_ID,
                 new TalkLevel("b1"), ConversationMode.QUICK, TalkStatus.ACTIVE, null, null,
-                Instant.now(), null, messages);
+                null, null, Instant.now(), null, messages);
     }
 
     public static TalkConversation withMessages(int count) {
@@ -47,7 +47,7 @@ public final class TalkConversationMother {
         return TalkConversation.reconstitute(
                 TalkConversationId.generate(), DEFAULT_USER_ID, DEFAULT_SCENARIO_ID,
                 new TalkLevel("b1"), ConversationMode.FULL, TalkStatus.ACTIVE, null, null,
-                Instant.now(), null, messages);
+                null, null, Instant.now(), null, messages);
     }
 
     public static TalkConversation completed() {
@@ -55,7 +55,21 @@ public final class TalkConversationMother {
                 TalkConversationId.generate(), DEFAULT_USER_ID, DEFAULT_SCENARIO_ID,
                 new TalkLevel("b1"), ConversationMode.FULL, TalkStatus.COMPLETED, "Good session.",
                 new TalkEvaluation(80, 70, 75, 85, 78, "b1", List.of("Good grammar"), List.of("More vocabulary")),
-                Instant.now().minusSeconds(3600), Instant.now(), List.of());
+                null, null, Instant.now().minusSeconds(3600), Instant.now(), List.of());
+    }
+
+    public static TalkConversation completedWithGrammarFeedback() {
+        List<GrammarNote> grammarNotes = List.of(
+                new GrammarNote("I goed to the store", "I went to the store",
+                        "'Go' is irregular; past tense is 'went'."));
+        List<VocabItem> vocab = List.of(
+                new VocabItem("negotiate", "To discuss in order to reach an agreement.",
+                        "They had to negotiate the terms."));
+        return TalkConversation.reconstitute(
+                TalkConversationId.generate(), DEFAULT_USER_ID, DEFAULT_SCENARIO_ID,
+                new TalkLevel("b1"), ConversationMode.FULL, TalkStatus.COMPLETED, "Good session.",
+                new TalkEvaluation(80, 70, 75, 85, 78, "b1", List.of("Good grammar"), List.of("More vocabulary")),
+                grammarNotes, vocab, Instant.now().minusSeconds(3600), Instant.now(), List.of());
     }
 
     public static TalkConversation withCorrections(int count) {
@@ -69,6 +83,6 @@ public final class TalkConversationMother {
         return TalkConversation.reconstitute(
                 TalkConversationId.generate(), DEFAULT_USER_ID, DEFAULT_SCENARIO_ID,
                 new TalkLevel("b1"), ConversationMode.FULL, TalkStatus.ACTIVE, null, null,
-                Instant.now(), null, messages);
+                null, null, Instant.now(), null, messages);
     }
 }

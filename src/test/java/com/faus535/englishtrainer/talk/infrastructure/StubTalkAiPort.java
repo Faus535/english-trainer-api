@@ -42,4 +42,15 @@ public class StubTalkAiPort implements TalkAiPort {
     public QuickSummary quickSummarize(List<TalkMessage> messages) throws TalkAiException {
         return new QuickSummary(true, List.of("I goed → I went"), "Great effort!");
     }
+
+    @Override
+    public GrammarFeedback analyzeGrammarAndVocabulary(List<TalkMessage> userMessages) throws TalkAiException {
+        List<GrammarNote> grammarNotes = List.of(
+                new GrammarNote("I goed to the store", "I went to the store",
+                        "'Go' is irregular; past tense is 'went'."));
+        List<VocabItem> vocab = List.of(
+                new VocabItem("negotiate", "To discuss in order to reach an agreement.",
+                        "They had to negotiate the terms."));
+        return new GrammarFeedback(grammarNotes, vocab);
+    }
 }

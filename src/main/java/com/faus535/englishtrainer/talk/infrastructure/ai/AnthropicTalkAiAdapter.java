@@ -122,6 +122,129 @@ class AnthropicTalkAiAdapter implements TalkAiPort {
         }
     }
 
+    private static final Map<String, Object> TOOL_ANALYZE_GRAMMAR = Map.of(
+            "name", "analyze_grammar_and_vocabulary",
+            "description", "Analyze grammar errors and new vocabulary from user messages",
+            "input_schema", Map.of(
+                    "type", "object",
+                    "properties", Map.of(
+                            "grammarNotes", Map.of(
+                                    "type", "array",
+                                    "items", Map.of(
+                                            "type", "object",
+                                            "properties", Map.of(
+                                                    "originalText", Map.of("type", "string"),
+                                                    "correction", Map.of("type", "string"),
+                                                    "explanation", Map.of("type", "string")
+                                            ),
+                                            "required", List.of("originalText", "correction", "explanation")
+                                    ),
+                                    "description", "Up to 5 grammar corrections"
+                            ),
+                            "newVocabulary", Map.of(
+                                    "type", "array",
+                                    "items", Map.of(
+                                            "type", "object",
+                                            "properties", Map.of(
+                                                    "word", Map.of("type", "string"),
+                                                    "definition", Map.of("type", "string"),
+                                                    "usedInContext", Map.of("type", "string")
+                                            ),
+                                            "required", List.of("word", "definition", "usedInContext")
+                                    ),
+                                    "description", "Up to 5 new vocabulary items"
+                            )
+                    ),
+                    "required", List.of("grammarNotes", "newVocabulary")
+            )
+    );
+
+    @Override
+    public GrammarFeedback analyzeGrammarAndVocabulary(List<TalkMessage> userMessages) throws TalkAiException {
+        try {
+            if (userMessages.isEmpty()) {
+                return new GrammarFeedback(List.of(), List.of());
+            }
+
+            StringBuilder conversationText = new StringBuilder();
+            for (TalkMessage msg : userMessages) {
+                conversationText.append("User: ").append(msg.content()).append("\n");
+            }
+
+            Map<String, Object> requestBody = new java.util.HashMap<>(Map.of(
+                    "model", model,
+                    "max_tokens", 600,
+                    "system", List.of(Map.of(
+                            "type", "text",
+                            "text", "You are an English language coach. Analyze the user's messages for grammar errors and new vocabulary. " +
+                                    "Identify up to 5 grammar mistakes with corrections, and up to 5 advanced vocabulary words the user attempted to use.",
+                            "cache_control", Map.of("type", "ephemeral")
+                    )),
+                    "tools", List.of(TOOL_ANALYZE_GRAMMAR),
+                    "tool_choice", Map.of("type", "tool", "name", "analyze_grammar_and_vocabulary"),
+                    "messages", List.of(Map.of("role", "user", "content", conversationText.toString()))
+            ));
+
+            @SuppressWarnings("unchecked")
+            Map<String, Object> response = restClient.post()
+                    .uri("/messages")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(requestBody)
+                    .retrieve()
+                    .body(Map.class);
+
+            if (response == null) return new GrammarFeedback(List.of(), List.of());
+
+            @SuppressWarnings("unchecked")
+            List<Map<String, Object>> content = (List<Map<String, Object>>) response.get("content");
+            for (Map<String, Object> block : content) {
+                if ("tool_use".equals(block.get("type"))) {
+                    String json = MAPPER.writeValueAsString(block.get("input"));
+                    Map<?, ?> result = MAPPER.readValue(json, Map.class);
+                    List<GrammarNote> grammarNotes = parseGrammarNotes(result.get("grammarNotes"));
+                    List<VocabItem> vocab = parseVocabItems(result.get("newVocabulary"));
+                    return new GrammarFeedback(grammarNotes, vocab);
+                }
+            }
+            return new GrammarFeedback(List.of(), List.of());
+        } catch (Exception e) {
+            log.error("Failed to analyze grammar and vocabulary: {}", e.getMessage(), e);
+            throw new TalkAiException("Talk AI service unavailable", e);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<GrammarNote> parseGrammarNotes(Object raw) {
+        if (!(raw instanceof List<?> list)) return List.of();
+        return list.stream()
+                .filter(item -> item instanceof Map)
+                .map(item -> {
+                    Map<String, Object> m = (Map<String, Object>) item;
+                    return new GrammarNote(
+                            String.valueOf(m.getOrDefault("originalText", "")),
+                            String.valueOf(m.getOrDefault("correction", "")),
+                            String.valueOf(m.getOrDefault("explanation", ""))
+                    );
+                })
+                .toList();
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<VocabItem> parseVocabItems(Object raw) {
+        if (!(raw instanceof List<?> list)) return List.of();
+        return list.stream()
+                .filter(item -> item instanceof Map)
+                .map(item -> {
+                    Map<String, Object> m = (Map<String, Object>) item;
+                    return new VocabItem(
+                            String.valueOf(m.getOrDefault("word", "")),
+                            String.valueOf(m.getOrDefault("definition", "")),
+                            String.valueOf(m.getOrDefault("usedInContext", ""))
+                    );
+                })
+                .toList();
+    }
+
     @Override
     public TalkEvaluation evaluate(TalkLevel level, List<TalkMessage> messages) throws TalkAiException {
         try {

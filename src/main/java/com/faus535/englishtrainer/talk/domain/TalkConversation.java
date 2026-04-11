@@ -24,12 +24,15 @@ public final class TalkConversation extends AggregateRoot<TalkConversationId> {
     private final TalkStatus status;
     private final String summary;
     private final TalkEvaluation evaluation;
+    private final List<GrammarNote> grammarNotes;
+    private final List<VocabItem> newVocabulary;
     private final Instant startedAt;
     private final Instant endedAt;
     private final List<TalkMessage> messages;
 
     private TalkConversation(TalkConversationId id, UUID userId, UUID scenarioId, TalkLevel level,
                              ConversationMode mode, TalkStatus status, String summary, TalkEvaluation evaluation,
+                             List<GrammarNote> grammarNotes, List<VocabItem> newVocabulary,
                              Instant startedAt, Instant endedAt, List<TalkMessage> messages) {
         this.id = id;
         this.userId = userId;
@@ -39,6 +42,8 @@ public final class TalkConversation extends AggregateRoot<TalkConversationId> {
         this.status = status;
         this.summary = summary;
         this.evaluation = evaluation;
+        this.grammarNotes = grammarNotes == null ? null : Collections.unmodifiableList(new ArrayList<>(grammarNotes));
+        this.newVocabulary = newVocabulary == null ? null : Collections.unmodifiableList(new ArrayList<>(newVocabulary));
         this.startedAt = startedAt;
         this.endedAt = endedAt;
         this.messages = Collections.unmodifiableList(new ArrayList<>(messages));
@@ -47,15 +52,16 @@ public final class TalkConversation extends AggregateRoot<TalkConversationId> {
     public static TalkConversation start(UUID userId, UUID scenarioId, TalkLevel level, ConversationMode mode) {
         return new TalkConversation(
                 TalkConversationId.generate(), userId, scenarioId, level, mode,
-                TalkStatus.ACTIVE, null, null, Instant.now(), null, List.of());
+                TalkStatus.ACTIVE, null, null, null, null, Instant.now(), null, List.of());
     }
 
     public static TalkConversation reconstitute(TalkConversationId id, UUID userId, UUID scenarioId,
                                                  TalkLevel level, ConversationMode mode, TalkStatus status,
-                                                 String summary, TalkEvaluation evaluation, Instant startedAt,
-                                                 Instant endedAt, List<TalkMessage> messages) {
+                                                 String summary, TalkEvaluation evaluation,
+                                                 List<GrammarNote> grammarNotes, List<VocabItem> newVocabulary,
+                                                 Instant startedAt, Instant endedAt, List<TalkMessage> messages) {
         return new TalkConversation(id, userId, scenarioId, level, mode, status, summary, evaluation,
-                startedAt, endedAt, messages);
+                grammarNotes, newVocabulary, startedAt, endedAt, messages);
     }
 
     public TalkConversation addMessage(TalkMessage message) throws TalkConversationAlreadyEndedException {
@@ -65,7 +71,7 @@ public final class TalkConversation extends AggregateRoot<TalkConversationId> {
         List<TalkMessage> newMessages = new ArrayList<>(messages);
         newMessages.add(message);
         return new TalkConversation(id, userId, scenarioId, level, mode, status, summary, evaluation,
-                startedAt, endedAt, newMessages);
+                grammarNotes, newVocabulary, startedAt, endedAt, newMessages);
     }
 
     public TalkConversation end(String summary, TalkEvaluation evaluation)
@@ -94,7 +100,7 @@ public final class TalkConversation extends AggregateRoot<TalkConversationId> {
                 .toList();
 
         TalkConversation ended = new TalkConversation(id, userId, scenarioId, level, mode,
-                TalkStatus.COMPLETED, summary, evaluation, startedAt, Instant.now(), messages);
+                TalkStatus.COMPLETED, summary, evaluation, grammarNotes, newVocabulary, startedAt, Instant.now(), messages);
         ended.registerEvent(new TalkConversationCompletedEvent(id, userId, corrections, messages.size()));
         return ended;
     }
@@ -125,6 +131,13 @@ public final class TalkConversation extends AggregateRoot<TalkConversationId> {
                 .count();
     }
 
+    public boolean hasGrammarFeedback() { return grammarNotes != null; }
+
+    public TalkConversation withGrammarFeedback(List<GrammarNote> grammarNotes, List<VocabItem> newVocabulary) {
+        return new TalkConversation(id, userId, scenarioId, level, mode, status, summary, evaluation,
+                grammarNotes, newVocabulary, startedAt, endedAt, messages);
+    }
+
     public TalkConversationId id() { return id; }
     public UUID userId() { return userId; }
     public UUID scenarioId() { return scenarioId; }
@@ -133,6 +146,8 @@ public final class TalkConversation extends AggregateRoot<TalkConversationId> {
     public TalkStatus status() { return status; }
     public String summary() { return summary; }
     public TalkEvaluation evaluation() { return evaluation; }
+    public List<GrammarNote> grammarNotes() { return grammarNotes; }
+    public List<VocabItem> newVocabulary() { return newVocabulary; }
     public Instant startedAt() { return startedAt; }
     public Instant endedAt() { return endedAt; }
     public List<TalkMessage> messages() { return messages; }
