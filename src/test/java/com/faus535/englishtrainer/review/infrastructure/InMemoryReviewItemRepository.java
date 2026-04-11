@@ -2,7 +2,7 @@ package com.faus535.englishtrainer.review.infrastructure;
 
 import com.faus535.englishtrainer.review.domain.*;
 
-import java.time.Instant;
+import java.time.LocalDate;
 import java.util.*;
 
 public class InMemoryReviewItemRepository implements ReviewItemRepository {
@@ -21,10 +21,10 @@ public class InMemoryReviewItemRepository implements ReviewItemRepository {
     }
 
     @Override
-    public List<ReviewItem> findDueByUserId(UUID userId, Instant now, int limit) {
+    public List<ReviewItem> findDueByUserId(UUID userId, LocalDate today, int limit) {
         return store.values().stream()
                 .filter(item -> item.userId().equals(userId))
-                .filter(item -> item.isDue(now))
+                .filter(item -> item.isDue(today))
                 .sorted(Comparator.comparing(ReviewItem::nextReviewAt))
                 .limit(limit)
                 .toList();
@@ -47,17 +47,11 @@ public class InMemoryReviewItemRepository implements ReviewItemRepository {
     }
 
     @Override
-    public int countDueByUserId(UUID userId, Instant now) {
+    public int countDueByUserId(UUID userId, LocalDate today) {
         return (int) store.values().stream()
                 .filter(item -> item.userId().equals(userId))
-                .filter(item -> item.isDue(now))
+                .filter(item -> item.isDue(today))
                 .count();
-    }
-
-    public List<ReviewItem> findAll(UUID userId) {
-        return store.values().stream()
-                .filter(item -> item.userId().equals(userId))
-                .toList();
     }
 
     @Override
@@ -66,5 +60,20 @@ public class InMemoryReviewItemRepository implements ReviewItemRepository {
                 .filter(item -> item.userId().equals(userId))
                 .filter(item -> item.intervalDays() >= 21)
                 .count();
+    }
+
+    @Override
+    public double averageIntervalByUserId(UUID userId) {
+        return store.values().stream()
+                .filter(item -> item.userId().equals(userId))
+                .mapToInt(ReviewItem::intervalDays)
+                .average()
+                .orElse(0.0);
+    }
+
+    public List<ReviewItem> findAll(UUID userId) {
+        return store.values().stream()
+                .filter(item -> item.userId().equals(userId))
+                .toList();
     }
 }

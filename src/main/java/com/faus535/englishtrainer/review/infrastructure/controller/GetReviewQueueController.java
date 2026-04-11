@@ -22,7 +22,7 @@ class GetReviewQueueController {
     }
 
     record ReviewItemResponse(UUID id, String sourceType, String frontContent, String backContent,
-                               String nextReviewAt, int intervalDays, int consecutiveCorrect,
+                               String nextReviewAt, int intervalDays, int repetitions,
                                String contextSentence, String contextTranslation,
                                String targetWord, String targetTranslation) {}
 
@@ -36,7 +36,7 @@ class GetReviewQueueController {
                         item.id().value(), item.sourceType().value(),
                         item.frontContent(), item.backContent(),
                         item.nextReviewAt().toString(), item.intervalDays(),
-                        item.consecutiveCorrect(), item.contextSentence(),
+                        item.repetitions(), item.contextSentence(),
                         item.contextTranslation(), item.targetWord(), item.targetTranslation()))
                 .toList();
         return ResponseEntity.ok(response);

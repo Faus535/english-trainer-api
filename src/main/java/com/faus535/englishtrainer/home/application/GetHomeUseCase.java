@@ -59,7 +59,7 @@ public class GetHomeUseCase {
         int streakDays = computeStreak(activities);
         boolean[] weeklyActivity = computeWeeklyActivity(activities);
 
-        long dueReviewCount = reviewItemRepo.countDueByUserId(userId, Instant.now());
+        long dueReviewCount = reviewItemRepo.countDueByUserId(userId, LocalDate.now(ZoneOffset.UTC));
 
         Instant todayStart = LocalDate.now(ZoneOffset.UTC).atStartOfDay(ZoneOffset.UTC).toInstant();
         boolean hasArticleToday = articleReadingRepo.existsByUserIdAndCreatedAtAfter(userId, todayStart);

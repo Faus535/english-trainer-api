@@ -2,6 +2,7 @@ package com.faus535.englishtrainer.review.domain;
 
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDate;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -15,19 +16,19 @@ class ReviewItemTest {
 
         assertEquals(1, item.intervalDays());
         assertEquals(2.5, item.easeFactor());
-        assertEquals(0, item.consecutiveCorrect());
+        assertEquals(0, item.repetitions());
         assertNotNull(item.id());
         assertNotNull(item.nextReviewAt());
         assertNotNull(item.createdAt());
     }
 
     @Test
-    void reviewWithQuality3IncreasesConsecutiveCorrect() {
+    void reviewWithQuality3IncreasesRepetitions() {
         ReviewItem item = ReviewItemMother.dueToday();
 
         ReviewItem reviewed = item.review(3);
 
-        assertEquals(1, reviewed.consecutiveCorrect());
+        assertEquals(1, reviewed.repetitions());
         assertEquals(1, reviewed.intervalDays());
     }
 
@@ -42,32 +43,32 @@ class ReviewItemTest {
 
     @Test
     void reviewWithQuality0ResetsToOne() {
-        ReviewItem item = ReviewItemMother.withConsecutiveCorrect(3);
+        ReviewItem item = ReviewItemMother.withRepetitions(3);
 
         ReviewItem reviewed = item.review(0);
 
-        assertEquals(0, reviewed.consecutiveCorrect());
+        assertEquals(0, reviewed.repetitions());
         assertEquals(1, reviewed.intervalDays());
     }
 
     @Test
-    void reviewWithQuality2ResetsConsecutiveCorrect() {
-        ReviewItem item = ReviewItemMother.withConsecutiveCorrect(5);
+    void reviewWithQuality2ResetsRepetitions() {
+        ReviewItem item = ReviewItemMother.withRepetitions(5);
 
         ReviewItem reviewed = item.review(2);
 
-        assertEquals(0, reviewed.consecutiveCorrect());
+        assertEquals(0, reviewed.repetitions());
         assertEquals(1, reviewed.intervalDays());
     }
 
     @Test
     void secondCorrectReviewSetsIntervalTo6() {
-        ReviewItem item = ReviewItemMother.withConsecutiveCorrect(1);
+        ReviewItem item = ReviewItemMother.withRepetitions(1);
 
         ReviewItem reviewed = item.review(4);
 
         assertEquals(6, reviewed.intervalDays());
-        assertEquals(2, reviewed.consecutiveCorrect());
+        assertEquals(2, reviewed.repetitions());
     }
 
     @Test
@@ -77,7 +78,7 @@ class ReviewItemTest {
         ReviewItem reviewed = item.review(4);
 
         assertEquals(15, reviewed.intervalDays()); // 6 * 2.5 = 15
-        assertEquals(3, reviewed.consecutiveCorrect());
+        assertEquals(3, reviewed.repetitions());
     }
 
     @Test
@@ -119,14 +120,14 @@ class ReviewItemTest {
     void isDueReturnsTrueWhenPastDue() {
         ReviewItem item = ReviewItemMother.dueToday();
 
-        assertTrue(item.isDue(java.time.Instant.now()));
+        assertTrue(item.isDue(LocalDate.now()));
     }
 
     @Test
     void isDueReturnsFalseWhenNotDue() {
         ReviewItem item = ReviewItemMother.notDue();
 
-        assertFalse(item.isDue(java.time.Instant.now()));
+        assertFalse(item.isDue(LocalDate.now()));
     }
 
     @Test

@@ -6,6 +6,7 @@ import org.springframework.data.domain.Persistable;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Entity
@@ -37,7 +38,7 @@ class ReviewItemEntity implements Persistable<UUID> {
     private String backContent;
 
     @Column(name = "next_review_at", nullable = false)
-    private Instant nextReviewAt;
+    private LocalDate nextReviewAt;
 
     @Column(name = "interval_days", nullable = false)
     private int intervalDays;
@@ -45,8 +46,8 @@ class ReviewItemEntity implements Persistable<UUID> {
     @Column(name = "ease_factor", nullable = false, precision = 4, scale = 2)
     private BigDecimal easeFactor;
 
-    @Column(name = "consecutive_correct", nullable = false)
-    private int consecutiveCorrect;
+    @Column(name = "repetitions", nullable = false)
+    private int repetitions;
 
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
@@ -77,7 +78,7 @@ class ReviewItemEntity implements Persistable<UUID> {
         entity.nextReviewAt = item.nextReviewAt();
         entity.intervalDays = item.intervalDays();
         entity.easeFactor = BigDecimal.valueOf(item.easeFactor());
-        entity.consecutiveCorrect = item.consecutiveCorrect();
+        entity.repetitions = item.repetitions();
         entity.createdAt = item.createdAt();
         entity.contextSentence = item.contextSentence();
         entity.contextTranslation = item.contextTranslation();
@@ -90,7 +91,7 @@ class ReviewItemEntity implements Persistable<UUID> {
         return ReviewItem.reconstitute(
                 new ReviewItemId(id), userId, ReviewSourceType.fromString(sourceType),
                 sourceId, frontContent, backContent, nextReviewAt,
-                intervalDays, easeFactor.doubleValue(), consecutiveCorrect, createdAt,
+                intervalDays, easeFactor.doubleValue(), repetitions, createdAt,
                 contextSentence, contextTranslation, targetWord, targetTranslation);
     }
 
@@ -98,7 +99,7 @@ class ReviewItemEntity implements Persistable<UUID> {
         this.nextReviewAt = item.nextReviewAt();
         this.intervalDays = item.intervalDays();
         this.easeFactor = BigDecimal.valueOf(item.easeFactor());
-        this.consecutiveCorrect = item.consecutiveCorrect();
+        this.repetitions = item.repetitions();
     }
 
     @Override

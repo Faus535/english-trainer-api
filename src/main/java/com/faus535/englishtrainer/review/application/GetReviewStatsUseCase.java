@@ -27,14 +27,11 @@ public class GetReviewStatsUseCase {
     @Transactional(readOnly = true)
     public ReviewStats execute(UUID userId) {
         int totalItems = itemRepository.countByUserId(userId);
-        int dueToday = itemRepository.countDueByUserId(userId, Instant.now());
+        int dueToday = itemRepository.countDueByUserId(userId, LocalDate.now(ZoneOffset.UTC));
 
-        Instant startOfDay = LocalDate.now().atStartOfDay().toInstant(ZoneOffset.UTC);
+        Instant startOfDay = LocalDate.now(ZoneOffset.UTC).atStartOfDay().toInstant(ZoneOffset.UTC);
         int completedToday = resultRepository.countByUserIdAndReviewedAtAfter(userId, startOfDay);
 
-        // Streak calculation: count consecutive days with at least one review
-        // For now, return completedToday > 0 ? 1 : 0 as a simple streak
-        // A proper streak would require querying review_results grouped by day
         int streak = completedToday > 0 ? 1 : 0;
 
         long totalMastered = itemRepository.countMasteredByUserId(userId);
@@ -45,8 +42,11 @@ public class GetReviewStatsUseCase {
         Instant thirtyDaysAgo = Instant.now().minus(30, ChronoUnit.DAYS);
         long totalLast30 = resultRepository.countByUserIdAndReviewedAtAfter(userId, thirtyDaysAgo);
         long correctLast30 = resultRepository.countCorrectByUserIdSince(userId, thirtyDaysAgo);
-        double accuracyRate = totalLast30 > 0 ? (double) correctLast30 / totalLast30 : 0.0;
+        double retentionRate = totalLast30 > 0 ? (double) correctLast30 / totalLast30 : 0.0;
 
-        return new ReviewStats(totalItems, dueToday, completedToday, streak, totalMastered, weeklyReviewed, accuracyRate);
+        double averageInterval = itemRepository.averageIntervalByUserId(userId);
+
+        return new ReviewStats(totalItems, dueToday, completedToday, streak, totalMastered, weeklyReviewed,
+                retentionRate, averageInterval);
     }
 }

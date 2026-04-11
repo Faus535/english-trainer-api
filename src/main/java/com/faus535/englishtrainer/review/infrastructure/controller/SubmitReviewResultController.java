@@ -23,7 +23,7 @@ class SubmitReviewResultController {
 
     record SubmitResultRequest(@Min(0) @Max(5) int quality) {}
     record ReviewResultResponse(UUID id, String nextReviewAt, int intervalDays,
-                                 double easeFactor, int consecutiveCorrect) {}
+                                 double easeFactor, int repetitions) {}
 
     @RequireProfileOwnership
     @PostMapping("/api/profiles/{userId}/review/items/{itemId}/result")
@@ -33,6 +33,6 @@ class SubmitReviewResultController {
         ReviewItem updated = useCase.execute(userId, itemId, request.quality());
         return ResponseEntity.ok(new ReviewResultResponse(
                 updated.id().value(), updated.nextReviewAt().toString(),
-                updated.intervalDays(), updated.easeFactor(), updated.consecutiveCorrect()));
+                updated.intervalDays(), updated.easeFactor(), updated.repetitions()));
     }
 }

@@ -3,7 +3,7 @@ package com.faus535.englishtrainer.review.infrastructure.persistence;
 import com.faus535.englishtrainer.review.domain.*;
 import org.springframework.stereotype.Repository;
 
-import java.time.Instant;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -38,8 +38,8 @@ class JpaReviewItemRepositoryAdapter implements ReviewItemRepository {
     }
 
     @Override
-    public List<ReviewItem> findDueByUserId(UUID userId, Instant now, int limit) {
-        return jpaRepository.findDueByUserId(userId, now).stream()
+    public List<ReviewItem> findDueByUserId(UUID userId, LocalDate today, int limit) {
+        return jpaRepository.findDueByUserId(userId, today).stream()
                 .limit(limit)
                 .map(ReviewItemEntity::toDomain)
                 .toList();
@@ -57,12 +57,17 @@ class JpaReviewItemRepositoryAdapter implements ReviewItemRepository {
     }
 
     @Override
-    public int countDueByUserId(UUID userId, Instant now) {
-        return jpaRepository.countDueByUserId(userId, now);
+    public int countDueByUserId(UUID userId, LocalDate today) {
+        return jpaRepository.countDueByUserId(userId, today);
     }
 
     @Override
     public long countMasteredByUserId(UUID userId) {
         return jpaRepository.countMasteredByUserId(userId);
+    }
+
+    @Override
+    public double averageIntervalByUserId(UUID userId) {
+        return jpaRepository.averageIntervalByUserId(userId);
     }
 }

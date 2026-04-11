@@ -37,7 +37,7 @@ class SubmitReviewResultUseCaseTest {
 
         ReviewItem updated = useCase.execute(USER_ID, item.id().value(), 4);
 
-        assertEquals(1, updated.consecutiveCorrect());
+        assertEquals(1, updated.repetitions());
         assertNotEquals(item.nextReviewAt(), updated.nextReviewAt());
     }
 
