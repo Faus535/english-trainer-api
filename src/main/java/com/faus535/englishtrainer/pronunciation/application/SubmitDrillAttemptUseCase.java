@@ -39,8 +39,8 @@ public class SubmitDrillAttemptUseCase {
         PronunciationDrill updated = drill.addAttempt(userId, feedbackResult.score(), recognizedText);
         int perfectStreak = updated.perfectStreakFor(userId);
 
-        PronunciationDrill saved = drillRepository.save(updated);
-        saved.pullDomainEvents().forEach(eventPublisher::publishEvent);
+        drillRepository.save(updated);
+        updated.pullDomainEvents().forEach(eventPublisher::publishEvent);
 
         return new DrillAttemptResultDto(feedbackResult.score(), feedbackResult.feedback(), perfectStreak);
     }

@@ -48,8 +48,8 @@ public class EvaluateMiniConversationTurnUseCase {
         PronunciationMiniConversation updated = conversation.evaluateTurn(
                 recognizedText, aiResult.score(), aiResult.nextPrompt(), aiResult.nextTargetPhrase());
 
-        PronunciationMiniConversation saved = conversationRepository.save(updated);
-        saved.pullDomainEvents().forEach(eventPublisher::publishEvent);
+        conversationRepository.save(updated);
+        updated.pullDomainEvents().forEach(eventPublisher::publishEvent);
 
         List<WordFeedbackDto> wordFeedback = aiResult.wordFeedback().stream()
                 .map(wf -> new WordFeedbackDto(wf.word(), wf.recognized(), wf.tip(), wf.score()))
@@ -58,6 +58,6 @@ public class EvaluateMiniConversationTurnUseCase {
         return new MiniConversationTurnResultDto(
                 aiResult.score(), wordFeedback,
                 aiResult.nextPrompt(), aiResult.nextTargetPhrase(),
-                saved.isComplete());
+                updated.isComplete());
     }
 }

@@ -3,6 +3,7 @@ package com.faus535.englishtrainer.pronunciation.application;
 import com.faus535.englishtrainer.pronunciation.domain.PronunciationAiPort;
 import com.faus535.englishtrainer.pronunciation.domain.error.PronunciationAiException;
 import com.faus535.englishtrainer.shared.application.annotation.UseCase;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -15,6 +16,7 @@ public class EvaluatePronunciationFeedbackUseCase {
         this.pronunciationAiPort = pronunciationAiPort;
     }
 
+    @Transactional(readOnly = true)
     public PronunciationFeedbackDto execute(String targetText, String recognizedText,
             List<WordConfidenceDto> wordConfidences) throws PronunciationAiException {
         List<PronunciationAiPort.WordConfidence> portConfidences = wordConfidences.stream()
