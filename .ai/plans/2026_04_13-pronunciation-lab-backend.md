@@ -406,8 +406,8 @@ public final class PronunciationDrillMother {
 `PronunciationControllerAdvice` gets `@ExceptionHandler(PronunciationDrillNotFoundException.class)` returning 404.
 
 **Acceptance criteria**:
-- [ ] `./gradlew compileJava` passes
-- [ ] `ListDrillsUseCaseTest` and `SubmitDrillAttemptUseCaseTest` pass
+- [x] `./gradlew compileJava` passes
+- [x] `ListDrillsUseCaseTest` and `SubmitDrillAttemptUseCaseTest` pass
 - [ ] `GET /api/pronunciation/drills?level=b1` returns seeded drills
 - [ ] `GET /api/pronunciation/drills?level=b1&focus=th-sound` returns filtered drills
 - [ ] `POST /api/pronunciation/drills/{id}/submit` returns `score`, `feedback`, `perfectStreak`
