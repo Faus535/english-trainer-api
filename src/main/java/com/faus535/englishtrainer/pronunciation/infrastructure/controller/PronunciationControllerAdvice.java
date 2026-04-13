@@ -2,6 +2,7 @@ package com.faus535.englishtrainer.pronunciation.infrastructure.controller;
 
 import com.faus535.englishtrainer.pronunciation.domain.error.PronunciationAiException;
 import com.faus535.englishtrainer.pronunciation.domain.error.PronunciationDrillNotFoundException;
+import com.faus535.englishtrainer.pronunciation.domain.error.PronunciationMiniConversationNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -29,4 +30,9 @@ class PronunciationControllerAdvice {
                 .body(new ApiError("not_found", "Pronunciation drill not found"));
     }
 
+    @ExceptionHandler(PronunciationMiniConversationNotFoundException.class)
+    ResponseEntity<ApiError> handleMiniConversationNotFound(PronunciationMiniConversationNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new ApiError("not_found", "Pronunciation mini-conversation not found"));
+    }
 }

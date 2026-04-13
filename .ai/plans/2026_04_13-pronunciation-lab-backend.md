@@ -535,8 +535,8 @@ public static PronunciationMiniConversation completed() { ... }
 `PronunciationControllerAdvice` gets `@ExceptionHandler(PronunciationMiniConversationNotFoundException.class)` returning 404.
 
 **Acceptance criteria**:
-- [ ] `./gradlew compileJava` passes
-- [ ] `StartMiniConversationUseCaseTest` and `EvaluateMiniConversationTurnUseCaseTest` pass
+- [x] `./gradlew compileJava` passes
+- [x] `StartMiniConversationUseCaseTest` and `EvaluateMiniConversationTurnUseCaseTest` pass
 - [ ] `POST /api/pronunciation/mini-conversation` returns 201 with `id`, `prompt`, `targetPhrase`
 - [ ] `POST /api/pronunciation/mini-conversation/{id}/evaluate` returns `score`, `wordFeedback`, `nextPrompt`, `nextTargetPhrase`, `isComplete`
 - [ ] After MAX_TURNS evaluations, `isComplete` is `true`
