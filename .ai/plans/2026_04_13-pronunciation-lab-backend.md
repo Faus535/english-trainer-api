@@ -284,8 +284,8 @@ ResponseEntity<FeedbackResponse> handle(@Valid @RequestBody FeedbackRequest requ
 ```
 
 **Acceptance criteria**:
-- [ ] `./gradlew compileJava` passes
-- [ ] `EvaluatePronunciationFeedbackUseCaseTest` passes
+- [x] `./gradlew compileJava` passes
+- [x] `EvaluatePronunciationFeedbackUseCaseTest` passes
 - [ ] `POST /api/pronunciation/feedback` with valid body returns 200 with `score`, `wordFeedback`, `overallTip`
 - [ ] `POST /api/pronunciation/feedback` without JWT returns 401
 - [ ] Human review: no persistence, maps cleanly through layers
